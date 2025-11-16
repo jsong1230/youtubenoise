@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# 환경변수
+.env
+.env.local
+
+# 로그 파일
+logs/*.log
+logs/history.json
+
+# 생성된 파일
+audio/*
+!audio/.gitkeep
+images/*
+!images/.gitkeep
+videos/*
+!videos/.gitkeep
+
+# YouTube OAuth 토큰
+config/token.json
+
+# YouTube 클라이언트 시크릿 (보안상 .gitignore에 포함)
+# config/youtube_client_secret.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
