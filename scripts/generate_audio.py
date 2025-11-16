@@ -218,12 +218,183 @@ def generate_fireplace(duration_sec: int, sample_rate: int = 44100) -> AudioSegm
     return audio_segment
 
 
+def generate_lofi(duration_sec: int, sample_rate: int = 44100) -> AudioSegment:
+    """로파이 힙합 비트 생성"""
+    logger.info(f"로파이 힙합 비트 생성 중... (길이: {duration_sec}초)")
+    samples = int(duration_sec * sample_rate)
+    t = np.linspace(0, duration_sec, samples)
+    
+    # 기본 드럼 비트 (킥, 스네어, 하이햇)
+    kick_freq = 60  # 저주파 킥
+    snare_freq = 200  # 스네어 주파수
+    hihat_freq = 8000  # 하이햇 주파수
+    
+    # 킥 드럼 (매 4박마다)
+    beat_length = 60.0 / 85.0  # 85 BPM (로파이의 전형적인 BPM)
+    kick_pattern = np.zeros(samples)
+    for i in range(int(duration_sec / beat_length)):
+        beat_start = int(i * beat_length * sample_rate)
+        if i % 4 == 0:  # 매 4박마다 킥
+            kick_duration = int(0.1 * sample_rate)
+            kick_end = min(beat_start + kick_duration, samples)
+            kick_envelope = np.exp(-np.linspace(0, 5, kick_end - beat_start))
+            kick_wave = np.sin(2 * np.pi * kick_freq * t[beat_start:kick_end])
+            kick_pattern[beat_start:kick_end] = kick_wave * kick_envelope * 0.6
+    
+    # 스네어 (2, 4박)
+    snare_pattern = np.zeros(samples)
+    for i in range(int(duration_sec / beat_length)):
+        beat_start = int(i * beat_length * sample_rate)
+        if i % 4 in [1, 3]:  # 2, 4박
+            snare_duration = int(0.05 * sample_rate)
+            snare_end = min(beat_start + snare_duration, samples)
+            snare_noise = np.random.randn(snare_end - beat_start).astype(np.float32)
+            snare_wave = np.sin(2 * np.pi * snare_freq * t[beat_start:snare_end])
+            snare_pattern[beat_start:snare_end] = (snare_wave * 0.3 + snare_noise * 0.7) * 0.4
+    
+    # 하이햇 (매 박마다)
+    hihat_pattern = np.zeros(samples)
+    for i in range(int(duration_sec / beat_length)):
+        beat_start = int(i * beat_length * sample_rate)
+        hihat_duration = int(0.02 * sample_rate)
+        hihat_end = min(beat_start + hihat_duration, samples)
+        hihat_noise = np.random.randn(hihat_end - beat_start).astype(np.float32)
+        # 고주파 필터링
+        hihat_fft = np.fft.rfft(hihat_noise)
+        hihat_freqs = np.fft.rfftfreq(len(hihat_noise), 1/sample_rate)
+        highpass = hihat_freqs > 3000
+        hihat_fft[~highpass] *= 0.1
+        hihat_filtered = np.fft.irfft(hihat_fft, n=len(hihat_noise))
+        hihat_pattern[beat_start:hihat_end] = hihat_filtered * 0.2
+    
+    # 베이스라인 (간단한 멜로디)
+    bass_pattern = np.zeros(samples)
+    bass_notes = [60, 65, 67, 65]  # C, F, G, F (간단한 코드 진행)
+    note_duration = beat_length * 2  # 2박씩
+    for i, note in enumerate(bass_notes * (int(duration_sec / (note_duration * len(bass_notes))) + 1)):
+        note_start = int(i * note_duration * sample_rate)
+        if note_start >= samples:
+            break
+        note_end = min(note_start + int(note_duration * sample_rate), samples)
+        # MIDI 노트를 주파수로 변환
+        freq = 440 * (2 ** ((note - 69) / 12))
+        bass_wave = np.sin(2 * np.pi * freq * t[note_start:note_end])
+        bass_envelope = np.exp(-np.linspace(0, 2, note_end - note_start))
+        bass_pattern[note_start:note_end] = bass_wave * bass_envelope * 0.3
+    
+    # 피아노/멜로디 (고주파, 부드러운 사인파)
+    melody_pattern = np.zeros(samples)
+    melody_notes = [72, 74, 76, 77, 76, 74, 72, 70]  # 간단한 멜로디
+    for i, note in enumerate(melody_notes * (int(duration_sec / (beat_length * 2 * len(melody_notes))) + 1)):
+        note_start = int(i * beat_length * 2 * sample_rate)
+        if note_start >= samples:
+            break
+        note_end = min(note_start + int(beat_length * 2 * sample_rate), samples)
+        freq = 440 * (2 ** ((note - 69) / 12))
+        melody_wave = np.sin(2 * np.pi * freq * t[note_start:note_end])
+        melody_envelope = np.exp(-np.linspace(0, 3, note_end - note_start))
+        melody_pattern[note_start:note_end] = melody_wave * melody_envelope * 0.15
+    
+    # 비닐 크랙/노이즈 (로파이 느낌)
+    vinyl_noise = np.random.randn(samples).astype(np.float32) * 0.05
+    # 저주파 필터링
+    vinyl_fft = np.fft.rfft(vinyl_noise)
+    vinyl_freqs = np.fft.rfftfreq(len(vinyl_noise), 1/sample_rate)
+    lowpass = vinyl_freqs < 500
+    vinyl_fft[~lowpass] *= 0.1
+    vinyl_filtered = np.fft.irfft(vinyl_fft, n=len(vinyl_noise))
+    
+    # 모든 요소 결합
+    lofi = (kick_pattern + snare_pattern + hihat_pattern + 
+            bass_pattern + melody_pattern + vinyl_filtered)
+    
+    # 정규화 및 볼륨 조절
+    lofi = lofi / np.max(np.abs(lofi)) * 0.8
+    
+    audio_array = (lofi * 32767).astype(np.int16)
+    audio_segment = AudioSegment(
+        audio_array.tobytes(),
+        frame_rate=sample_rate,
+        sample_width=2,
+        channels=1
+    )
+    return audio_segment
+
+
+def generate_asmr(duration_sec: int, sample_rate: int = 44100) -> AudioSegment:
+    """ASMR 소리 생성 (부드러운 속삭임, 타이핑, 물소리 등)"""
+    logger.info(f"ASMR 소리 생성 중... (길이: {duration_sec}초)")
+    samples = int(duration_sec * sample_rate)
+    t = np.linspace(0, duration_sec, samples)
+    
+    # 기본: 부드러운 화이트 노이즈 (속삭임 느낌)
+    whisper_base = np.random.randn(samples).astype(np.float32)
+    # 고주파 필터링 (부드러운 느낌)
+    whisper_fft = np.fft.rfft(whisper_base)
+    whisper_freqs = np.fft.rfftfreq(len(whisper_base), 1/sample_rate)
+    # 200Hz ~ 4000Hz 대역 강조 (인간 목소리 대역)
+    bandpass = (whisper_freqs > 200) & (whisper_freqs < 4000)
+    whisper_fft[~bandpass] *= 0.1
+    whisper_filtered = np.fft.irfft(whisper_fft, n=len(whisper_base))
+    
+    # 타이핑 소리 (간헐적 클릭)
+    typing_pattern = np.zeros(samples)
+    for i in range(0, samples, sample_rate // 2):  # 0.5초마다
+        if random.random() > 0.4:
+            click_start = i
+            click_duration = int(0.01 * sample_rate)  # 10ms 클릭
+            click_end = min(click_start + click_duration, samples)
+            # 고주파 클릭 소리
+            click_freq = 3000 + random.randint(-500, 500)
+            click_wave = np.sin(2 * np.pi * click_freq * t[click_start:click_end])
+            click_envelope = np.exp(-np.linspace(0, 10, click_end - click_start))
+            typing_pattern[click_start:click_end] = click_wave * click_envelope * 0.3
+    
+    # 물소리/물방울 (간헐적)
+    water_pattern = np.zeros(samples)
+    for i in range(0, samples, sample_rate):  # 1초마다
+        if random.random() > 0.6:
+            water_start = i
+            water_duration = int(0.1 * sample_rate)
+            water_end = min(water_start + water_duration, samples)
+            # 고주파 물방울 소리
+            water_freq = 5000 + random.randint(-1000, 1000)
+            water_wave = np.sin(2 * np.pi * water_freq * t[water_start:water_end])
+            water_envelope = np.exp(-np.linspace(0, 5, water_end - water_start))
+            water_pattern[water_start:water_end] = water_wave * water_envelope * 0.2
+    
+    # 부드러운 브러싱/스크래칭 소리
+    brushing = np.random.randn(samples).astype(np.float32) * 0.1
+    # 중주파 대역 강조
+    brushing_fft = np.fft.rfft(brushing)
+    brushing_freqs = np.fft.rfftfreq(len(brushing), 1/sample_rate)
+    midpass = (brushing_freqs > 1000) & (brushing_freqs < 8000)
+    brushing_fft[~midpass] *= 0.2
+    brushing_filtered = np.fft.irfft(brushing_fft, n=len(brushing))
+    
+    # 모든 요소 결합
+    asmr = (whisper_filtered * 0.5 + typing_pattern + 
+            water_pattern + brushing_filtered * 0.3)
+    
+    # 정규화 및 볼륨 조절 (ASMR은 부드럽게)
+    asmr = asmr / np.max(np.abs(asmr)) * 0.6
+    
+    audio_array = (asmr * 32767).astype(np.int16)
+    audio_segment = AudioSegment(
+        audio_array.tobytes(),
+        frame_rate=sample_rate,
+        sample_width=2,
+        channels=1
+    )
+    return audio_segment
+
+
 def generate_noise(noise_type: str, duration_sec: int) -> Path:
     """
     노이즈 생성 함수
     
     Args:
-        noise_type: 노이즈 타입 (white_noise, brown_noise, pink_noise, rain, ocean, fireplace)
+        noise_type: 노이즈 타입 (white_noise, brown_noise, pink_noise, rain, ocean, fireplace, lofi, asmr)
         duration_sec: 길이 (초)
     
     Returns:
@@ -238,6 +409,8 @@ def generate_noise(noise_type: str, duration_sec: int) -> Path:
             "rain": generate_rain,
             "ocean": generate_ocean,
             "fireplace": generate_fireplace,
+            "lofi": generate_lofi,
+            "asmr": generate_asmr,
         }
         
         if noise_type not in generators:
@@ -279,8 +452,17 @@ def main():
         audio_length_sec = config.get("audio_length_sec", 14400)
         noise_types = config.get("noise_types", ["white_noise"])
         
-        # 랜덤으로 노이즈 타입 선택
-        noise_type = random.choice(noise_types)
+        # 명령행 인자로 노이즈 타입 지정 가능
+        if len(sys.argv) > 1:
+            noise_type = sys.argv[1]
+            if noise_type not in ["white_noise", "brown_noise", "pink_noise", "rain", "ocean", "fireplace", "lofi", "asmr"]:
+                logger.error(f"지원하지 않는 노이즈 타입: {noise_type}")
+                logger.info(f"지원하는 타입: white_noise, brown_noise, pink_noise, rain, ocean, fireplace, lofi, asmr")
+                sys.exit(1)
+        else:
+            # 랜덤으로 노이즈 타입 선택
+            noise_type = random.choice(noise_types)
+        
         logger.info(f"선택된 노이즈 타입: {noise_type}")
         
         # 오디오 생성

@@ -1,6 +1,6 @@
 {
   "audio_length_sec": 14400,
-  "noise_types": ["white_noise", "brown_noise", "pink_noise", "rain", "ocean", "fireplace"],
+  "noise_types": ["white_noise", "brown_noise", "pink_noise", "rain", "ocean", "fireplace", "lofi", "asmr"],
   "language": "en",
   "openai_model": "gpt-4o-mini",
   "youtube": {

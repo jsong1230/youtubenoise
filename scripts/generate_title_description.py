@@ -56,6 +56,8 @@ def get_noise_type_display_name(noise_type: str) -> str:
         "rain": "Rain Sounds",
         "ocean": "Ocean Waves",
         "fireplace": "Fireplace Sounds",
+        "lofi": "Lofi Hip Hop",
+        "asmr": "ASMR",
     }
     return display_names.get(noise_type, noise_type.replace("_", " ").title())
 
@@ -69,8 +71,12 @@ def get_use_cases_for_noise_type(noise_type: str) -> str:
         "rain": "sleep, study, relaxation, meditation, and creating a peaceful atmosphere",
         "ocean": "deep sleep, meditation, stress relief, and creating a serene environment",
         "fireplace": "cozy relaxation, study, reading, and creating a warm, comforting atmosphere",
+        "lofi": "study, focus, concentration, work, reading, and creating a productive atmosphere",
+        "asmr": "relaxation, sleep, stress relief, meditation, tingles, and creating a calming experience",
     }
     return use_cases.get(noise_type, "sleep, study, focus, and relaxation")
+
+
 
 
 def generate_metadata(noise_type: str, duration_hours: int) -> Dict[str, any]:
@@ -186,23 +192,21 @@ Timeline:
 
 #whitenoise #sleep #relax #asmr #meditation #studymusic #focus #peaceful #calm #sleepsounds #relaxation #backgroundnoise #sleepaid #deepsleep #ambient"""
     
-    tags = [
-        display_name.lower().replace(" ", ""),
-        "sleep sounds",
-        "relaxation",
-        "study music",
-        "focus",
-        "asmr",
-        "meditation",
-        "deep sleep",
-        "calm",
-        "peaceful",
-        "background noise",
-        "sleep aid",
-        "ambient",
-        "white noise",
-        "relax"
-    ]
+    # 기본 태그
+    base_tags = ["sleep", "relax", "study", "focus", "meditation", "peaceful", "calm"]
+    type_specific_tags = {
+        "white_noise": ["white noise", "sleep sounds", "background noise", "sleep aid", "deep sleep", "relaxation", "asmr", "ambient"],
+        "brown_noise": ["brown noise", "sleep sounds", "deep sleep", "concentration", "stress relief", "calming", "relaxation"],
+        "pink_noise": ["pink noise", "sleep sounds", "focus music", "relaxation", "concentration", "study music"],
+        "rain": ["rain sounds", "rain", "sleep sounds", "nature sounds", "relaxation", "meditation", "peaceful"],
+        "ocean": ["ocean waves", "ocean sounds", "waves", "sleep sounds", "meditation", "nature sounds", "serene"],
+        "fireplace": ["fireplace", "fireplace sounds", "cozy", "warm", "relaxation", "sleep sounds", "ambient"],
+        "lofi": ["lofi", "lofi hip hop", "lofi music", "study music", "chill beats", "focus music", "lofi beats", "chill", "productivity", "work music", "study beats"],
+        "asmr": ["asmr", "asmr sounds", "tingles", "relaxation", "sleep", "whisper", "soft sounds", "asmr trigger", "stress relief", "calming"],
+    }
+    
+    tags = base_tags + type_specific_tags.get(noise_type, [])
+    tags = list(set(tags))  # 중복 제거
     
     logger.warning("폴백 메타데이터 사용")
     return {

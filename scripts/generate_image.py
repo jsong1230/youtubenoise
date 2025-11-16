@@ -46,7 +46,7 @@ def load_config() -> dict:
         raise
 
 
-def get_color_scheme_for_noise_type(noise_type: str) -> Tuple[Tuple[int, int, int], Tuple[int, int, int]]:
+def get_color_scheme_for_noise_type(noise_type: str) -> Tuple[Tuple[int, int, int], Tuple[int, int,  int]]:
     """노이즈 타입에 따른 색상 스킴 반환 (시작 색상, 끝 색상)"""
     color_schemes = {
         "white_noise": ((20, 30, 60), (40, 60, 100)),  # 어두운 파란색 그라데이션
@@ -55,6 +55,8 @@ def get_color_scheme_for_noise_type(noise_type: str) -> Tuple[Tuple[int, int, in
         "rain": ((30, 40, 60), (50, 70, 90)),  # 비 오는 밤 파란색
         "ocean": ((20, 40, 60), (40, 70, 100)),  # 바다 파란색
         "fireplace": ((80, 50, 30), (120, 70, 40)),  # 따뜻한 오렌지/빨강
+        "lofi": ((40, 30, 50), (80, 60, 90)),  # 로파이 느낌의 따뜻한 퍼플/핑크
+        "asmr": ((50, 40, 60), (90, 80, 100)),  # 부드러운 라벤더/퍼플
     }
     return color_schemes.get(noise_type, ((30, 40, 60), (50, 70, 90)))
 
@@ -172,6 +174,8 @@ def generate_background_image(noise_type: str) -> Path:
             "rain": "vertical",
             "ocean": "horizontal",
             "fireplace": "radial",
+            "lofi": "radial",
+            "asmr": "diagonal",
         }
         direction = gradient_directions.get(noise_type, "vertical")
         

@@ -4,9 +4,9 @@
 
 ## 프로젝트 목적
 
-이 프로젝트는 화이트노이즈, 브라운노이즈, 핑크노이즈, 빗소리, 파도 소리, 벽난로 소리 등의 환경음을 자동으로 생성하고, AI로 배경 이미지를 만들고, FFmpeg로 영상으로 합친 뒤, YouTube Data API를 통해 자동 업로드까지 하는 end-to-end 자동화 파이프라인입니다.
+이 프로젝트는 화이트노이즈, 브라운노이즈, 핑크노이즈, 빗소리, 파도 소리, 벽난로 소리, 로파이 힙합 비트, ASMR 소리 등의 환경음/음악을 자동으로 생성하고, AI로 배경 이미지를 만들고, FFmpeg로 영상으로 합친 뒤, YouTube Data API를 통해 자동 업로드까지 하는 end-to-end 자동화 파이프라인입니다.
 
-최종적으로는 cron 등으로 `scheduler.py`를 주기적으로 실행시키면 사람이 손대지 않아도 매일 새로운 화이트노이즈/자연음 영상이 유튜브에 업로드되어, 장기적으로 광고 수익을 만들 수 있는 구조를 목표로 합니다.
+최종적으로는 cron 등으로 `scheduler.py`를 주기적으로 실행시키면 사람이 손대지 않아도 매일 새로운 화이트노이즈/자연음/로파이/ASMR 영상이 유튜브에 업로드되어, 장기적으로 광고 수익을 만들 수 있는 구조를 목표로 합니다.
 
 ## 프로젝트 구조
 
@@ -96,6 +96,11 @@ OPENAI_API_KEY=sk-your-openai-api-key-here
 
 OpenAI API 키는 [OpenAI Platform](https://platform.openai.com/api-keys)에서 발급받을 수 있습니다.
 
+**참고**: 
+- 오디오 생성: pydub와 numpy로 직접 생성 (무료)
+- 이미지 생성: Pillow로 직접 생성 (무료)
+- 메타데이터 생성: OpenAI API 사용 (유료, 하지만 gpt-4o-mini는 매우 저렴함)
+
 ### 3. YouTube OAuth 설정
 
 1. [Google Cloud Console](https://console.cloud.google.com/)에 접속
@@ -114,7 +119,7 @@ OpenAI API 키는 [OpenAI Platform](https://platform.openai.com/api-keys)에서 
 ```json
 {
   "audio_length_sec": 14400,  // 오디오 길이 (초, 기본값: 4시간)
-  "noise_types": ["white_noise", "brown_noise", "pink_noise", "rain", "ocean", "fireplace"],
+  "noise_types": ["white_noise", "brown_noise", "pink_noise", "rain", "ocean", "fireplace", "lofi", "asmr"],
   "language": "en",
   "openai_model": "gpt-4o-mini",  // 또는 "gpt-4o"
   "youtube": {
@@ -133,17 +138,28 @@ OpenAI API 키는 [OpenAI Platform](https://platform.openai.com/api-keys)에서 
 
 #### 1. 오디오 생성
 ```bash
+python scripts/generate_audio.py white_noise
+# 또는
+python scripts/generate_audio.py lofi
+python scripts/generate_audio.py asmr
+# 인자 없이 실행하면 설정에서 랜덤으로 선택됩니다
 python scripts/generate_audio.py
 ```
 
 #### 2. 이미지 생성
 ```bash
 python scripts/generate_image.py white_noise
+# 또는
+python scripts/generate_image.py lofi
+python scripts/generate_image.py asmr
 ```
 
 #### 3. 메타데이터 생성
 ```bash
 python scripts/generate_title_description.py white_noise 4
+# 또는
+python scripts/generate_title_description.py lofi 4
+python scripts/generate_title_description.py asmr 4
 ```
 
 #### 4. 영상 생성
@@ -193,6 +209,8 @@ crontab -e
 - `rain`: 빗소리
 - `ocean`: 파도 소리
 - `fireplace`: 벽난로 소리
+- `lofi`: 로파이 힙합 비트 (공부/집중용)
+- `asmr`: ASMR 소리 (속삭임, 타이핑, 물소리 등)
 
 ## 로그 및 히스토리
 
@@ -202,7 +220,7 @@ crontab -e
 ## 주의사항
 
 1. **YouTube 정책 준수**: 자동 생성된 콘텐츠도 YouTube의 커뮤니티 가이드라인을 준수해야 합니다.
-2. **API 비용**: OpenAI API 사용 시 비용이 발생할 수 있습니다. 사용량을 모니터링하세요.
+2. **API 비용**: OpenAI API 사용 시 비용이 발생할 수 있습니다. gpt-4o-mini는 매우 저렴하지만 사용량을 모니터링하세요.
 3. **저작권**: 생성된 오디오와 이미지는 자동 생성된 것이지만, YouTube 정책을 확인하세요.
 4. **OAuth 인증**: YouTube 업로드 시 처음 한 번은 브라우저에서 인증이 필요합니다.
 5. **FFmpeg 필수**: 영상 생성에는 FFmpeg가 반드시 설치되어 있어야 합니다.
@@ -216,6 +234,7 @@ crontab -e
 ### OpenAI API 오류
 - `.env` 파일에 올바른 API 키가 설정되어 있는지 확인
 - API 키의 사용량 한도를 확인
+- gpt-4o-mini 모델 사용을 권장 (비용 효율적)
 
 ### YouTube 업로드 실패
 - `config/youtube_client_secret.json` 파일이 올바른 위치에 있는지 확인
