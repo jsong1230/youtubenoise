@@ -1,5 +1,5 @@
 {
-  "audio_length_sec": 14400,
+  "audio_length_sec": 1800,
   "noise_types": ["white_noise", "brown_noise", "pink_noise", "rain", "ocean", "fireplace", "lofi", "asmr"],
   "language": "en",
   "openai_model": "gpt-4o-mini",
