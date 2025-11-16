@@ -4,32 +4,30 @@ __pycache__/
 *$py.class
 *.so
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
 venv/
 env/
 ENV/
-.venv
 
-# 환경변수
+# Environment variables
 .env
 .env.local
-
-# 로그 파일
-logs/*.log
-logs/history.json
-
-# 생성된 파일
-audio/*
-!audio/.gitkeep
-images/*
-!images/.gitkeep
-videos/*
-!videos/.gitkeep
-
-# YouTube OAuth 토큰
-config/token.json
-
-# YouTube 클라이언트 시크릿 (보안상 .gitignore에 포함)
-# config/youtube_client_secret.json
 
 # IDE
 .vscode/
@@ -38,7 +36,37 @@ config/token.json
 *.swo
 *~
 
+# Logs
+logs/*.log
+logs/history.json
+
+# Generated files
+audio/*.mp3
+audio/*.wav
+images/*.png
+images/*.jpg
+videos/*.mp4
+
+# Keep directories
+!audio/.gitkeep
+!images/.gitkeep
+!videos/.gitkeep
+!logs/.gitkeep
+
+# Public Domain music (keep README)
+audio/public_domain/*.mp3
+audio/public_domain/*.wav
+!audio/public_domain/README.md
+
+# Config (keep examples)
+config/token.json
+config/youtube_client_secret.json
+
 # OS
 .DS_Store
 Thumbs.db
 
+# Temporary files
+*.tmp
+*.bak
+/tmp/

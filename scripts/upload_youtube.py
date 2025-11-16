@@ -19,11 +19,9 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from googleapiclient.errors import HttpError
 
-# 프로젝트 루트를 sys.path에 추가
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
-# .env 파일 로드
 load_dotenv(project_root / ".env")
 
 # 로깅 설정

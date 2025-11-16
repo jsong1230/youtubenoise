@@ -15,7 +15,11 @@ project_root = Path(__file__).parent.parent
 load_dotenv(project_root / ".env")
 
 # YouTube API 스코프
-SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
+# Analytics API를 사용하려면 yt-analytics.readonly도 추가
+SCOPES = [
+    'https://www.googleapis.com/auth/youtube.upload',
+    'https://www.googleapis.com/auth/yt-analytics.readonly'  # Analytics API용
+]
 
 def main():
     """OAuth 플로우를 실행하여 새로운 토큰 받기"""

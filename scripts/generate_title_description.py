@@ -79,6 +79,181 @@ def get_use_cases_for_noise_type(noise_type: str) -> str:
 
 
 
+def generate_metadata_for_bgm(preset_name: str, duration_minutes: int) -> Dict[str, any]:
+    """
+    BGM용 메타데이터 생성 함수
+    
+    Args:
+        preset_name: BGM 프리셋 이름
+        duration_minutes: 길이 (분)
+    
+    Returns:
+        {title, description, tags} 딕셔너리
+    """
+    try:
+        import yaml
+        
+        # OpenAI API 키 확인
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY 환경변수가 설정되지 않았습니다.")
+        
+        client = OpenAI(api_key=api_key)
+        
+        # 설정 로드
+        config = load_config()
+        model = config.get("openai_model", "gpt-4o-mini")
+        
+        # 프리셋 정보 로드
+        presets_path = project_root / "config" / "bgm_presets.yaml"
+        with open(presets_path, 'r', encoding='utf-8') as f:
+            presets_data = yaml.safe_load(f)
+            presets = presets_data.get("presets", {})
+            
+        if preset_name not in presets:
+            raise ValueError(f"프리셋을 찾을 수 없습니다: {preset_name}")
+        
+        preset = presets[preset_name]
+        preset_name_display = preset.get("name", preset_name)
+        preset_description = preset.get("description", "")
+        preset_tags = preset.get("tags", [])
+        style = preset.get("style", "")
+        
+        # 시간 포맷팅
+        hours = duration_minutes // 60
+        minutes = duration_minutes % 60
+        if hours > 0:
+            duration_str = f"{hours}시간 {minutes}분" if minutes > 0 else f"{hours}시간"
+        else:
+            duration_str = f"{minutes}분"
+        
+        # 프롬프트 생성
+        prompt = f"""Create YouTube video metadata for a long-form BGM (Background Music) video.
+
+Preset Information:
+- Name: {preset_name_display}
+- Description: {preset_description}
+- Style: {style}
+- Duration: {duration_str} ({duration_minutes} minutes)
+
+IMPORTANT: This is original, copyright-free music generated algorithmically. It is NOT a cover or remix of any existing copyrighted song.
+
+Requirements:
+1. Title: Should be engaging, SEO-friendly, and include the duration. Maximum 100 characters.
+   Example format: "{preset_name_display} - {duration_str} Long Form BGM"
+   Or: "{preset_name_display} Background Music ({duration_str})"
+
+2. Description: Should include:
+   - A brief introduction about this original, copyright-free BGM
+   - The style and atmosphere (e.g., "Christmas-inspired jazz", "cafe ambiance", "classical")
+   - What it's good for: cafe, study, work, relaxation, background music
+   - A note that this is original music, not a cover
+   - A simple timeline (e.g., "00:00:00 - Start")
+   - Hashtags at the end
+   - Keep it natural and engaging, around 3-5 paragraphs
+
+3. Tags: Provide a list of 10-15 relevant tags as a JSON array. Include: {', '.join(preset_tags[:5])} and related terms.
+   Example: {preset_tags}
+
+Return the response as a JSON object with the following structure:
+{{
+    "title": "...",
+    "description": "...",
+    "tags": ["tag1", "tag2", ...]
+}}"""
+
+        logger.info(f"OpenAI API로 BGM 메타데이터 생성 중... (모델: {model})")
+        
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that creates engaging YouTube video metadata for original, copyright-free background music. Always respond with valid JSON only."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+        )
+        
+        content = response.choices[0].message.content.strip()
+        
+        # JSON 파싱 (마크다운 코드 블록 제거)
+        if content.startswith("```"):
+            lines = content.split("\n")
+            content = "\n".join(lines[1:-1]) if len(lines) > 2 else content
+        
+        # JSON 파싱
+        metadata = json.loads(content)
+        
+        # 프리셋 태그 추가
+        if isinstance(metadata.get("tags"), list):
+            metadata["tags"] = list(set(metadata["tags"] + preset_tags))  # 중복 제거
+        
+        logger.info(f"BGM 메타데이터 생성 완료")
+        logger.info(f"제목: {metadata.get('title', 'N/A')}")
+        logger.info(f"태그 수: {len(metadata.get('tags', []))}")
+        
+        return metadata
+        
+    except json.JSONDecodeError as e:
+        logger.error(f"JSON 파싱 오류: {e}")
+        logger.error(f"응답 내용: {content}")
+        # 폴백 메타데이터 반환
+        return generate_fallback_metadata_for_bgm(preset_name, duration_minutes)
+    except Exception as e:
+        logger.error(f"BGM 메타데이터 생성 중 오류 발생: {e}", exc_info=True)
+        # 폴백 메타데이터 반환
+        return generate_fallback_metadata_for_bgm(preset_name, duration_minutes)
+
+
+def generate_fallback_metadata_for_bgm(preset_name: str, duration_minutes: int) -> Dict[str, any]:
+    """BGM API 실패 시 사용할 기본 메타데이터"""
+    import yaml
+    presets_path = project_root / "config" / "bgm_presets.yaml"
+    try:
+        with open(presets_path, 'r', encoding='utf-8') as f:
+            presets_data = yaml.safe_load(f)
+            presets = presets_data.get("presets", {})
+            preset = presets.get(preset_name, {})
+    except:
+        preset = {}
+    
+    preset_name_display = preset.get("name", preset_name.replace("_", " ").title())
+    preset_tags = preset.get("tags", ["bgm", "background music", "music"])
+    
+    hours = duration_minutes // 60
+    minutes = duration_minutes % 60
+    if hours > 0:
+        duration_str = f"{hours}시간 {minutes}분" if minutes > 0 else f"{hours}시간"
+    else:
+        duration_str = f"{minutes}분"
+    
+    title = f"{preset_name_display} - {duration_str} Long Form BGM"
+    
+    description = f"""Welcome to {duration_str} of original, copyright-free background music: {preset_name_display}.
+
+This is algorithmically generated original music, perfect for:
+- Cafe ambiance
+- Study and work
+- Relaxation
+- Background music for your videos
+- Creating a peaceful atmosphere
+
+This is original music, not a cover or remix of any existing copyrighted song.
+
+Timeline:
+00:00:00 - Start
+
+#bgm #backgroundmusic #music #cafe #study #work #relaxation #ambient #instrumental"""
+    
+    tags = preset_tags + ["bgm", "background music", "original music", "copyright free", "instrumental", "ambient", "study music", "cafe music"]
+    
+    logger.warning("BGM 폴백 메타데이터 사용")
+    return {
+        "title": title,
+        "description": description,
+        "tags": list(set(tags))
+    }
+
+
 def generate_metadata(noise_type: str, duration_hours: int) -> Dict[str, any]:
     """
     메타데이터 생성 함수

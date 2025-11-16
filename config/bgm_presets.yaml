@@ -1,0 +1,245 @@
+# 롱폼 BGM 프리셋 설정
+# 저작권 문제 없는 오리지널 음악 생성용 프리셋
+
+presets:
+  # 크리스마스 분위기 프리셋
+  christmas_cafe_3h:
+    name: "Christmas Cafe BGM"
+    description: "크리스마스 분위기의 카페 BGM (3시간)"
+    style: "christmas_jazz"
+    tempo_bpm: 80
+    key: "C_major"
+    # Public Domain 음악 자동 사용: audio/public_domain/ 폴더의 음악 파일을 자동으로 찾아 사용
+    # 수동 설정하려면 아래 주석 해제:
+    # use_external_audio: true
+    # external_audio_path: "audio/public_domain/christmas_cafe.mp3"
+    instruments:
+      - type: "piano"
+        volume: 0.6
+        style: "gentle_chord_progression"
+      - type: "strings"
+        volume: 0.3
+        style: "warm_pad"
+      - type: "bells"
+        volume: 0.2
+        style: "soft_chimes"
+    color_scheme:
+      start: [100, 30, 30]  # 따뜻한 빨강
+      end: [150, 80, 50]    # 크리스마스 골드
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["christmas", "cafe", "bgm", "jazz", "holiday", "cozy", "winter", "ambient"]
+    
+  christmas_classical_2h:
+    name: "Christmas Classical BGM"
+    description: "크리스마스 분위기의 클래식 스타일 BGM (2시간)"
+    style: "christmas_classical"
+    tempo_bpm: 70
+    key: "G_major"
+    instruments:
+      - type: "piano"
+        volume: 0.5
+        style: "classical_arpeggio"
+      - type: "strings"
+        volume: 0.4
+        style: "orchestral_pad"
+      - type: "flute"
+        volume: 0.2
+        style: "melodic_line"
+    color_scheme:
+      start: [80, 100, 120]  # 차분한 파란색
+      end: [120, 140, 160]   # 따뜻한 파란색
+      gradient_direction: "vertical"
+    duration_minutes: 120
+    tags: ["christmas", "classical", "bgm", "orchestral", "holiday", "peaceful", "winter"]
+    
+  christmas_ambient_4h:
+    name: "Christmas Ambient BGM"
+    description: "크리스마스 분위기의 앰비언트 BGM (4시간)"
+    style: "christmas_ambient"
+    tempo_bpm: 60
+    key: "D_major"
+    instruments:
+      - type: "pads"
+        volume: 0.5
+        style: "ambient_drone"
+      - type: "bells"
+        volume: 0.3
+        style: "sparse_chimes"
+      - type: "strings"
+        volume: 0.2
+        style: "long_sustains"
+    color_scheme:
+      start: [40, 60, 80]   # 어두운 파란색
+      end: [80, 100, 120]   # 밝은 파란색
+      gradient_direction: "diagonal"
+    duration_minutes: 240
+    tags: ["christmas", "ambient", "bgm", "relaxing", "holiday", "meditation", "winter"]
+
+  # 카페 BGM 프리셋
+  cafe_jazz_2h:
+    name: "Cafe Jazz BGM"
+    description: "카페 분위기의 재즈 스타일 BGM (2시간)"
+    style: "jazz"
+    tempo_bpm: 90
+    key: "F_major"
+    instruments:
+      - type: "piano"
+        volume: 0.5
+        style: "jazz_chords"
+      - type: "bass"
+        volume: 0.3
+        style: "walking_bass"
+      - type: "drums"
+        volume: 0.2
+        style: "brush_swing"
+    color_scheme:
+      start: [60, 50, 40]   # 따뜻한 브라운
+      end: [100, 80, 60]    # 카페 브라운
+      gradient_direction: "radial"
+    duration_minutes: 120
+    tags: ["cafe", "jazz", "bgm", "cozy", "study", "work", "relaxing", "ambient"]
+    
+  cafe_classical_3h:
+    name: "Cafe Classical BGM"
+    description: "카페 분위기의 클래식 스타일 BGM (3시간)"
+    style: "classical"
+    tempo_bpm: 75
+    key: "C_major"
+    instruments:
+      - type: "piano"
+        volume: 0.6
+        style: "classical_arpeggio"
+      - type: "strings"
+        volume: 0.3
+        style: "soft_pad"
+      - type: "harp"
+        volume: 0.1
+        style: "gentle_plucks"
+    color_scheme:
+      start: [50, 60, 70]   # 부드러운 그레이
+      end: [90, 100, 110]   # 밝은 그레이
+      gradient_direction: "vertical"
+    duration_minutes: 180
+    tags: ["cafe", "classical", "bgm", "study", "work", "focus", "peaceful", "elegant"]
+
+  # 클래식 BGM 프리셋
+  classical_piano_2h:
+    name: "Classical Piano BGM"
+    description: "클래식 피아노 스타일 BGM (2시간)"
+    style: "classical"
+    tempo_bpm: 70
+    key: "A_major"
+    instruments:
+      - type: "piano"
+        volume: 0.7
+        style: "classical_arpeggio"
+      - type: "strings"
+        volume: 0.2
+        style: "minimal_pad"
+    color_scheme:
+      start: [30, 40, 50]   # 어두운 그레이
+      end: [70, 80, 90]     # 밝은 그레이
+      gradient_direction: "vertical"
+    duration_minutes: 120
+    tags: ["classical", "piano", "bgm", "study", "focus", "elegant", "peaceful", "instrumental"]
+
+# 스타일별 설정
+styles:
+  christmas_jazz:
+    chord_progression: "jazz_christmas"
+    harmony_style: "warm_jazz"
+    melody_complexity: "medium"
+    rhythm_style: "swing"
+    
+  christmas_classical:
+    chord_progression: "classical_christmas"
+    harmony_style: "orchestral"
+    melody_complexity: "medium"
+    rhythm_style: "rubato"
+    
+  christmas_ambient:
+    chord_progression: "ambient_drone"
+    harmony_style: "minimal"
+    melody_complexity: "low"
+    rhythm_style: "free"
+    
+  jazz:
+    chord_progression: "jazz_standard"
+    harmony_style: "jazz_harmony"
+    melody_complexity: "high"
+    rhythm_style: "swing"
+    
+  classical:
+    chord_progression: "classical_progression"
+    harmony_style: "classical_harmony"
+    melody_complexity: "medium"
+    rhythm_style: "rubato"
+
+# 악기 타입별 설정
+instruments:
+  piano:
+    waveform: "sine"  # sine, triangle, sawtooth
+    attack: 0.1
+    decay: 0.3
+    sustain: 0.5
+    release: 0.5
+    
+  strings:
+    waveform: "sine"
+    attack: 1.0
+    decay: 0.5
+    sustain: 0.7
+    release: 2.0
+    
+  bells:
+    waveform: "sine"
+    attack: 0.05
+    decay: 0.2
+    sustain: 0.3
+    release: 1.5
+    
+  bass:
+    waveform: "sine"
+    attack: 0.1
+    decay: 0.2
+    sustain: 0.6
+    release: 0.3
+    
+  drums:
+    waveform: "noise"
+    attack: 0.01
+    decay: 0.1
+    sustain: 0.0
+    release: 0.2
+    
+  pads:
+    waveform: "sine"
+    attack: 2.0
+    decay: 1.0
+    sustain: 0.8
+    release: 3.0
+    
+  flute:
+    waveform: "sine"
+    attack: 0.2
+    decay: 0.3
+    sustain: 0.6
+    release: 0.5
+    
+  harp:
+    waveform: "sine"
+    attack: 0.05
+    decay: 0.1
+    sustain: 0.4
+    release: 0.8
+
+# 기본 설정
+defaults:
+  sample_rate: 44100
+  bitrate: "192k"
+  channels: 2  # 스테레오
+  volume_normalization: true
+  fade_in_seconds: 3.0
+  fade_out_seconds: 3.0
+
