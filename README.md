@@ -11,7 +11,7 @@
 ## 프로젝트 구조
 
 ```
-youtube-noise-generator/
+youtube-noise/
   audio/              # 생성된 오디오 파일 저장
   images/             # 생성된 이미지 파일 저장
   videos/             # 생성된 영상 파일 저장
@@ -39,7 +39,7 @@ youtube-noise-generator/
 ### 1. 저장소 클론 또는 다운로드
 
 ```bash
-cd /path/to/youtube-noise-generator
+cd /path/to/youtube-noise
 ```
 
 ### 2. Python 가상환경 생성 및 활성화 (권장)
@@ -182,7 +182,7 @@ python scripts/scheduler.py
 crontab -e
 
 # 매일 오전 2시에 실행
-0 2 * * * cd /path/to/youtube-noise-generator && /path/to/venv/bin/python scripts/scheduler.py >> logs/cron.log 2>&1
+0 2 * * * cd /path/to/youtube-noise && /path/to/venv/bin/python scripts/scheduler.py >> logs/cron.log 2>&1
 ```
 
 ## 지원하는 노이즈 타입
