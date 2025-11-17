@@ -85,6 +85,26 @@ python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes
 - 작곡 저작권뿐만 아니라 **녹음 저작권**도 확인
 - YouTube 업로드 시 설명란에 라이선스 명시 권장
 
+## 자동 분류 & 필터링
+
+Public Domain 폴더에 파일이 많아지면 `scripts/public_domain_catalog.py`가 자동으로 카테고리를 분류합니다.
+
+```bash
+# 카테고리 요약 보기
+python scripts/public_domain_catalog.py --summary
+```
+
+`config/bgm_presets.yaml`에서 원하는 카테고리를 지정하면 해당 분위기의 곡만 사용됩니다.
+
+```yaml
+christmas_cafe_3h:
+  public_domain_categories:
+    include: ["lofi", "piano", "calm"]
+    exclude: ["kids", "electronic"]
+```
+
+다운로드는 계속 진행되며, 새로 추가된 곡도 자동으로 분류됩니다.
+
 ## 파일 위치
 
 ```

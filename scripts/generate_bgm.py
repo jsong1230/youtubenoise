@@ -16,6 +16,10 @@ import numpy as np
 from pydub import AudioSegment
 from pydub.generators import Sine, Triangle, Sawtooth, WhiteNoise
 from dotenv import load_dotenv
+from scripts.public_domain_catalog import (
+    build_public_domain_catalog,
+    filter_tracks_by_category,
+)
 
 # 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
@@ -432,10 +436,51 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
             public_domain_dir = project_root / "audio" / "public_domain"
             public_domain_dir.mkdir(parents=True, exist_ok=True)
             
-            # Public Domain 음악 파일 찾기
-            music_files = sorted(list(public_domain_dir.glob("*.mp3")) + list(public_domain_dir.glob("*.wav")))
+            catalog = build_public_domain_catalog()
+            all_tracks = catalog.get("tracks", [])
+
+            # 카테고리 필터 설정
+            include_categories: List[str] = []
+            exclude_categories: List[str] = []
+
+            category_config = preset.get("public_domain_categories")
+            if isinstance(category_config, dict):
+                include_categories = list(category_config.get("include") or [])
+                exclude_categories.extend(category_config.get("exclude") or [])
+            elif isinstance(category_config, (list, tuple, set)):
+                include_categories = list(category_config)
+            elif isinstance(category_config, str):
+                include_categories = [category_config]
+
+            preset_exclude = preset.get("public_domain_exclude_categories")
+            if isinstance(preset_exclude, (list, tuple, set)):
+                exclude_categories.extend(list(preset_exclude))
+            elif isinstance(preset_exclude, str):
+                exclude_categories.append(preset_exclude)
+
+            selected_metadata = all_tracks
+            if include_categories or exclude_categories:
+                selected_metadata = filter_tracks_by_category(
+                    catalog,
+                    include=include_categories or None,
+                    exclude=exclude_categories or None,
+                )
+                if include_categories and not selected_metadata:
+                    logger.warning(
+                        f"필터와 일치하는 Public Domain 음악을 찾지 못했습니다 (필터: {include_categories}). 전체 라이브러리를 사용합니다."
+                    )
+                    selected_metadata = all_tracks
+
+            music_files: List[Path] = []
+            for track in selected_metadata:
+                track_path = project_root / track["path"]
+                if track_path.exists():
+                    music_files.append(track_path)
+                else:
+                    logger.debug(f"분류된 파일을 찾을 수 없습니다: {track['path']}")
+
             if music_files:
-                logger.info(f"Public Domain 음악 파일 {len(music_files)}개 발견")
+                logger.info(f"Public Domain 음악 파일 {len(music_files)}개 발견 (필터 적용)")
                 
                 # 여러 파일이 있으면 조합, 하나면 단일 파일 사용
                 if len(music_files) > 1:
@@ -454,8 +499,8 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
                         result = load_external_audio(selected_file, duration_minutes)
                         if result:
                             return result
-                else:
-                    logger.info(f"단일 파일 사용: {music_files[0]}")
+                elif len(music_files) == 1:
+                    logger.info(f"단일 파일 사용: {music_files[0].name}")
                     result = load_external_audio(music_files[0], duration_minutes)
                     if result:
                         return result

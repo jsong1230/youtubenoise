@@ -9,6 +9,9 @@ presets:
     style: "christmas_jazz"
     tempo_bpm: 80
     key: "C_major"
+    public_domain_categories:
+      include: ["lofi", "piano", "calm"]
+      exclude: ["kids", "electronic"]
     # Public Domain 음악 자동 사용: audio/public_domain/ 폴더의 음악 파일을 자동으로 찾아 사용
     # 수동 설정하려면 아래 주석 해제:
     # use_external_audio: true
@@ -36,6 +39,9 @@ presets:
     style: "christmas_classical"
     tempo_bpm: 70
     key: "G_major"
+    public_domain_categories:
+      include: ["piano", "strings", "traditional"]
+      exclude: ["lofi", "electronic"]
     instruments:
       - type: "piano"
         volume: 0.5
@@ -59,6 +65,9 @@ presets:
     style: "christmas_ambient"
     tempo_bpm: 60
     key: "D_major"
+    public_domain_categories:
+      include: ["ambient", "bells"]
+      exclude: ["upbeat", "kids"]
     instruments:
       - type: "pads"
         volume: 0.5
