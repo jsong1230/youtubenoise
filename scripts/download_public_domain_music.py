@@ -482,6 +482,22 @@ def get_public_domain_christmas_music() -> Optional[Path]:
     if result:
         return result
     
+    # 방법 2-1: Pixabay Selenium 다운로더 시도 (Cloudflare 우회)
+    try:
+        logger.info("Pixabay Selenium 다운로더로 크리스마스 음악 다운로드 시도 중...")
+        from scripts.pixabay_christmas_downloader import main as pixabay_selenium_main
+        # Selenium 다운로더는 여러 파일을 다운로드하므로, 기존 파일 확인만 수행
+        existing_files = list(output_dir.glob("*.mp3")) + list(output_dir.glob("*.wav"))
+        if existing_files:
+            logger.info(f"기존 Public Domain 음악 파일 발견: {existing_files[0]}")
+            return existing_files[0]
+        # Selenium 다운로더는 별도로 실행하도록 안내
+        logger.info("Selenium 다운로더는 별도로 실행하세요: python scripts/pixabay_christmas_downloader.py")
+    except ImportError:
+        logger.debug("Selenium이 설치되지 않았습니다. pip install selenium webdriver-manager")
+    except Exception as e:
+        logger.debug(f"Selenium 다운로더 확인 실패: {e}")
+    
     # 방법 3: Musopen에서 Public Domain 녹음 다운로드 시도 (PD 녹음만)
     logger.info("Musopen에서 Public Domain 크리스마스 녹음 다운로드 시도 중...")
     result = download_from_musopen("christmas", output_dir)

@@ -92,7 +92,7 @@ def create_gradient_image(
     direction: str = "vertical"
 ) -> Image.Image:
     """
-    그라데이션 이미지 생성
+    그라데이션 이미지 생성 (개선된 다중 색상 그라데이션)
     
     Args:
         width: 이미지 너비
@@ -108,23 +108,53 @@ def create_gradient_image(
     img = Image.new('RGB', (width, height))
     pixels = img.load()
     
+    # 중간 색상 추가로 더 부드러운 그라데이션
+    mid_color = (
+        (start_color[0] + end_color[0]) // 2,
+        (start_color[1] + end_color[1]) // 2,
+        (start_color[2] + end_color[2]) // 2
+    )
+    
     if direction == "vertical":
-        # 수직 그라데이션
+        # 수직 그라데이션 (다중 색상)
         for y in range(height):
             ratio = y / height
-            r = int(start_color[0] + (end_color[0] - start_color[0]) * ratio)
-            g = int(start_color[1] + (end_color[1] - start_color[1]) * ratio)
-            b = int(start_color[2] + (end_color[2] - start_color[2]) * ratio)
+            if ratio < 0.5:
+                # 상단에서 중간까지
+                sub_ratio = ratio * 2
+                r = int(start_color[0] + (mid_color[0] - start_color[0]) * sub_ratio)
+                g = int(start_color[1] + (mid_color[1] - start_color[1]) * sub_ratio)
+                b = int(start_color[2] + (mid_color[2] - start_color[2]) * sub_ratio)
+            else:
+                # 중간에서 하단까지
+                sub_ratio = (ratio - 0.5) * 2
+                r = int(mid_color[0] + (end_color[0] - mid_color[0]) * sub_ratio)
+                g = int(mid_color[1] + (end_color[1] - mid_color[1]) * sub_ratio)
+                b = int(mid_color[2] + (end_color[2] - mid_color[2]) * sub_ratio)
+            
+            # 약간의 수평 변화 추가 (자연스러운 느낌)
             for x in range(width):
-                pixels[x, y] = (r, g, b)
+                h_variation = math.sin(x / 200) * 3  # 미세한 수평 변화
+                pixels[x, y] = (
+                    max(0, min(255, int(r + h_variation))),
+                    max(0, min(255, int(g + h_variation))),
+                    max(0, min(255, int(b + h_variation)))
+                )
     
     elif direction == "horizontal":
         # 수평 그라데이션
         for x in range(width):
             ratio = x / width
-            r = int(start_color[0] + (end_color[0] - start_color[0]) * ratio)
-            g = int(start_color[1] + (end_color[1] - start_color[1]) * ratio)
-            b = int(start_color[2] + (end_color[2] - start_color[2]) * ratio)
+            if ratio < 0.5:
+                sub_ratio = ratio * 2
+                r = int(start_color[0] + (mid_color[0] - start_color[0]) * sub_ratio)
+                g = int(start_color[1] + (mid_color[1] - start_color[1]) * sub_ratio)
+                b = int(start_color[2] + (mid_color[2] - start_color[2]) * sub_ratio)
+            else:
+                sub_ratio = (ratio - 0.5) * 2
+                r = int(mid_color[0] + (end_color[0] - mid_color[0]) * sub_ratio)
+                g = int(mid_color[1] + (end_color[1] - mid_color[1]) * sub_ratio)
+                b = int(mid_color[2] + (end_color[2] - mid_color[2]) * sub_ratio)
             for y in range(height):
                 pixels[x, y] = (r, g, b)
     
@@ -133,106 +163,292 @@ def create_gradient_image(
         for y in range(height):
             for x in range(width):
                 ratio = (x + y) / (width + height)
-                r = int(start_color[0] + (end_color[0] - start_color[0]) * ratio)
-                g = int(start_color[1] + (end_color[1] - start_color[1]) * ratio)
-                b = int(start_color[2] + (end_color[2] - start_color[2]) * ratio)
+                if ratio < 0.5:
+                    sub_ratio = ratio * 2
+                    r = int(start_color[0] + (mid_color[0] - start_color[0]) * sub_ratio)
+                    g = int(start_color[1] + (mid_color[1] - start_color[1]) * sub_ratio)
+                    b = int(start_color[2] + (mid_color[2] - start_color[2]) * sub_ratio)
+                else:
+                    sub_ratio = (ratio - 0.5) * 2
+                    r = int(mid_color[0] + (end_color[0] - mid_color[0]) * sub_ratio)
+                    g = int(mid_color[1] + (end_color[1] - mid_color[1]) * sub_ratio)
+                    b = int(mid_color[2] + (end_color[2] - mid_color[2]) * sub_ratio)
                 pixels[x, y] = (r, g, b)
     
     elif direction == "radial":
-        # 방사형 그라데이션
+        # 방사형 그라데이션 (중앙에서 밖으로)
         center_x, center_y = width // 2, height // 2
         max_dist = math.sqrt(center_x**2 + center_y**2)
         for y in range(height):
             for x in range(width):
                 dist = math.sqrt((x - center_x)**2 + (y - center_y)**2)
                 ratio = min(dist / max_dist, 1.0)
-                r = int(start_color[0] + (end_color[0] - start_color[0]) * ratio)
-                g = int(start_color[1] + (end_color[1] - start_color[1]) * ratio)
-                b = int(start_color[2] + (end_color[2] - start_color[2]) * ratio)
+                # 중앙이 밝고, 가장자리가 어두운 효과
+                if ratio < 0.5:
+                    sub_ratio = ratio * 2
+                    r = int(start_color[0] + (mid_color[0] - start_color[0]) * sub_ratio)
+                    g = int(start_color[1] + (mid_color[1] - start_color[1]) * sub_ratio)
+                    b = int(start_color[2] + (mid_color[2] - start_color[2]) * sub_ratio)
+                else:
+                    sub_ratio = (ratio - 0.5) * 2
+                    r = int(mid_color[0] + (end_color[0] - mid_color[0]) * sub_ratio)
+                    g = int(mid_color[1] + (end_color[1] - mid_color[1]) * sub_ratio)
+                    b = int(mid_color[2] + (end_color[2] - mid_color[2]) * sub_ratio)
                 pixels[x, y] = (r, g, b)
     
     return img
 
 
 def add_texture(img: Image.Image, noise_type: str) -> Image.Image:
-    """이미지에 텍스처 추가"""
-    # 약간의 노이즈 추가로 자연스러운 느낌
-    np_img = np.array(img)
-    noise = np.random.randint(-10, 10, np_img.shape, dtype=np.int16)
-    np_img = np.clip(np_img.astype(np.int16) + noise, 0, 255).astype(np.uint8)
+    """이미지에 텍스처 추가 (개선된 자연스러운 텍스처)"""
+    # 더 자연스러운 노이즈 추가 (가우시안 노이즈)
+    np_img = np.array(img, dtype=np.float32)
+    
+    # 가우시안 노이즈 생성 (더 자연스러움)
+    noise = np.random.normal(0, 5, np_img.shape).astype(np.float32)
+    np_img = np.clip(np_img + noise, 0, 255).astype(np.uint8)
     img = Image.fromarray(np_img)
     
-    # 부드러운 블러 적용
-    if noise_type in ["rain", "ocean"]:
-        img = img.filter(ImageFilter.GaussianBlur(radius=1))
+    # 부드러운 블러 적용 (깊이감 추가)
+    if noise_type in ["rain", "ocean", "bgm"]:
+        img = img.filter(ImageFilter.GaussianBlur(radius=0.5))
+    
+    # 미세한 필름 그레인 효과
+    np_img = np.array(img, dtype=np.float32)
+    grain = np.random.normal(0, 2, np_img.shape).astype(np.float32)
+    np_img = np.clip(np_img + grain, 0, 255).astype(np.uint8)
+    img = Image.fromarray(np_img)
     
     return img
 
 
 def add_christmas_elements(img: Image.Image) -> Image.Image:
-    """크리스마스 요소 추가 (눈, 별, 트리 실루엣 등)"""
+    """크리스마스 요소 추가 (개선된 현실적인 크리스마스 장면)"""
     width, height = img.size
-    draw = ImageDraw.Draw(img)
+    draw = ImageDraw.Draw(img, 'RGBA')
     
-    # 눈 추가 (작은 흰색 점들)
-    for _ in range(200):
+    # 1. 창문 실루엣과 불빛 효과 (좌우에)
+    window_width = 300
+    window_height = 400
+    window_y = height - window_height - 50
+    
+    # 왼쪽 창문
+    left_window_x = 100
+    window_frame_color = (40, 30, 20, 255)  # 어두운 갈색
+    window_light_color = (255, 200, 150, 120)  # 따뜻한 불빛
+    
+    # 창문 불빛 (중앙에서 퍼지는 효과)
+    for i in range(5):
+        light_size = window_width // 2 - i * 20
+        light_alpha = 80 - i * 15
+        draw.ellipse(
+            [left_window_x + window_width//2 - light_size//2, 
+             window_y + window_height//2 - light_size//2,
+             left_window_x + window_width//2 + light_size//2,
+             window_y + window_height//2 + light_size//2],
+            fill=(255, 200, 150, light_alpha)
+        )
+    
+    # 창문 프레임
+    frame_thickness = 15
+    draw.rectangle(
+        [left_window_x, window_y, left_window_x + window_width, window_y + window_height],
+        outline=window_frame_color, width=frame_thickness
+    )
+    # 창문 십자형 프레임
+    draw.line([left_window_x + window_width//2, window_y, 
+               left_window_x + window_width//2, window_y + window_height], 
+              fill=window_frame_color, width=frame_thickness)
+    draw.line([left_window_x, window_y + window_height//2,
+               left_window_x + window_width, window_y + window_height//2],
+              fill=window_frame_color, width=frame_thickness)
+    
+    # 오른쪽 창문
+    right_window_x = width - 100 - window_width
+    for i in range(5):
+        light_size = window_width // 2 - i * 20
+        light_alpha = 80 - i * 15
+        draw.ellipse(
+            [right_window_x + window_width//2 - light_size//2,
+             window_y + window_height//2 - light_size//2,
+             right_window_x + window_width//2 + light_size//2,
+             window_y + window_height//2 + light_size//2],
+            fill=(255, 200, 150, light_alpha)
+        )
+    draw.rectangle(
+        [right_window_x, window_y, right_window_x + window_width, window_y + window_height],
+        outline=window_frame_color, width=frame_thickness
+    )
+    draw.line([right_window_x + window_width//2, window_y,
+               right_window_x + window_width//2, window_y + window_height],
+              fill=window_frame_color, width=frame_thickness)
+    draw.line([right_window_x, window_y + window_height//2,
+               right_window_x + window_width, window_y + window_height//2],
+              fill=window_frame_color, width=frame_thickness)
+    
+    # 2. 눈 내리는 효과 (더 현실적으로)
+    for _ in range(300):
         x = random.randint(0, width)
         y = random.randint(0, height)
-        size = random.randint(2, 5)
-        draw.ellipse([x-size, y-size, x+size, y+size], fill=(255, 255, 255, 180))
+        size = random.randint(1, 4)
+        # 크기에 따라 투명도 조절 (작은 눈은 더 투명)
+        alpha = 150 + size * 20
+        # 약간의 블러 효과를 위한 여러 점
+        for offset in range(size):
+            draw.ellipse(
+                [x - size + offset, y - size + offset,
+                 x + size - offset, y + size - offset],
+                fill=(255, 255, 255, alpha // (offset + 1))
+            )
     
-    # 별 추가 (상단)
-    star_color = (255, 255, 200, 200)
-    for _ in range(20):
+    # 3. 별 추가 (반짝이는 효과)
+    star_color = (255, 255, 200, 255)
+    for _ in range(30):
         x = random.randint(0, width)
-        y = random.randint(0, height // 3)
-        size = random.randint(3, 8)
-        # 간단한 별 모양
-        points = [
-            (x, y - size),
-            (x - size//3, y - size//3),
-            (x - size, y),
-            (x - size//3, y + size//3),
-            (x, y + size),
-            (x + size//3, y + size//3),
-            (x + size, y),
-            (x + size//3, y - size//3),
-        ]
-        draw.polygon(points, fill=star_color)
+        y = random.randint(0, height // 2)
+        size = random.randint(2, 6)
+        
+        # 별 중심
+        draw.ellipse([x-2, y-2, x+2, y+2], fill=star_color)
+        
+        # 별 빛줄기 (4방향)
+        line_length = size * 2
+        draw.line([x-line_length, y, x+line_length, y], fill=star_color, width=1)
+        draw.line([x, y-line_length, x, y+line_length], fill=star_color, width=1)
+        # 대각선
+        draw.line([x-line_length//2, y-line_length//2, 
+                   x+line_length//2, y+line_length//2], fill=star_color, width=1)
+        draw.line([x-line_length//2, y+line_length//2,
+                   x+line_length//2, y-line_length//2], fill=star_color, width=1)
     
-    # 크리스마스 트리 실루엣 (하단 중앙)
+    # 4. 크리스마스 트리 (더 현실적으로, 그림자 포함)
     tree_x = width // 2
-    tree_y = height - 100
-    tree_color = (30, 80, 30, 200)  # 어두운 초록
+    tree_y = height - 150
+    tree_base_color = (20, 60, 20, 255)  # 어두운 초록
+    tree_highlight_color = (40, 100, 40, 200)  # 밝은 초록
     
-    # 트리 삼각형들
+    # 트리 그림자
+    shadow_offset = 20
     for i in range(3):
-        level_y = tree_y - i * 80
-        level_width = 200 - i * 40
+        level_y = tree_y - i * 90
+        level_width = 250 - i * 50
+        shadow_points = [
+            (tree_x + shadow_offset, level_y - 60 + shadow_offset),
+            (tree_x - level_width//2 + shadow_offset, level_y + shadow_offset),
+            (tree_x + level_width//2 + shadow_offset, level_y + shadow_offset),
+        ]
+        draw.polygon(shadow_points, fill=(0, 0, 0, 80))
+    
+    # 트리 삼각형들 (그림자 효과 포함)
+    for i in range(3):
+        level_y = tree_y - i * 90
+        level_width = 250 - i * 50
+        
+        # 어두운 부분 (왼쪽)
+        dark_points = [
+            (tree_x, level_y - 60),
+            (tree_x - level_width//2, level_y),
+            (tree_x - level_width//4, level_y - 30),
+        ]
+        draw.polygon(dark_points, fill=tree_base_color)
+        
+        # 밝은 부분 (오른쪽, 조명 효과)
+        light_points = [
+            (tree_x, level_y - 60),
+            (tree_x + level_width//4, level_y - 30),
+            (tree_x + level_width//2, level_y),
+        ]
+        draw.polygon(light_points, fill=tree_highlight_color)
+        
+        # 전체 외곽선
         points = [
             (tree_x, level_y - 60),
             (tree_x - level_width//2, level_y),
             (tree_x + level_width//2, level_y),
         ]
-        draw.polygon(points, fill=tree_color)
+        draw.polygon(points, outline=(10, 40, 10, 255), width=2)
     
-    # 트리 줄기
-    trunk_width = 30
-    trunk_height = 60
+    # 트리 줄기 (그림자 포함)
+    trunk_width = 40
+    trunk_height = 80
+    # 줄기 그림자
     draw.rectangle(
-        [tree_x - trunk_width//2, tree_y, tree_x + trunk_width//2, tree_y + trunk_height],
+        [tree_x - trunk_width//2 + shadow_offset,
+         tree_y + shadow_offset,
+         tree_x + trunk_width//2 + shadow_offset,
+         tree_y + trunk_height + shadow_offset],
+        fill=(0, 0, 0, 100)
+    )
+    # 줄기
+    draw.rectangle(
+        [tree_x - trunk_width//2, tree_y,
+         tree_x + trunk_width//2, tree_y + trunk_height],
+        fill=(60, 30, 15, 255)  # 갈색
+    )
+    # 줄기 하이라이트
+    draw.rectangle(
+        [tree_x - trunk_width//4, tree_y,
+         tree_x + trunk_width//2, tree_y + trunk_height],
         fill=(80, 40, 20, 200)
     )
     
-    # 트리 장식 (작은 원들)
-    decoration_colors = [(255, 0, 0, 200), (255, 255, 0, 200), (0, 0, 255, 200), (255, 165, 0, 200)]
+    # 5. 트리 장식 (더 현실적으로, 반짝이는 효과)
+    decoration_colors = [
+        (255, 50, 50, 255),    # 빨강
+        (255, 220, 0, 255),    # 금색
+        (50, 150, 255, 255),   # 파랑
+        (255, 140, 0, 255),    # 주황
+        (200, 50, 255, 255),   # 보라
+    ]
+    
     for i in range(3):
-        level_y = tree_y - i * 80
-        for j in range(3):
-            dec_x = tree_x - 60 + j * 60
-            dec_y = level_y - 30 + random.randint(-10, 10)
+        level_y = tree_y - i * 90
+        level_width = 250 - i * 50
+        num_decorations = 4 + i
+        
+        for j in range(num_decorations):
+            dec_x = tree_x - level_width//2 + (j + 1) * (level_width // (num_decorations + 1))
+            dec_y = level_y - 40 + random.randint(-15, 15)
             color = random.choice(decoration_colors)
-            draw.ellipse([dec_x-5, dec_y-5, dec_x+5, dec_y+5], fill=color)
+            size = random.randint(6, 10)
+            
+            # 장식 구체
+            draw.ellipse(
+                [dec_x - size, dec_y - size,
+                 dec_x + size, dec_y + size],
+                fill=color
+            )
+            # 하이라이트 (반짝임 효과)
+            draw.ellipse(
+                [dec_x - size//2, dec_y - size//2,
+                 dec_x + size//3, dec_y + size//3],
+                fill=(255, 255, 255, 180)
+            )
+    
+    # 6. 트리 꼭대기 별
+    top_star_x = tree_x
+    top_star_y = tree_y - 270
+    star_size = 15
+    star_gold = (255, 220, 0, 255)
+    
+    # 별 중심
+    draw.ellipse([top_star_x-3, top_star_y-3, top_star_x+3, top_star_y+3], fill=star_gold)
+    # 별 빛줄기
+    draw.line([top_star_x-star_size*2, top_star_y, top_star_x+star_size*2, top_star_y],
+              fill=star_gold, width=3)
+    draw.line([top_star_x, top_star_y-star_size*2, top_star_x, top_star_y+star_size*2],
+              fill=star_gold, width=3)
+    
+    # 7. 눈 쌓인 지면 효과
+    ground_y = height - 50
+    snow_color = (240, 240, 255, 200)
+    for x in range(0, width, 20):
+        wave_height = random.randint(0, 15)
+        draw.ellipse(
+            [x - 20, ground_y - wave_height,
+             x + 20, ground_y + wave_height],
+            fill=snow_color
+        )
     
     return img
 
@@ -240,6 +456,7 @@ def add_christmas_elements(img: Image.Image) -> Image.Image:
 def generate_background_image_for_bgm(preset_name: str) -> Path:
     """
     BGM용 배경 이미지 생성 함수
+    먼저 무료 이미지를 다운로드 시도하고, 실패하면 생성합니다.
     
     Args:
         preset_name: BGM 프리셋 이름
@@ -248,10 +465,23 @@ def generate_background_image_for_bgm(preset_name: str) -> Path:
         생성된 이미지 파일 경로
     """
     try:
-        logger.info(f"BGM용 배경 이미지 생성 중... (프리셋: {preset_name})")
+        logger.info(f"BGM용 배경 이미지 준비 중... (프리셋: {preset_name})")
         
         # 타겟 해상도
         width, height = 1920, 1080
+        
+        # 먼저 무료 이미지 다운로드 시도
+        try:
+            from scripts.download_public_domain_images import get_background_image_for_preset
+            downloaded_image = get_background_image_for_preset(preset_name, width, height)
+            if downloaded_image and downloaded_image.exists():
+                logger.info(f"다운로드된 이미지 사용: {downloaded_image}")
+                return downloaded_image
+        except Exception as e:
+            logger.debug(f"이미지 다운로드 시도 실패 (생성으로 대체): {e}")
+        
+        # 다운로드 실패 시 이미지 생성
+        logger.info(f"이미지 생성 중... (프리셋: {preset_name})")
         
         # 프리셋에서 색상 스킴 가져오기
         start_color, end_color, direction = get_color_scheme_for_bgm_preset(preset_name)
@@ -266,12 +496,18 @@ def generate_background_image_for_bgm(preset_name: str) -> Path:
             # RGBA 모드로 변환 (투명도 지원)
             if img.mode != "RGBA":
                 img = img.convert("RGBA")
-            img = add_christmas_elements(img)
-            # 다시 RGB로 변환 (PNG 저장용)
+            
+            # 크리스마스 요소를 별도 레이어에 그리기
+            christmas_layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
+            christmas_layer = add_christmas_elements(christmas_layer)
+            
+            # 원본 배경에 크리스마스 레이어 합성
+            img = Image.alpha_composite(img, christmas_layer)
+            
+            # RGB로 변환 (PNG 저장용, 알파 채널 제거)
             if img.mode == "RGBA":
-                # 알파 채널을 배경과 합성
                 background = Image.new("RGB", img.size, (0, 0, 0))
-                background.paste(img, mask=img.split()[3] if img.mode == "RGBA" else None)
+                background.paste(img, mask=img.split()[3])
                 img = background
         
         # 텍스처 추가
