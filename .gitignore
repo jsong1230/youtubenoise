@@ -57,6 +57,7 @@ videos/*.mp4
 audio/public_domain/*.mp3
 audio/public_domain/*.wav
 !audio/public_domain/README.md
+audio/public_domain/catalog.json
 
 # Config (keep examples)
 config/token.json

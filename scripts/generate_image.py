@@ -8,16 +8,51 @@ import json
 import logging
 import math
 import random
+import base64
+import io
 from pathlib import Path
 from datetime import datetime
 from typing import Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFilter
 import numpy as np
+from openai import OpenAI
+from dotenv import load_dotenv
+
+_openai_client: Optional[OpenAI] = None
+
+
+def get_openai_client() -> Optional[OpenAI]:
+    """OpenAI 클라이언트를 생성/캐싱"""
+    global _openai_client
+    if _openai_client is not None:
+        return _openai_client
+    
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        logger.warning("OPENAI_API_KEY가 설정되지 않아 DALL·E 생성을 건너뜁니다.")
+        return None
+    
+    _openai_client = OpenAI(api_key=api_key)
+    return _openai_client
+
+
+def load_bgm_preset(preset_name: str) -> Optional[dict]:
+    """BGM 프리셋 정보 로드"""
+    import yaml
+    presets_path = project_root / "config" / "bgm_presets.yaml"
+    try:
+        with open(presets_path, 'r', encoding='utf-8') as f:
+            presets_data = yaml.safe_load(f)
+            return presets_data.get("presets", {}).get(preset_name)
+    except Exception as e:
+        logger.warning(f"BGM 프리셋 로드 실패: {e}")
+        return None
 
 # 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
+load_dotenv(project_root / ".env")
 
 # 로깅 설정
 log_file = project_root / "logs" / "app.log"
@@ -64,19 +99,14 @@ def get_color_scheme_for_noise_type(noise_type: str) -> Tuple[Tuple[int, int, in
 
 def get_color_scheme_for_bgm_preset(preset_name: str) -> Tuple[Tuple[int, int, int], Tuple[int, int, int], str]:
     """BGM 프리셋에 따른 색상 스킴 반환"""
-    import yaml
-    presets_path = project_root / "config" / "bgm_presets.yaml"
     try:
-        with open(presets_path, 'r', encoding='utf-8') as f:
-            presets_data = yaml.safe_load(f)
-            presets = presets_data.get("presets", {})
-            if preset_name in presets:
-                preset = presets[preset_name]
-                color_scheme = preset.get("color_scheme", {})
-                start = tuple(color_scheme.get("start", [50, 50, 50]))
-                end = tuple(color_scheme.get("end", [100, 100, 100]))
-                direction = color_scheme.get("gradient_direction", "vertical")
-                return start, end, direction
+        preset = load_bgm_preset(preset_name)
+        if preset:
+            color_scheme = preset.get("color_scheme", {})
+            start = tuple(color_scheme.get("start", [50, 50, 50]))
+            end = tuple(color_scheme.get("end", [100, 100, 100]))
+            direction = color_scheme.get("gradient_direction", "vertical")
+            return start, end, direction
     except Exception as e:
         logger.warning(f"BGM 프리셋 색상 로드 실패: {e}")
     
@@ -453,6 +483,74 @@ def add_christmas_elements(img: Image.Image) -> Image.Image:
     return img
 
 
+def build_dalle_prompt_for_preset(preset_name: str) -> Optional[str]:
+    """프리셋 정보를 기반으로 DALL·E 프롬프트 생성"""
+    preset = load_bgm_preset(preset_name)
+    if not preset:
+        return None
+    
+    name = preset.get("name", preset_name).replace("_", " ")
+    description = preset.get("description", "")
+    style = preset.get("style", "").replace("_", " ")
+    tags = preset.get("tags", [])
+    tag_phrase = ", ".join(tags[:8]) if tags else ""
+    
+    color_start, color_end, _ = get_color_scheme_for_bgm_preset(preset_name)
+    color_phrase = f"color palette mixing RGB {color_start} to {color_end}"
+    
+    prompt = (
+        f"Ultra realistic, cinematic illustration for a YouTube video background depicting {description}. "
+        f"Atmosphere: cozy {name.lower()} with gentle holiday lights, soft depth of field, "
+        f"warm bokeh, subtle snowflakes outside the window. Style: {style}. "
+        f"Keywords: {tag_phrase}. {color_phrase}. "
+        f"No text, no watermark, 4K detailed lighting, perfect for a relaxing music video."
+    )
+    return prompt
+
+
+def generate_image_with_dalle(preset_name: str, width: int, height: int) -> Optional[Path]:
+    """DALL·E (gpt-image-1)로 이미지 생성"""
+    client = get_openai_client()
+    if not client:
+        return None
+    
+    prompt = build_dalle_prompt_for_preset(preset_name)
+    if not prompt:
+        logger.warning("프롬프트를 생성하지 못했습니다. DALL·E 생성을 건너뜁니다.")
+        return None
+    
+    model = os.getenv("OPENAI_IMAGE_MODEL", "gpt-image-1")
+    size = os.getenv("OPENAI_IMAGE_SIZE", "1024x1024")
+    
+    try:
+        logger.info(f"DALL·E 이미지를 생성 중... (모델: {model}, 사이즈: {size})")
+        response = client.images.generate(
+            model=model,
+            prompt=prompt,
+            size=size,
+            quality="high",
+            n=1,
+        )
+        image_base64 = response.data[0].b64_json
+        image_bytes = base64.b64decode(image_base64)
+        
+        with Image.open(io.BytesIO(image_bytes)) as dalle_img:
+            dalle_img = dalle_img.convert("RGB")
+            dalle_img = dalle_img.resize((width, height), Image.Resampling.LANCZOS)
+            
+            output_dir = project_root / "images"
+            output_dir.mkdir(parents=True, exist_ok=True)
+            date_str = datetime.now().strftime("%Y-%m-%d")
+            filename = f"{date_str}_{preset_name}_bg.png"
+            output_path = output_dir / filename
+            dalle_img.save(str(output_path), "PNG", optimize=True)
+            logger.info(f"DALL·E 이미지 생성 완료: {output_path}")
+            return output_path
+    except Exception as e:
+        logger.warning(f"DALL·E 이미지 생성 실패: {e}")
+        return None
+
+
 def generate_background_image_for_bgm(preset_name: str) -> Path:
     """
     BGM용 배경 이미지 생성 함수
@@ -470,7 +568,12 @@ def generate_background_image_for_bgm(preset_name: str) -> Path:
         # 타겟 해상도
         width, height = 1920, 1080
         
-        # 먼저 무료 이미지 다운로드 시도
+        # 1) DALL·E 이미지 생성 시도
+        dalle_image = generate_image_with_dalle(preset_name, width, height)
+        if dalle_image:
+            return dalle_image
+        
+        # 2) 무료 이미지 다운로드 시도
         try:
             from scripts.download_public_domain_images import get_background_image_for_preset
             downloaded_image = get_background_image_for_preset(preset_name, width, height)
@@ -480,7 +583,7 @@ def generate_background_image_for_bgm(preset_name: str) -> Path:
         except Exception as e:
             logger.debug(f"이미지 다운로드 시도 실패 (생성으로 대체): {e}")
         
-        # 다운로드 실패 시 이미지 생성
+        # 3) Pillow 기반 이미지 생성
         logger.info(f"이미지 생성 중... (프리셋: {preset_name})")
         
         # 프리셋에서 색상 스킴 가져오기
