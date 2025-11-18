@@ -21,9 +21,6 @@
   2. 원하는 크리스마스 음악 선택
   3. "Download" 클릭
   4. `audio/public_domain/christmas_cafe.mp3`로 저장
-- **API 키** (선택사항): https://pixabay.com/api/docs/ 에서 발급 가능
-  - `.env` 파일에 `PIXABAY_API_KEY=your_key` 추가
-
 ### 3. Musopen (Public Domain 녹음만)
 - **URL**: https://musopen.org/
 - **특징**: Public Domain 녹음만 선택 가능

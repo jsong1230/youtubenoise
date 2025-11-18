@@ -19,9 +19,6 @@
 - **URL**: https://pixabay.com/music/
 - **특징**: 상업용으로도 완전 무료 사용 가능
 - **크리스마스 음악**: https://pixabay.com/music/search/christmas/
-- **API 키**: 선택사항 (https://pixabay.com/api/docs/)
-  - `.env` 파일에 `PIXABAY_API_KEY=your_key` 추가
-
 ### 3. Musopen (Public Domain 녹음만)
 
 - **URL**: https://musopen.org/

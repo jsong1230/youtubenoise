@@ -37,7 +37,6 @@ UNSPLASH_ACCESS_KEY=your_unsplash_access_key
 PEXELS_API_KEY=your_pexels_api_key
 
 # Pixabay (음악 다운로드에도 사용 가능)
-PIXABAY_API_KEY=your_pixabay_api_key
 ```
 
 ## 사용 방법

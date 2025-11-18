@@ -213,11 +213,10 @@ def download_from_pixabay(query: str, output_dir: Optional[Path] = None, width: 
             output_dir = project_root / "images" / "downloaded"
         output_dir.mkdir(parents=True, exist_ok=True)
         
-        # Pixabay API 키 확인
+        # Pixabay API 사용 중단 안내
         pixabay_key = os.getenv("PIXABAY_API_KEY")
         if not pixabay_key:
-            logger.warning("Pixabay API 키가 없습니다. .env 파일에 PIXABAY_API_KEY를 추가하세요.")
-            logger.info("무료 API 키 발급: https://pixabay.com/api/docs/")
+            logger.info("Pixabay API는 현재 사용하지 않습니다. 다른 이미지 소스를 사용하거나 수동으로 다운로드하세요.")
             return None
         
         logger.info(f"Pixabay에서 '{query}' 이미지 검색 중...")
@@ -381,7 +380,7 @@ def main():
         print("2. Pexels: https://www.pexels.com/api/")
         print("   .env 파일에 추가: PEXELS_API_KEY=your_key")
         print("3. Pixabay: https://pixabay.com/api/docs/")
-        print("   .env 파일에 추가: PIXABAY_API_KEY=your_key")
+        print("   (Pixabay API는 현재 사용하지 않습니다)")
 
 
 if __name__ == "__main__":

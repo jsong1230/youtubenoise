@@ -98,7 +98,6 @@ YOUTUBE_CLIENT_SECRET=your-client-secret
 YOUTUBE_REFRESH_TOKEN=your-refresh-token
 
 # 선택사항: Pixabay API 키 (Public Domain 음악 다운로드용)
-PIXABAY_API_KEY=your-pixabay-api-key
 ```
 
 ### 2. OpenAI API 키 설정

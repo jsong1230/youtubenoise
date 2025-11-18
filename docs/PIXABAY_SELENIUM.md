@@ -140,6 +140,5 @@ python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes
 
 Selenium이 작동하지 않는 경우:
 
-1. **Pixabay API 사용**: `.env`에 `PIXABAY_API_KEY` 설정
-2. **수동 다운로드**: 브라우저에서 직접 다운로드 후 `audio/public_domain/`에 저장
+1. **수동 다운로드**: 브라우저에서 직접 다운로드 후 `audio/public_domain/`에 저장
 

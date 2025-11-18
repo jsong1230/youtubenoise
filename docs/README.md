@@ -62,7 +62,6 @@ API 키 설정 (`.env` 파일):
 ```bash
 UNSPLASH_ACCESS_KEY=your_key  # https://unsplash.com/developers
 PEXELS_API_KEY=your_key        # https://www.pexels.com/api/
-PIXABAY_API_KEY=your_key       # https://pixabay.com/api/docs/
 ```
 
 이미지 다운로드:

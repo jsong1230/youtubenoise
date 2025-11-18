@@ -7,22 +7,7 @@ Pixabay는 Cloudflare를 사용하여 자동화된 요청(봇)을 차단합니�
 
 ## 해결 방법
 
-### 방법 1: Pixabay API 사용 (권장)
-
-1. **API 키 발급**
-   - https://pixabay.com/api/docs/ 방문
-   - 무료 계정 생성 후 API 키 발급
-
-2. **API 키 설정**
-   ```bash
-   # .env 파일에 추가
-   echo "PIXABAY_API_KEY=your_api_key_here" >> .env
-   ```
-
-3. **자동 다운로드**
-   - API 키가 설정되면 자동으로 Pixabay에서 음악을 다운로드합니다.
-
-### 방법 2: 수동 다운로드 (가장 확실)
+### 방법 1: 수동 다운로드 (가장 확실)
 
 1. **브라우저에서 방문**
    ```
@@ -48,7 +33,7 @@ Pixabay는 Cloudflare를 사용하여 자동화된 요청(봇)을 차단합니�
 ## 현재 상태
 
 - ✅ **FreePD**: 자동 다운로드 시도 (웹 스크래핑 제한)
-- ⚠️ **Pixabay**: Cloudflare 봇 차단 (API 키 필요 또는 수동 다운로드)
+- ⚠️ **Pixabay**: Cloudflare 봇 차단 (수동 다운로드 권장)
 - ✅ **Musopen**: 자동 다운로드 시도 (웹 스크래핑 제한)
 
 ## 권장 사항

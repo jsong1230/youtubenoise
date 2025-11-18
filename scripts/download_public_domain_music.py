@@ -332,15 +332,11 @@ def download_from_pixabay(query: str = "christmas", output_dir: Optional[Path] =
             logger.debug(f"Pixabay 웹 스크래핑 실패: {e}")
         
         logger.warning("Pixabay 자동 다운로드 실패.")
-        logger.info("Pixabay는 Cloudflare로 봇을 차단합니다.")
-        logger.info("해결 방법:")
-        logger.info("1. Pixabay API 키 사용 (권장):")
-        logger.info("   - https://pixabay.com/api/docs/ 에서 API 키 발급")
-        logger.info("   - .env 파일에 PIXABAY_API_KEY=your_key 추가")
-        logger.info("2. 수동 다운로드:")
-        logger.info(f"   - https://pixabay.com/music/search/{query}/ 방문")
-        logger.info(f"   - 원하는 음악 다운로드")
-        logger.info(f"   - {output_dir / 'christmas_cafe.mp3'}에 저장")
+        logger.info("Pixabay는 Cloudflare로 봇을 차단하므로 수동 다운로드를 권장합니다.")
+        logger.info("수동 다운로드 안내:")
+        logger.info(f"1) https://pixabay.com/music/search/{query}/ 방문")
+        logger.info("2) 원하는 음악 다운로드")
+        logger.info(f"3) 다운로드한 파일을 {output_dir / 'christmas_cafe.mp3'}에 저장")
         
         return None
         
