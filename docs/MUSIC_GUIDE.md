@@ -107,12 +107,33 @@ christmas_cafe_3h:
 
 ## 파일 위치
 
+### 장르별 폴더 구조 (권장)
+
+```
+audio/public_domain/
+  ├── classical/      # 클래식 음악
+  ├── jazz/          # 재즈 음악
+  ├── rock/           # 록 음악
+  ├── lofi/           # 로파이 힙합
+  ├── ambient/        # 앰비언트
+  ├── piano/          # 피아노
+  ├── electronic/     # 일렉트로닉
+  ├── blues/          # 블루스
+  ├── folk/           # 포크
+  ├── world/          # 월드 뮤직
+  └── christmas/     # 크리스마스 음악
+```
+
+### 기존 구조 (평면적)
+
 ```
 audio/public_domain/
   ├── christmas_cafe.mp3      # 크리스마스 카페 BGM
   ├── christmas_classical.mp3  # 크리스마스 클래식 BGM
   └── ...
 ```
+
+**참고**: 기존에 평면적으로 저장된 음악 파일은 `organize_music_by_genre.py` 스크립트로 자동 분류할 수 있습니다.
 
 파일이 있으면 자동으로 사용되고, 없으면 알고리즘 생성으로 대체됩니다.
 

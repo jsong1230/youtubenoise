@@ -85,6 +85,32 @@ presets:
     duration_minutes: 240
     tags: ["christmas", "ambient", "bgm", "relaxing", "holiday", "meditation", "winter"]
 
+  jazz_bar_3h:
+    name: "Jazz Bar BGM"
+    description: "재즈 바 감성의 저녁 BGM (3시간)"
+    style: "jazz"
+    tempo_bpm: 85
+    key: "D_minor"
+    public_domain_categories:
+      include: ["jazz", "lofi_jazz", "piano", "ambient"]
+      exclude: ["electronic", "rock", "kids"]
+    instruments:
+      - type: "piano"
+        volume: 0.55
+        style: "jazz_chords"
+      - type: "bass"
+        volume: 0.3
+        style: "walking_bass"
+      - type: "drums"
+        volume: 0.15
+        style: "brush_swing"
+    color_scheme:
+      start: [25, 20, 35]    # 어두운 퍼플
+      end: [80, 50, 40]      # 따뜻한 앰버
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["jazz", "bar", "evening", "bgm", "lounge", "cozy", "night"]
+
   # 카페 BGM 프리셋
   cafe_jazz_2h:
     name: "Cafe Jazz BGM"
@@ -131,6 +157,26 @@ presets:
       gradient_direction: "vertical"
     duration_minutes: 180
     tags: ["cafe", "classical", "bgm", "study", "work", "focus", "peaceful", "elegant"]
+
+  jazz_cafe_3h:
+    name: "Jazz Cafe BGM"
+    description: "재즈 카페 감성의 롱폼 BGM (3시간)"
+    style: "jazz"
+    tempo_bpm: 85
+    key: "D_minor"
+    public_domain_categories:
+      include: ["jazz", "lofi_jazz", "piano"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "jazz"
+    instruments: []  # Public Domain 전용, 알고리즘 악기 사용 안 함
+    color_scheme:
+      start: [45, 30, 55]    # 딥 퍼플
+      end: [110, 70, 45]     # 앰버 브라운
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["jazz", "cafe", "bgm", "night", "bar", "lofi", "lounge"]
 
   # 클래식 BGM 프리셋
   classical_piano_2h:

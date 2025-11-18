@@ -403,6 +403,78 @@ def load_external_audio(audio_path: Path, duration_minutes: int) -> Optional[Pat
         return None
 
 
+def _select_public_domain_audio(
+    preset: dict,
+    preset_name: str,
+    duration_minutes: int,
+) -> Optional[Path]:
+    """프리셋 설정에 따라 Public Domain 음악을 선택 또는 조합"""
+    public_domain_dir = project_root / "audio" / "public_domain"
+    public_domain_dir.mkdir(parents=True, exist_ok=True)
+
+    catalog = build_public_domain_catalog()
+    all_tracks = catalog.get("tracks", [])
+
+    include_categories: List[str] = []
+    exclude_categories: List[str] = []
+    target_subdir = preset.get("public_domain_subdir")
+
+    category_config = preset.get("public_domain_categories")
+    if isinstance(category_config, dict):
+        include_categories = list(category_config.get("include") or [])
+        exclude_categories.extend(category_config.get("exclude") or [])
+    elif isinstance(category_config, (list, tuple, set)):
+        include_categories = list(category_config)
+    elif isinstance(category_config, str):
+        include_categories = [category_config]
+
+    preset_exclude = preset.get("public_domain_exclude_categories")
+    if isinstance(preset_exclude, (list, tuple, set)):
+        exclude_categories.extend(list(preset_exclude))
+    elif isinstance(preset_exclude, str):
+        exclude_categories.append(preset_exclude)
+
+    selected_metadata = all_tracks
+    if include_categories or exclude_categories:
+        selected_metadata = filter_tracks_by_category(
+            catalog,
+            include=include_categories or None,
+            exclude=exclude_categories or None,
+        )
+        if include_categories and not selected_metadata:
+            logger.warning(
+                f"필터와 일치하는 Public Domain 음악을 찾지 못했습니다 (필터: {include_categories}). 전체 라이브러리를 사용합니다."
+            )
+            selected_metadata = all_tracks
+
+    music_files: List[Path] = []
+    for track in selected_metadata:
+        track_path = project_root / track["path"]
+        if target_subdir:
+            try:
+                track_path.relative_to(public_domain_dir / target_subdir)
+            except ValueError:
+                continue
+        if track_path.exists():
+            music_files.append(track_path)
+        else:
+            logger.debug(f"분류된 파일을 찾을 수 없습니다: {track['path']}")
+
+    if not music_files:
+        return None
+
+    logger.info(f"Public Domain 음악 파일 {len(music_files)}개 발견")
+
+    combine_mode = preset.get("combine_mode", "combine")
+    if len(music_files) > 1 and combine_mode == "combine":
+        logger.info(f"{len(music_files)}개 파일을 조합하여 {duration_minutes}분 길이로 생성합니다.")
+        return combine_multiple_audio_files(music_files, duration_minutes)
+
+    selected_file = random.choice(music_files)
+    logger.info(f"Public Domain 파일 사용: {selected_file.name}")
+    return load_external_audio(selected_file, duration_minutes)
+
+
 def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
     """
     BGM 생성 함수
@@ -429,95 +501,38 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
         # Public Domain 외부 음악 파일 사용 (우선순위 1)
         use_external = preset.get("use_external_audio", False)
         external_path = preset.get("external_audio_path")
-        
-        # 크리스마스 프리셋인 경우 자동으로 Public Domain 음악 찾기 시도
-        if "christmas" in preset_name.lower() and not use_external:
-            logger.info("크리스마스 프리셋 감지: Public Domain 음악 자동 검색 및 다운로드 시도 중...")
-            public_domain_dir = project_root / "audio" / "public_domain"
-            public_domain_dir.mkdir(parents=True, exist_ok=True)
-            
-            catalog = build_public_domain_catalog()
-            all_tracks = catalog.get("tracks", [])
+        force_public_domain_only = preset.get("public_domain_only", False)
 
-            # 카테고리 필터 설정
-            include_categories: List[str] = []
-            exclude_categories: List[str] = []
+        use_public_domain_library = (
+            not use_external
+            and (
+                bool(preset.get("public_domain_categories"))
+                or preset.get("use_public_domain_library", False)
+                or "christmas" in preset_name.lower()
+            )
+        )
 
-            category_config = preset.get("public_domain_categories")
-            if isinstance(category_config, dict):
-                include_categories = list(category_config.get("include") or [])
-                exclude_categories.extend(category_config.get("exclude") or [])
-            elif isinstance(category_config, (list, tuple, set)):
-                include_categories = list(category_config)
-            elif isinstance(category_config, str):
-                include_categories = [category_config]
+        if use_public_domain_library:
+            result = _select_public_domain_audio(preset, preset_name, duration_minutes)
+            if result:
+                return result
 
-            preset_exclude = preset.get("public_domain_exclude_categories")
-            if isinstance(preset_exclude, (list, tuple, set)):
-                exclude_categories.extend(list(preset_exclude))
-            elif isinstance(preset_exclude, str):
-                exclude_categories.append(preset_exclude)
-
-            selected_metadata = all_tracks
-            if include_categories or exclude_categories:
-                selected_metadata = filter_tracks_by_category(
-                    catalog,
-                    include=include_categories or None,
-                    exclude=exclude_categories or None,
-                )
-                if include_categories and not selected_metadata:
-                    logger.warning(
-                        f"필터와 일치하는 Public Domain 음악을 찾지 못했습니다 (필터: {include_categories}). 전체 라이브러리를 사용합니다."
-                    )
-                    selected_metadata = all_tracks
-
-            music_files: List[Path] = []
-            for track in selected_metadata:
-                track_path = project_root / track["path"]
-                if track_path.exists():
-                    music_files.append(track_path)
-                else:
-                    logger.debug(f"분류된 파일을 찾을 수 없습니다: {track['path']}")
-
-            if music_files:
-                logger.info(f"Public Domain 음악 파일 {len(music_files)}개 발견 (필터 적용)")
-                
-                # 여러 파일이 있으면 조합, 하나면 단일 파일 사용
-                if len(music_files) > 1:
-                    # 프리셋 설정에서 조합 방식 확인
-                    combine_mode = preset.get("combine_mode", "combine")  # "combine" 또는 "single"
-                    
-                    if combine_mode == "combine":
-                        logger.info(f"여러 파일 발견: {len(music_files)}개 파일을 조합합니다")
-                        result = combine_multiple_audio_files(music_files, duration_minutes)
+            if "christmas" in preset_name.lower():
+                logger.info("Public Domain 음악 파일이 없습니다. 자동 다운로드 시도 중...")
+                try:
+                    from scripts.download_public_domain_music import get_public_domain_christmas_music
+                    downloaded_file = get_public_domain_christmas_music()
+                    if downloaded_file:
+                        logger.info(f"Public Domain 음악 다운로드 완료: {downloaded_file}")
+                        result = load_external_audio(downloaded_file, duration_minutes)
                         if result:
                             return result
-                    else:
-                        # 랜덤으로 하나 선택
-                        selected_file = random.choice(music_files)
-                        logger.info(f"여러 파일 중 하나 선택: {selected_file.name} ({len(music_files)}개 중)")
-                        result = load_external_audio(selected_file, duration_minutes)
-                        if result:
-                            return result
-                elif len(music_files) == 1:
-                    logger.info(f"단일 파일 사용: {music_files[0].name}")
-                    result = load_external_audio(music_files[0], duration_minutes)
-                    if result:
-                        return result
-            
-            # 파일이 없으면 자동 다운로드 시도
-            logger.info("Public Domain 음악 파일이 없습니다. 자동 다운로드 시도 중...")
-            try:
-                from scripts.download_public_domain_music import get_public_domain_christmas_music
-                downloaded_file = get_public_domain_christmas_music()
-                if downloaded_file:
-                    logger.info(f"Public Domain 음악 다운로드 완료: {downloaded_file}")
-                    result = load_external_audio(downloaded_file, duration_minutes)
-                    if result:
-                        return result
-            except Exception as e:
-                logger.warning(f"자동 다운로드 실패: {e}")
-                logger.info("알고리즘 생성으로 대체합니다.")
+                except Exception as e:
+                    logger.warning(f"자동 다운로드 실패: {e}")
+                    logger.info("알고리즘 생성으로 대체합니다.")
+
+            if force_public_domain_only:
+                raise ValueError("Public Domain 음악을 찾지 못해 작업을 중단합니다.")
         
         # 명시적으로 설정된 외부 음악 파일 사용
         if use_external and external_path:

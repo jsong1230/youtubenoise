@@ -135,8 +135,12 @@ def build_public_domain_catalog() -> Dict[str, List[Dict]]:
     PUBLIC_DOMAIN_DIR.mkdir(parents=True, exist_ok=True)
     tracks: List[TrackMetadata] = []
 
+    # 하위 폴더 포함하여 모든 음악 파일 스캔
     for extension in ("*.mp3", "*.wav", "*.flac"):
-        for file_path in sorted(PUBLIC_DOMAIN_DIR.glob(extension)):
+        for file_path in sorted(PUBLIC_DOMAIN_DIR.rglob(extension)):
+            # catalog.json은 제외
+            if file_path.name == "catalog.json":
+                continue
             metadata = analyze_track(file_path)
             if metadata:
                 tracks.append(metadata)
