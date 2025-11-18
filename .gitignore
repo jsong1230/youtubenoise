@@ -56,6 +56,8 @@ videos/*.mp4
 # Public Domain music (keep README)
 audio/public_domain/*.mp3
 audio/public_domain/*.wav
+audio/public_domain/**/*.mp3
+audio/public_domain/**/*.wav
 !audio/public_domain/README.md
 audio/public_domain/catalog.json
 
