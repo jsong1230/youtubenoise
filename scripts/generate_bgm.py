@@ -502,7 +502,28 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
         # Public Domain 외부 음악 파일 사용 (우선순위 1)
         use_external = preset.get("use_external_audio", False)
         external_path = preset.get("external_audio_path")
+<<<<<<< Updated upstream
         force_public_domain_only = preset.get("public_domain_only", False)
+=======
+        
+        # Public Domain 라이브러리 사용 여부 판단
+        has_public_domain_config = any([
+            bool(preset.get("public_domain_categories")),
+            bool(preset.get("public_domain_exclude_categories")),
+            bool(preset.get("use_public_domain_catalog")),
+        ])
+        should_use_public_domain = (not use_external) and (
+            has_public_domain_config or "christmas" in preset_name.lower()
+        )
+        
+        if should_use_public_domain:
+            logger.info("Public Domain 음악 자동 검색 및 조합 시도 중...")
+            public_domain_dir = project_root / "audio" / "public_domain"
+            public_domain_dir.mkdir(parents=True, exist_ok=True)
+            
+            catalog = build_public_domain_catalog()
+            all_tracks = catalog.get("tracks", [])
+>>>>>>> Stashed changes
 
         use_public_domain_library = (
             not use_external

@@ -85,6 +85,7 @@ presets:
     duration_minutes: 240
     tags: ["christmas", "ambient", "bgm", "relaxing", "holiday", "meditation", "winter"]
 
+<<<<<<< Updated upstream
   jazz_bar_3h:
     name: "Jazz Bar BGM"
     description: "재즈 바 감성의 저녁 BGM (3시간)"
@@ -110,6 +111,25 @@ presets:
       gradient_direction: "diagonal"
     duration_minutes: 180
     tags: ["jazz", "bar", "evening", "bgm", "lounge", "cozy", "night"]
+=======
+  lofi_jazz_3h:
+    name: "Lofi Jazz Winter Lounge"
+    description: "공개 도메인 lofi jazz & chillhop 트랙을 조합한 3시간짜리 겨울 카페 BGM"
+    style: "jazz"
+    tempo_bpm: 75
+    key: "C_major"
+    use_public_domain_catalog: true
+    public_domain_categories:
+      include: ["lofi_jazz"]
+    public_domain_exclude_categories: ["kids", "electronic"]
+    combine_mode: "combine"
+    color_scheme:
+      start: [30, 25, 45]   # 어두운 퍼플
+      end: [90, 70, 110]    # 따뜻한 라벤더
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["lofi", "jazz", "bgm", "winter", "study", "relax", "cafe", "sleep"]
+>>>>>>> Stashed changes
 
   # 카페 BGM 프리셋
   cafe_jazz_2h:
