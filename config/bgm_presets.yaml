@@ -199,6 +199,67 @@ presets:
     duration_minutes: 120
     tags: ["classical", "piano", "bgm", "study", "focus", "elegant", "peaceful", "instrumental"]
 
+  # 장르별 3시간 BGM 프리셋
+  ambient_3h:
+    name: "Ambient BGM"
+    description: "앰비언트 장르의 롱폼 BGM (3시간)"
+    style: "ambient"
+    tempo_bpm: 60
+    key: "D_major"
+    public_domain_categories:
+      include: ["ambient"]
+      exclude: ["upbeat", "kids", "rock"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "ambient"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [40, 60, 80]   # 어두운 파란색
+      end: [80, 100, 120]   # 밝은 파란색
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["ambient", "bgm", "relaxing", "meditation", "calm", "peaceful", "study", "focus"]
+
+  classical_3h:
+    name: "Classical BGM"
+    description: "클래식 장르의 롱폼 BGM (3시간)"
+    style: "classical"
+    tempo_bpm: 70
+    key: "C_major"
+    public_domain_categories:
+      include: ["classical", "piano", "strings"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "classical"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [30, 40, 50]   # 어두운 그레이
+      end: [70, 80, 90]     # 밝은 그레이
+      gradient_direction: "vertical"
+    duration_minutes: 180
+    tags: ["classical", "bgm", "study", "focus", "elegant", "peaceful", "instrumental", "orchestral"]
+
+  electronic_3h:
+    name: "Electronic BGM"
+    description: "일렉트로닉 장르의 롱폼 BGM (3시간)"
+    style: "electronic"
+    tempo_bpm: 120
+    key: "A_minor"
+    public_domain_categories:
+      include: ["electronic"]
+      exclude: ["classical", "jazz", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "electronic"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [80, 40, 100]  # 어두운 퍼플
+      end: [120, 60, 140]   # 밝은 퍼플
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["electronic", "bgm", "edm", "synth", "energetic", "workout", "focus", "modern"]
+
 # 스타일별 설정
 styles:
   christmas_jazz:
@@ -230,6 +291,18 @@ styles:
     harmony_style: "classical_harmony"
     melody_complexity: "medium"
     rhythm_style: "rubato"
+    
+  ambient:
+    chord_progression: "ambient_drone"
+    harmony_style: "minimal"
+    melody_complexity: "low"
+    rhythm_style: "free"
+    
+  electronic:
+    chord_progression: "electronic_progression"
+    harmony_style: "synthetic"
+    melody_complexity: "medium"
+    rhythm_style: "steady"
 
 # 악기 타입별 설정
 instruments:

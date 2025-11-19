@@ -297,7 +297,7 @@ def generate_bells_part(chord_progression: List[List[int]], duration_sec: int, t
     return output
 
 
-def combine_multiple_audio_files(audio_files: List[Path], duration_minutes: int) -> Optional[Path]:
+def combine_multiple_audio_files(audio_files: List[Path], duration_minutes: int, preset_name: str = "") -> Optional[Path]:
     """
     여러 오디오 파일을 조합하여 하나의 긴 음악 생성
     
@@ -342,7 +342,8 @@ def combine_multiple_audio_files(audio_files: List[Path], duration_minutes: int)
         output_dir = project_root / "audio"
         output_dir.mkdir(parents=True, exist_ok=True)
         date_str = datetime.now().strftime("%Y-%m-%d")
-        output_path = output_dir / f"{date_str}_combined_{duration_minutes}min.wav"
+        preset_suffix = f"_{preset_name}" if preset_name else ""
+        output_path = output_dir / f"{date_str}_combined{preset_suffix}_{duration_minutes}min.wav"
         
         # 저장
         combined_audio.export(str(output_path), format="wav")
@@ -468,7 +469,7 @@ def _select_public_domain_audio(
     combine_mode = preset.get("combine_mode", "combine")
     if len(music_files) > 1 and combine_mode == "combine":
         logger.info(f"{len(music_files)}개 파일을 조합하여 {duration_minutes}분 길이로 생성합니다.")
-        return combine_multiple_audio_files(music_files, duration_minutes)
+        return combine_multiple_audio_files(music_files, duration_minutes, preset_name)
 
     selected_file = random.choice(music_files)
     logger.info(f"Public Domain 파일 사용: {selected_file.name}")
