@@ -7,14 +7,17 @@
 ## 프로젝트 구조
 - `scripts/`: 실행 스크립트들
   - `generate_audio.py`: 오디오 생성 (화이트노이즈, 브라운노이즈, 핑크노이즈, 빗소리, 파도, 벽난로 등)
-  - `generate_image.py`: 배경 이미지 생성 (Pillow 기반 그라데이션)
+  - `generate_bgm.py`: 롱폼 BGM 생성 (Public Domain 음악 조합 또는 알고리즘 생성)
+  - `generate_image.py`: 배경 이미지 생성 (DALL·E, Public Domain 이미지, Pillow 그라데이션)
   - `generate_title_description.py`: YouTube 메타데이터 생성 (OpenAI API 사용)
   - `make_video.py`: FFmpeg로 영상 생성
   - `upload_youtube.py`: YouTube 업로드
   - `scheduler.py`: 전체 파이프라인 자동 실행
+  - `public_domain_catalog.py`: Public Domain 음악 분류 및 카탈로그 관리
 - `config/`: 설정 파일
   - `config.json`: 기본 설정
-- `.env`: 환경변수 (YouTube API, OpenAI API 키)
+  - `bgm_presets.yaml`: BGM 프리셋 설정
+  - `.env`: 환경변수 (YouTube API, OpenAI API 키)
 
 ## 코드 스타일
 - 모든 스크립트는 `project_root`를 기준으로 경로 처리

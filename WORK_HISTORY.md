@@ -1,5 +1,47 @@
 # 작업 이력
 
+## 2025-11-19
+
+### 완료된 작업
+- [x] 장르별 3시간 BGM 프리셋 추가
+  - `bgm_presets.yaml`에 ambient_3h, classical_3h, electronic_3h 프리셋 추가
+  - 각 장르별 Public Domain 음악 자동 조합 기능
+  - 프리셋별 색상 스킴 및 스타일 설정
+
+- [x] BGM 생성 스크립트 개선
+  - `generate_bgm.py`에서 출력 파일명에 프리셋 이름 포함
+  - 파일명 형식: `{date}_combined_{preset_name}_{duration}min.wav`
+
+- [x] 장르별 BGM 및 영상 생성
+  - Ambient: 43개 Public Domain 음악 조합, 3시간 BGM 생성
+  - Classical: 24개 Public Domain 음악 조합, 3시간 BGM 생성
+  - Electronic: 46개 Public Domain 음악 조합, 3시간 BGM 생성
+  - 각 장르별 DALL·E 배경 이미지 생성
+  - 각 장르별 영상 생성 완료
+
+- [x] YouTube 롱폼 영상 업로드
+  - Ambient BGM - 3시간 Long Form BGM (Video ID: GDoAlLF3wvE)
+  - Classical BGM - 3시간 Long Form Background Music (Video ID: QhgPX_2m3Fo)
+  - Electronic BGM - 3시간 Long Form Background Music (Video ID: hOhbr8yeRLw)
+
+### 생성된 파일
+- `audio/2025-11-19_combined_ambient_3h_180min.wav`: Ambient 3시간 BGM
+- `audio/2025-11-19_combined_classical_3h_180min.wav`: Classical 3시간 BGM
+- `audio/2025-11-19_combined_electronic_3h_180min.wav`: Electronic 3시간 BGM
+- `images/2025-11-19_ambient_3h_bg.png`: Ambient 배경 이미지
+- `images/2025-11-19_classical_3h_bg.png`: Classical 배경 이미지
+- `images/2025-11-19_electronic_3h_bg.png`: Electronic 배경 이미지
+- `videos/2025-11-19_2025-11-19_combined_ambient_3h_180min.mp4`: Ambient 영상
+- `videos/2025-11-19_2025-11-19_combined_classical_3h_180min.mp4`: Classical 영상
+- `videos/2025-11-19_2025-11-19_combined_electronic_3h_180min.mp4`: Electronic 영상
+
+### 다음 작업 계획
+- 다양한 장르 프리셋 추가 (jazz, lofi, piano 등)
+- 영상 메타데이터 최적화
+- 자동 업로드 스케줄링 개선
+
+---
+
 ## 2025-11-17
 
 ### 완료된 작업
