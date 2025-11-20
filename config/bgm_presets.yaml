@@ -260,6 +260,66 @@ presets:
     duration_minutes: 180
     tags: ["electronic", "bgm", "edm", "synth", "energetic", "workout", "focus", "modern"]
 
+  blues_3h:
+    name: "Blues BGM"
+    description: "블루스 장르의 롱폼 BGM (3시간)"
+    style: "blues"
+    tempo_bpm: 90
+    key: "A_minor"
+    public_domain_categories:
+      include: ["blues", "jazz"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "blues"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [30, 40, 60]   # 어두운 블루
+      end: [60, 80, 100]    # 밝은 블루
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["blues", "bgm", "jazz", "relaxing", "soulful", "guitar", "night", "bar"]
+
+  folk_3h:
+    name: "Folk BGM"
+    description: "포크 장르의 롱폼 BGM (3시간)"
+    style: "folk"
+    tempo_bpm: 85
+    key: "G_major"
+    public_domain_categories:
+      include: ["folk", "acoustic"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "folk"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [60, 50, 40]   # 따뜻한 브라운
+      end: [100, 80, 60]    # 카페 브라운
+      gradient_direction: "vertical"
+    duration_minutes: 180
+    tags: ["folk", "bgm", "acoustic", "guitar", "cozy", "campfire", "nature", "peaceful"]
+
+  lofi_3h:
+    name: "Lofi BGM"
+    description: "로파이 힙합 장르의 롱폼 BGM (3시간)"
+    style: "lofi"
+    tempo_bpm: 85
+    key: "C_major"
+    public_domain_categories:
+      include: ["lofi", "chillhop", "study"]
+      exclude: ["rock", "kids", "upbeat"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "lofi"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [40, 30, 50]   # 로파이 퍼플
+      end: [80, 60, 90]     # 밝은 로파이 핑크
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["lofi", "bgm", "chillhop", "study", "focus", "relaxing", "beats", "cozy"]
+
 # 스타일별 설정
 styles:
   christmas_jazz:
@@ -303,6 +363,24 @@ styles:
     harmony_style: "synthetic"
     melody_complexity: "medium"
     rhythm_style: "steady"
+    
+  blues:
+    chord_progression: "blues_progression"
+    harmony_style: "blues_harmony"
+    melody_complexity: "medium"
+    rhythm_style: "swing"
+    
+  folk:
+    chord_progression: "folk_progression"
+    harmony_style: "simple"
+    melody_complexity: "low"
+    rhythm_style: "steady"
+    
+  lofi:
+    chord_progression: "jazz_standard"
+    harmony_style: "jazz_harmony"
+    melody_complexity: "low"
+    rhythm_style: "chill"
 
 # 악기 타입별 설정
 instruments:

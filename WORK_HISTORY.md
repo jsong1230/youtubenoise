@@ -1,5 +1,35 @@
 # 작업 이력
 
+## 2025-11-20
+
+### 완료된 작업
+- [x] Blues/Folk/Lofi 3시간 BGM 제작
+  - Public Domain 음악 29/50/50곡 조합하여 장르별 BGM 생성
+  - 각 장르별 DALL·E 배경 이미지 생성
+  - FFmpeg로 3시간 영상 생성
+  - YouTube 롱폼 업로드 (썸네일 포함)
+
+- [x] 썸네일 비율 보정
+  - `generate_image.py`에 16:9 크롭 & 리사이즈 로직 추가
+  - 썸네일이 좌우로 늘어나는 문제 해결
+
+### 생성된 파일
+- `audio/2025-11-20_combined_blues_3h_180min.wav`
+- `audio/2025-11-20_combined_folk_3h_180min.wav`
+- `audio/2025-11-20_combined_lofi_3h_180min.wav`
+- `images/2025-11-20_blues_3h_bg.png`
+- `images/2025-11-20_folk_3h_bg.png`
+- `images/2025-11-20_lofi_3h_bg.png`
+- `videos/2025-11-20_2025-11-20_combined_blues_3h_180min.mp4`
+- `videos/2025-11-20_2025-11-20_combined_folk_3h_180min.mp4`
+- `videos/2025-11-20_2025-11-20_combined_lofi_3h_180min.mp4`
+
+### 다음 작업 계획
+- 기타 장르(Bossa, Meditation 등) 프리셋 추가
+- 썸네일 스타일 가이드 정립
+
+---
+
 ## 2025-11-19
 
 ### 완료된 작업

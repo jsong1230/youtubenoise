@@ -114,6 +114,29 @@ def get_color_scheme_for_bgm_preset(preset_name: str) -> Tuple[Tuple[int, int, i
     return ((50, 50, 50), (100, 100, 100), "vertical")
 
 
+def resize_and_crop_to_aspect(
+    img: Image.Image,
+    target_width: int,
+    target_height: int,
+) -> Image.Image:
+    """이미지를 비율 왜곡 없이 지정 비율/크기로 맞춤"""
+    target_ratio = target_width / target_height
+    src_ratio = img.width / img.height
+
+    if src_ratio > target_ratio:
+        # 가로가 더 길면 좌우를 잘라냄
+        new_width = int(img.height * target_ratio)
+        offset = (img.width - new_width) // 2
+        img = img.crop((offset, 0, offset + new_width, img.height))
+    elif src_ratio < target_ratio:
+        # 세로가 더 길면 상하를 잘라냄
+        new_height = int(img.width / target_ratio)
+        offset = (img.height - new_height) // 2
+        img = img.crop((0, offset, img.width, offset + new_height))
+
+    return img.resize((target_width, target_height), Image.Resampling.LANCZOS)
+
+
 def create_gradient_image(
     width: int,
     height: int,
@@ -536,7 +559,7 @@ def generate_image_with_dalle(preset_name: str, width: int, height: int) -> Opti
         
         with Image.open(io.BytesIO(image_bytes)) as dalle_img:
             dalle_img = dalle_img.convert("RGB")
-            dalle_img = dalle_img.resize((width, height), Image.Resampling.LANCZOS)
+            dalle_img = resize_and_crop_to_aspect(dalle_img, width, height)
             
             output_dir = project_root / "images"
             output_dir.mkdir(parents=True, exist_ok=True)
