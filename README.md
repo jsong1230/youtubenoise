@@ -1,43 +1,50 @@
-# YouTube Noise Generator
+# YouTube Longform Generator
 
-유튜브용 화이트노이즈/자연음/롱폼 BGM 영상을 완전 자동으로 생성하고 업로드하여 수익을 낼 수 있는 Python 프로젝트입니다.
+GPT · Public Domain 음악 · FFmpeg을 조합해 **다양한 주제의 롱폼 영상**을 자동으로 제작하는 파이프라인입니다.  
+화이트노이즈/환경음에 머무르지 않고, **BGM·시니어 브레인트레이닝·틀린그림찾기** 등 여러 포맷을 선택적으로 생성할 수 있도록 리팩토링되었습니다.  
+각 파이프라인은 이미지/오디오/텍스트를 자동 생성하고, 최종 MP4와 메타데이터 파일을 산출합니다.
 
-## 프로젝트 목적
+## 핵심 콘셉트
 
-이 프로젝트는 화이트노이즈, 브라운노이즈, 핑크노이즈, 빗소리, 파도 소리, 벽난로 소리, 로파이 힙합 비트, ASMR 소리 등의 환경음/음악을 자동으로 생성하고, AI로 배경 이미지를 만들고, FFmpeg로 영상으로 합친 뒤, YouTube Data API를 통해 자동 업로드까지 하는 end-to-end 자동화 파이프라인입니다.
+| 모드 (`--mode`) | 설명 | 프리셋 예시 |
+| --- | --- | --- |
+| `longform_bgm` | Public Domain 음악 또는 합성 음원을 조합한 2~6시간 BGM | `cafe_jazz_3h`, `blues_3h`, `lofi_3h`, `christmas_ambient_4h` |
+| `spot_difference` | GPT 이미지/분석을 활용한 시니어용 틀린그림찾기(10~20 문제) | `senior_easy`, `senior_normal` |
+| `brain_training` | GPT 문제 생성 기반 시니어 두뇌훈련 | `number_memory_senior`, `mixed_brain_training_senior` |
+| (Legacy) noise | 전통적인 노이즈/환경음 합성 스크립트 | `white_noise`, `rain`, `asmr` |
 
-**새로운 기능**: 롱폼 BGM 모드로 2~6시간 길이의 카페/클래식/크리스마스 BGM 영상을 자동 생성할 수 있습니다.
-
-최종적으로는 cron 등으로 스크립트를 주기적으로 실행시키면 사람이 손대지 않아도 매일 새로운 화이트노이즈/자연음/롱폼 BGM 영상이 유튜브에 업로드되어, 장기적으로 광고 수익을 만들 수 있는 구조를 목표로 합니다.
+필요한 프리셋만 지정하면 **이미지→오디오→영상→메타데이터**까지 한 번에 생성됩니다.  
+YouTube 업로드는 `--upload` 옵션으로 자동화하거나, 생성된 파일을 수동 검토 후 올릴 수 있습니다.
 
 ## 프로젝트 구조
 
 ```
+```
 youtubenoise/
-  audio/                    # 생성된 오디오 파일 저장
-    public_domain/          # Public Domain 음악 파일
-  images/                   # 생성된 이미지 파일 저장
-  videos/                   # 생성된 영상 파일 저장
-  scripts/                  # 실행 스크립트들
-    generate_audio.py       # 오디오 자동 생성
-    generate_bgm.py         # 롱폼 BGM 생성
-    generate_image.py       # 이미지 생성
-    generate_title_description.py  # 제목/설명/태그 자동 생성
-    make_video.py           # 영상 생성
-    upload_youtube.py       # 유튜브 업로드
-    update_statistics.py    # 영상 통계 업데이트
-    scheduler.py            # 전체 파이프라인 스케줄러
-  config/                   # 설정 파일
-    config.json             # 기본 설정
-    bgm_presets.yaml        # BGM 프리셋 설정
-    ambience_presets.yaml   # 앰비언스 프리셋
-  logs/                     # 로그 파일
-    app.log                 # 애플리케이션 로그
-    history.json            # 업로드 히스토리
-  .env                      # 환경변수 (직접 생성 필요)
-  requirements.txt          # Python 패키지 의존성
-  main.py                   # 메인 CLI 인터페이스
-  README.md                 # 프로젝트 문서
+  audio/
+    public_domain/              # 장르별 Public Domain 음악
+  images/                       # 생성된 배경/틀린그림찾기 이미지
+  videos/
+    spot_difference/
+  scripts/
+    generate_bgm.py             # 롱폼 BGM
+    generate_image.py           # 배경 이미지
+    generate_audio.py           # 노이즈/환경음
+    make_video.py               # BGM/노이즈 영상
+    upload_youtube.py           # (옵션) 업로드
+    scheduler.py                # 배치 실행
+    generate_spot_difference*.py# 틀린그림찾기 파이프라인
+    make_spot_difference_video.py
+    generate_brain_training*.py # 브레인트레이닝
+  config/
+    config.json                 # 공통 설정
+    bgm_presets.yaml
+    spot_difference_presets.yaml
+    brain_training_presets.yaml
+  docs/                         # 가이드 모음
+  logs/app.log
+  main.py                       # CLI 엔트리포인트
+```
 ```
 
 ## 설치 방법
@@ -82,257 +89,131 @@ sudo apt install ffmpeg
 choco install ffmpeg
 ```
 
-## 환경변수 설정
-
-### 1. .env 파일 생성
-
-`.env` 파일을 생성하고 다음 내용을 추가하세요:
+## 환경 변수 (.env)
 
 ```bash
-# OpenAI API 키 (메타데이터 생성용)
-OPENAI_API_KEY=sk-your-openai-api-key-here
+OPENAI_API_KEY=sk-...
 
-# YouTube OAuth 인증 정보
-YOUTUBE_CLIENT_ID=your-client-id
-YOUTUBE_CLIENT_SECRET=your-client-secret
-YOUTUBE_REFRESH_TOKEN=your-refresh-token
+# YouTube 업로드 자동화를 사용할 경우
+YOUTUBE_CLIENT_ID=...
+YOUTUBE_CLIENT_SECRET=...
+YOUTUBE_REFRESH_TOKEN=...
 
-# 선택사항: Pixabay API 키 (Public Domain 음악 다운로드용)
+# 선택: 이미지/API 다운로드용 키
+UNSPLASH_ACCESS_KEY=...
+PEXELS_API_KEY=...
+PIXABAY_API_KEY=...
 ```
 
-### 2. OpenAI API 키 설정
-
-OpenAI API 키는 [OpenAI Platform](https://platform.openai.com/api-keys)에서 발급받을 수 있습니다.
-
-**참고**: 
-- 오디오 생성: pydub와 numpy로 직접 생성 (무료)
-- 이미지 생성: Pillow로 직접 생성 (무료)
-- 메타데이터 생성: OpenAI API 사용 (유료, 하지만 gpt-4o-mini는 매우 저렴함)
-
-### 3. YouTube OAuth 설정
-
-1. [Google Cloud Console](https://console.cloud.google.com/)에 접속
-2. 새 프로젝트 생성 또는 기존 프로젝트 선택
-3. "API 및 서비스" > "사용자 인증 정보"로 이동
-4. "사용자 인증 정보 만들기" > "OAuth 클라이언트 ID" 선택
-5. 애플리케이션 유형: "데스크톱 앱" 선택
-6. 이름 입력 후 생성
-7. 클라이언트 ID와 시크릿을 `.env` 파일에 추가
-8. YouTube Data API v3를 사용 설정 (API 및 서비스 > 라이브러리에서 활성화)
+- OpenAI 키는 [platform.openai.com](https://platform.openai.com/api-keys)에서 발급
+- YouTube OAuth는 Google Cloud Console에서 “데스크톱 앱” 클라이언트 생성 후 `.env`에 입력
 
 ## 실행 방법
 
-### 롱폼 BGM 모드 (권장)
-
-롱폼 BGM 모드는 2~6시간 길이의 카페/클래식/크리스마스 BGM 영상을 자동 생성합니다.
-
-#### 기본 사용법
-
+### 1. 롱폼 BGM
 ```bash
-# 프리셋 목록 보기
+# 프리셋 목록 출력
 python main.py --list-presets
 
-# 크리스마스 카페 BGM 생성 (3시간, 업로드 없음)
-python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes 180
+# 3시간 카페 재즈 BGM 생성 (로컬 저장)
+python main.py --mode longform_bgm --preset cafe_jazz_3h --duration-minutes 180
 
-# 크리스마스 카페 BGM 생성 및 YouTube 업로드
-python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes 180 --upload
+# Public Domain 음악 활용 + YouTube 업로드
+python main.py --mode longform_bgm --preset blues_3h --duration-minutes 180 --upload
 ```
+- `audio/public_domain/<genre>/`에 MP3/WAV를 두면 자동 조합됩니다.
+- 여러 파일이 있으면 길이에 맞게 이어붙입니다.
+- 세부 스타일은 `config/bgm_presets.yaml`에서 조정합니다.
 
-#### Public Domain 음악 사용
-
-`audio/public_domain/` 폴더에 MP3 파일을 저장하면 자동으로 사용됩니다:
-
+### 2. 시니어용 틀린그림찾기 (GPT 기반)
 ```bash
-# 1. Public Domain 음악 다운로드 (브라우저에서)
-# - https://freepd.com/christmas.php
-# - https://pixabay.com/music/search/christmas/
-# - https://musopen.org/music/?q=christmas&license=pd
+# 쉬운 난이도 (3개 차이, 15초 카운트다운, 15문제)
+python main.py --mode spot_difference --preset senior_easy
 
-# 2. 다운로드한 파일을 다음 위치로 이동
-mv ~/Downloads/*.mp3 audio/public_domain/christmas_cafe.mp3
-
-# 3. BGM 생성 (자동으로 Public Domain 음악 사용됨!)
-python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes 180
+# 보통 난이도 (5개 차이, 10초 카운트다운, 20문제)
+python main.py --mode spot_difference --preset senior_normal
 ```
+- DALL·E가 원본 이미지를 생성하고 GPT가 차이점·좌표 JSON을 제공합니다.
+- 비교 화면 + 1초씩 줄어드는 카운트다운 + 정답 오버레이가 자동 합성됩니다.
+- 결과물: `videos/spot_difference/<date>_<preset>_ep01.mp4`  
+  메타데이터는 JSON/텍스트로 함께 저장됩니다.
+- 자세한 가이드는 `docs/SPOT_DIFFERENCE_GUIDE.md` 참고.
 
-여러 파일이 있으면 자동으로 조합됩니다.
-
-#### 영상 통계 관리
-
+### 3. 시니어 브레인트레이닝
 ```bash
-# 모든 영상의 통계 업데이트 (조회수, 좋아요, 댓글 수)
-python main.py --update-stats
-
-# 영상 통계 리포트 출력
-python main.py --report
-```
-
-### 시니어용 두뇌훈련 모드
-
-시니어(60~80대)를 위한 치매 예방 두뇌훈련 롱폼 영상을 생성합니다.
-
-#### 기본 사용법
-
-```bash
-# 숫자 기억 훈련 영상 생성
 python main.py --mode brain_training --preset number_memory_senior
-
-# 사라진 물건 찾기 영상 생성
-python main.py --mode brain_training --preset missing_object_senior
-
-# 종합 두뇌훈련 영상 생성 (여러 모듈 혼합)
 python main.py --mode brain_training --preset mixed_brain_training_senior
 ```
+- GPT가 문제와 자막을 생성하고, Python이 카드/카운트다운을 렌더링합니다.
 
-#### 특징
-
-- **시니어 친화적 디자인**: 큰 글자, 따뜻한 색상, 높은 대비
-- **느린 템포**: 충분한 시간과 부드러운 화면 전환
-- **다양한 모듈**: 숫자 기억, 관찰력, 패턴 인식, 언어, 시간 인지 등
-- **GPT 기반 콘텐츠**: 매번 새로운 문제 자동 생성
-- **수동 업로드**: 영상과 메타데이터 파일 생성, YouTube 업로드는 수동
-
-### 기존 노이즈 모드
-
-기존의 화이트노이즈/자연음 생성 모드도 사용할 수 있습니다:
-
+### 4. (Legacy) 노이즈/환경음
 ```bash
-# 전체 파이프라인 실행
-python scripts/scheduler.py
-
-# 개별 스크립트 실행
 python scripts/generate_audio.py white_noise
 python scripts/generate_image.py white_noise
-python scripts/make_video.py images/bg.png audio/noise.mp3
+python scripts/make_video.py images/bg.png audio/white_noise.wav
+```
+- `scripts/scheduler.py`를 사용하면 기존 파이프라인 전체를 순차 실행할 수 있습니다.
+
+### 통계 & 리포트
+```bash
+python main.py --update-stats   # YouTube 통계 동기화
+python main.py --report         # 콘솔 리포트 출력
 ```
 
-## 지원하는 콘텐츠 타입
+## 프리셋 & 확장성
 
-### 롱폼 BGM 프리셋
+- **BGM**: café jazz, blues, folk, lofi, classical, christmas ambient …
+- **Spot Difference**: 난이도와 테마를 YAML로 정의 (차이점 개수, 카운트다운, 색상 스킴)
+- **Brain Training**: 숫자 기억, 사라진 물건, 패턴 순서 등 모듈 조합
+- **노이즈/환경음**: white/brown/pink noise, rain, ocean, fireplace, asmr …
 
-- `christmas_cafe_3h`: 크리스마스 카페 BGM (3시간)
-- `cafe_jazz_3h`: 카페 재즈 BGM (3시간)
-- `cafe_classical_3h`: 카페 클래식 BGM (3시간)
-- `classical_piano_3h`: 클래식 피아노 BGM (3시간)
+모든 프리셋은 YAML 파일로 관리되어 새 장르/테마 추가가 쉽습니다.
 
-### 노이즈 타입
+## Public Domain 음악 (요약)
 
-- `white_noise`: 화이트 노이즈
-- `brown_noise`: 브라운 노이즈
-- `pink_noise`: 핑크 노이즈
-- `rain`: 빗소리
-- `ocean`: 파도 소리
-- `fireplace`: 벽난로 소리
-- `lofi`: 로파이 힙합 비트 (공부/집중용)
-- `asmr`: ASMR 소리 (속삭임, 타이핑, 물소리 등)
+1. 추천 소스  
+   - [FreePD](https://freepd.com/)  
+   - [Pixabay Music](https://pixabay.com/music/)  
+   - [Musopen](https://musopen.org/music/?license=pd)
+2. 다운로드 후 `audio/public_domain/<genre>/`에 저장
+3. BGM 생성 시 자동으로 선별·조합
+4. `scripts/pixabay_genre_downloader.py`로 장르별 자동 다운로드 지원
 
-### 시니어용 두뇌훈련 프리셋
+세부 가이드는 `docs/MUSIC_GUIDE.md`, `docs/PUBLIC_DOMAIN_GENRES.md` 참고.
 
-- `number_memory_senior`: 숫자 기억 훈련 (4자리 숫자, 쉬운 난이도)
-- `missing_object_senior`: 사라진 물건 찾기 (관찰력 훈련)
-- `pattern_sequence_senior`: 패턴 순서 맞추기 (패턴 인식)
-- `word_association_senior`: 단어 연상 게임 (언어 능력)
-- `clock_reading_senior`: 시계 읽기 훈련 (시간 인지)
-- `korean_word_puzzle_senior`: 한글 단어 퍼즐 (초성 퀴즈)
-- `mixed_brain_training_senior`: 종합 두뇌훈련 (여러 모듈 혼합)
+## 문서
 
-## Public Domain 음악 사용 가이드
-
-### 추천 소스
-
-1. **FreePD** (https://freepd.com/)
-   - 완전 Public Domain
-   - 크리스마스 카테고리 제공
-
-2. **Pixabay Music** (https://pixabay.com/music/)
-   - 상업용 완전 무료
-   - API 키로 자동 다운로드 가능
-
-3. **Musopen** (https://musopen.org/)
-   - Public Domain 녹음만 선택 가능
-   - 클래식 음악 전문
-
-### 사용 방법
-
-1. 브라우저에서 Public Domain 음악 다운로드
-2. `audio/public_domain/` 폴더에 저장
-3. BGM 생성 시 자동으로 사용됨
-
-자세한 내용은 `MUSIC_SOURCES.md`를 참고하세요.
-
-## 설정 파일
-
-### config/config.json
-
-```json
-{
-  "audio_length_sec": 14400,
-  "noise_types": ["white_noise", "brown_noise", "pink_noise", "rain", "ocean", "fireplace", "lofi", "asmr"],
-  "language": "en",
-  "openai_model": "gpt-4o-mini",
-  "youtube": {
-    "client_secret_file": "config/youtube_client_secret.json",
-    "token_file": "config/token.json",
-    "default_tags": ["white noise", "sleep", "relax", "study", "asmr"]
-  }
-}
-```
-
-### config/bgm_presets.yaml
-
-BGM 프리셋 설정 파일입니다. 프리셋별로 음악 스타일, 악기, 색상 스킴 등을 설정할 수 있습니다.
+- `docs/README.md` : 활성 문서 vs 레거시 문서 정리
+- `docs/SPOT_DIFFERENCE_GUIDE.md` : 틀린그림찾기 파이프라인
+- `docs/MUSIC_GUIDE.md`, `docs/PUBLIC_DOMAIN_GENRES.md` : 음악 다운로드
+- `docs/STATISTICS.md` : YouTube 통계 관리
+- 레거시 노이즈 관련 문서는 “Legacy” 섹션에서 확인할 수 있습니다.
 
 ## 로그 및 히스토리
 
 - `logs/app.log`: 모든 스크립트의 실행 로그
 - `logs/history.json`: 업로드된 영상의 히스토리 (video ID, 생성 시간, 통계 등)
 
-## 자동 스케줄링 (cron)
-
-매일 자동으로 실행하려면 cron을 설정하세요:
-
+## 자동 스케줄링 (cron 예시)
 ```bash
-# crontab 편집
-crontab -e
-
-# 매일 오전 2시에 실행
-0 2 * * * cd /path/to/youtubenoise && /path/to/venv/bin/python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes 180 --upload >> logs/cron.log 2>&1
+0 2 * * * cd /path/to/youtubenoise && /path/to/venv/bin/python main.py --mode longform_bgm --preset cafe_jazz_3h --duration-minutes 180 >> logs/cron.log 2>&1
+0 5 * * 1 cd /path/to/youtubenoise && /path/to/venv/bin/python main.py --mode spot_difference --preset senior_easy >> logs/cron.log 2>&1
 ```
 
-## 주의사항
+## 주의사항 & 문제 해결
 
-1. **YouTube 정책 준수**: 자동 생성된 콘텐츠도 YouTube의 커뮤니티 가이드라인을 준수해야 합니다.
-2. **저작권**: Public Domain 또는 CC0 라이선스 음악만 사용하세요. 알고리즘 생성 음악도 사용 가능하지만, 실제 Public Domain 음악 사용을 권장합니다.
-3. **API 비용**: OpenAI API 사용 시 비용이 발생할 수 있습니다. gpt-4o-mini는 매우 저렴하지만 사용량을 모니터링하세요.
-4. **OAuth 인증**: YouTube 업로드 시 처음 한 번은 브라우저에서 인증이 필요합니다.
-5. **FFmpeg 필수**: 영상 생성에는 FFmpeg가 반드시 설치되어 있어야 합니다.
+1. **저작권**: Public Domain/CC0 또는 직접 합성한 자산만 사용하세요.
+2. **YouTube 정책**: 자동화된 콘텐츠도 커뮤니티 가이드라인을 준수해야 합니다.
+3. **OpenAI 비용**: gpt-4o-mini/gpt-4o는 저렴하지만 이미지 생성은 비용이 크므로 사용량 모니터링.
+4. **FFmpeg 필수**: 설치 및 PATH 등록 여부를 `ffmpeg -version`으로 확인.
+5. **업로드 오류**: `.env`의 OAuth 정보, API 활성화 여부, 토큰 만료를 점검하세요.
 
-## 문제 해결
+### Public Domain 음악이 인식되지 않을 때
+- `audio/public_domain/<genre>/` 경로가 맞는지 확인
+- 파일 권한 및 로그(`logs/app.log`) 확인
+- `public_domain_catalog.py`를 실행해 카탈로그 재생성
 
-### FFmpeg를 찾을 수 없음
-- FFmpeg가 설치되어 있는지 확인: `ffmpeg -version`
-- PATH 환경변수에 FFmpeg가 포함되어 있는지 확인
+## 라이선스 & 기여
 
-### OpenAI API 오류
-- `.env` 파일에 올바른 API 키가 설정되어 있는지 확인
-- API 키의 사용량 한도를 확인
-- gpt-4o-mini 모델 사용을 권장 (비용 효율적)
-
-### YouTube 업로드 실패
-- `.env` 파일에 YouTube OAuth 정보가 올바르게 설정되어 있는지 확인
-- YouTube Data API v3가 활성화되어 있는지 확인
-- OAuth 인증이 완료되었는지 확인
-
-### Public Domain 음악이 사용되지 않음
-- `audio/public_domain/` 폴더에 MP3 또는 WAV 파일이 있는지 확인
-- 파일 권한 확인
-- 로그 파일에서 오류 메시지 확인
-
-## 라이선스
-
-이 프로젝트는 개인 사용 및 학습 목적으로 제공됩니다.
-
-## 기여
-
-버그 리포트나 기능 제안은 이슈로 등록해주세요.
+- 개인 사용/학습용 템플릿입니다.
+- 버그 리포트와 기능 제안은 GitHub Issues로 남겨주세요.

@@ -1,71 +1,31 @@
-# 문서 목록
+# Documentation Hub
 
-## 주요 가이드
+롱폼 생성 파이프라인을 빠르게 파악할 수 있도록 문서를 정리했습니다.  
+아래 “Active Guides”를 먼저 확인하고, 필요 시 Legacy 문서를 참고하세요.
 
-- **[MUSIC_GUIDE.md](MUSIC_GUIDE.md)**: Public Domain 음악 사용 가이드
-- **[PUBLIC_DOMAIN_GENRES.md](PUBLIC_DOMAIN_GENRES.md)**: 장르별 Public Domain 음악 소스 가이드
-- **[GENRE_DOWNLOAD_GUIDE.md](GENRE_DOWNLOAD_GUIDE.md)**: 장르별 음악 다운로드 사용 가이드
-- **[IMAGE_DOWNLOAD.md](IMAGE_DOWNLOAD.md)**: 무료 이미지 다운로드 가이드
-- **[STATISTICS.md](STATISTICS.md)**: YouTube 영상 통계 관리 가이드
-- **[MUSIC_SOURCES.md](MUSIC_SOURCES.md)**: 음악 소스 상세 정보
-- **[MULTIPLE_MUSIC_FILES.md](MULTIPLE_MUSIC_FILES.md)**: 여러 음악 파일 조합 가이드
-- **[PIXABAY_DOWNLOAD.md](PIXABAY_DOWNLOAD.md)**: Pixabay 음악 다운로드 가이드
+## Active Guides
 
-## 빠른 참조
+- **[../README.md](../README.md)** – 프로젝트 전반 개요 & 실행 가이드
+- **[SPOT_DIFFERENCE_GUIDE.md](SPOT_DIFFERENCE_GUIDE.md)** – 시니어용 틀린그림찾기 파이프라인
+- **[MUSIC_GUIDE.md](MUSIC_GUIDE.md)** – Public Domain 음악 수집/관리
+- **[PUBLIC_DOMAIN_GENRES.md](PUBLIC_DOMAIN_GENRES.md)** – 장르별 PD 소스 & 분류 규칙
+- **[GENRE_DOWNLOAD_GUIDE.md](GENRE_DOWNLOAD_GUIDE.md)** – Pixabay 자동 다운로드 사용법
+- **[STATISTICS.md](STATISTICS.md)** – YouTube 통계 동기화 및 리포트
 
-### Public Domain 음악 다운로드
+## BGM & Asset Resources
 
-#### 장르별 자동 다운로드
+- [MUSIC_SOURCES.md](MUSIC_SOURCES.md) – 주요 무료 음악 플랫폼 개요
 
-```bash
-# 재즈 음악 다운로드
-python scripts/pixabay_genre_downloader.py --genre jazz
+## Legacy / Reference
 
-# 클래식 음악 다운로드 (최대 50개)
-python scripts/pixabay_genre_downloader.py --genre classical --max-tracks 50
+이전 화이트노이즈/이미지 다운로드 위주의 문서들입니다.  
+필요 시 참고하고, 새로운 롱폼 파이프라인에는 “Active Guides”를 활용하세요.
 
-# 로파이 힙합 다운로드
-python scripts/pixabay_genre_downloader.py --genre lofi
-```
+- [legacy/IMAGE_DOWNLOAD.md](legacy/IMAGE_DOWNLOAD.md) – Unsplash/Pexels 이미지 다운로드 가이드
+- [legacy/MULTIPLE_MUSIC_FILES.md](legacy/MULTIPLE_MUSIC_FILES.md) – (구버전) 여러 음악 파일 조합 가이드
+- [legacy/PIXABAY_DOWNLOAD.md](legacy/PIXABAY_DOWNLOAD.md) – (구버전) Pixabay 다운로드 지침
+- `scripts/generate_audio.py` 관련 사용법은 최상위 README의 “Legacy noise mode” 섹션 참고
 
-#### 기존 음악 파일 장르별 정리
-
-```bash
-# 시뮬레이션
-python scripts/organize_music_by_genre.py --dry-run
-
-# 실제 정리
-python scripts/organize_music_by_genre.py
-```
-
-#### 수동 다운로드
-
-1. **FreePD**: https://freepd.com/christmas.php
-2. **Pixabay**: https://pixabay.com/music/search/christmas/
-3. **Musopen**: https://musopen.org/music/?q=christmas&license=pd
-
-자세한 내용은 [PUBLIC_DOMAIN_GENRES.md](PUBLIC_DOMAIN_GENRES.md) 참고
-
-### 사용 방법
-
-```bash
-# 음악 다운로드 후 (장르별 폴더에 저장됨)
-# 예: audio/public_domain/jazz/jazz_track.mp3
-
-# BGM 생성 (자동으로 장르별 필터링)
-python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes 180
-```
-
-### 무료 이미지 다운로드
-
-API 키 설정 (`.env` 파일):
-```bash
-UNSPLASH_ACCESS_KEY=your_key  # https://unsplash.com/developers
-PEXELS_API_KEY=your_key        # https://www.pexels.com/api/
-```
-
-이미지 다운로드:
-```bash
-python scripts/download_public_domain_images.py --preset christmas_cafe_3h
-```
+> **Tip**: 새로운 가이드가 추가되면 여기 “Active Guides” 섹션에 링크를 추가하고,  
+> 오래된 내용은 Legacy로 이동해 관리하십시오.
 
