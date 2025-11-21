@@ -39,11 +39,6 @@
 - `scripts/make_spot_difference_video.py`: 영상 합성
 - `docs/SPOT_DIFFERENCE_GUIDE.md`: 사용 가이드
 
-### 다음 작업 계획
-- 틀린그림찾기 이미지 편집 기능 개선 (GPT 이미지 편집 API 활용)
-- 다양한 테마 및 난이도 프리셋 추가
-- TTS 내레이션 기능 추가 (선택사항)
-
 ---
 
 ## 2025-11-19
@@ -80,11 +75,6 @@
 - `videos/2025-11-19_2025-11-19_combined_ambient_3h_180min.mp4`: Ambient 영상
 - `videos/2025-11-19_2025-11-19_combined_classical_3h_180min.mp4`: Classical 영상
 - `videos/2025-11-19_2025-11-19_combined_electronic_3h_180min.mp4`: Electronic 영상
-
-### 다음 작업 계획
-- 다양한 장르 프리셋 추가 (jazz, lofi, piano 등)
-- 영상 메타데이터 최적화
-- 자동 업로드 스케줄링 개선
 
 ---
 
@@ -140,12 +130,6 @@
 - `docs/GENRE_DOWNLOAD_GUIDE.md`: 장르별 다운로드 사용 가이드
 - `images/2025-11-17_christmas_cafe_3h_bg_2_compressed.jpg`: 압축된 썸네일
 - `images/2025-11-17_lofi_deep_focus_bg_compressed.jpg`: 압축된 썸네일
-
-### 다음 작업 계획
-- 기존 크리스마스 음악 파일 장르별 폴더 정리 실행
-- 다양한 장르 음악 다운로드 테스트
-- SORA를 통한 배경 이미지 생성 테스트
-- 영상 품질 최적화
 
 ---
 
