@@ -58,20 +58,21 @@ def create_comparison_image(base_image: Path, modified_image: Path, output_path:
         base_img = Image.open(base_image)
         modified_img = Image.open(modified_image)
         
-        # 두 이미지 모두 960x1080으로 리사이즈
-        base_img = base_img.resize((960, 1080), Image.Resampling.LANCZOS)
-        modified_img = modified_img.resize((960, 1080), Image.Resampling.LANCZOS)
+        # 두 이미지 모두 960x540으로 리사이즈 (16:9 비율 유지)
+        base_img = base_img.resize((960, 540), Image.Resampling.LANCZOS)
+        modified_img = modified_img.resize((960, 540), Image.Resampling.LANCZOS)
         
         # 1920x1080 캔버스 생성
         canvas = Image.new('RGB', (1920, 1080), (240, 240, 235))
         
-        # 좌우 배치
-        canvas.paste(base_img, (0, 0))
-        canvas.paste(modified_img, (960, 0))
+        # 좌우 배치 (상하 중앙 정렬)
+        y_offset = (1080 - 540) // 2  # 270
+        canvas.paste(base_img, (0, y_offset))
+        canvas.paste(modified_img, (960, y_offset))
         
         # 중앙 구분선
         draw = ImageDraw.Draw(canvas)
-        draw.line([(960, 0), (960, 1080)], fill=(200, 200, 200), width=3)
+        draw.line([(960, y_offset), (960, y_offset + 540)], fill=(200, 200, 200), width=3)
         
         # 라벨 추가
         try:
@@ -79,8 +80,8 @@ def create_comparison_image(base_image: Path, modified_image: Path, output_path:
         except:
             font = ImageFont.load_default()
         
-        draw.text((480, 50), "원본", fill=(50, 50, 50), font=font, anchor="mm")
-        draw.text((1440, 50), "수정본", fill=(50, 50, 50), font=font, anchor="mm")
+        draw.text((480, y_offset + 50), "원본", fill=(50, 50, 50), font=font, anchor="mm")
+        draw.text((1440, y_offset + 50), "수정본", fill=(50, 50, 50), font=font, anchor="mm")
         
         canvas.save(output_path, "PNG", optimize=True)
         logger.info(f"비교 이미지 생성 완료: {output_path}")
