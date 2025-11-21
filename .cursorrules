@@ -102,3 +102,45 @@ YouTube 노이즈/환경음/롱폼 BGM 영상을 자동으로 생성하고 업�
 7. Public Domain 음악 사용 시 라이선스 확인
 8. 이미지/비디오 파일 크기 제한 고려 (YouTube 업로드 제한)
 
+## 시니어용 두뇌훈련 시스템
+
+### 개요
+- 60~80대 시니어를 위한 치매 예방 두뇌훈련 롱폼 영상 생성
+- 7가지 모듈: 숫자 기억, 사라진 물건 찾기, 패턴 순서, 단어 연상, 시계 읽기, 한글 퍼즐, 종합 훈련
+- GPT API를 활용한 문제 자동 생성
+- 시니어 친화적 디자인 (큰 글자, 따뜻한 색상, 높은 대비, 느린 템포)
+
+### 관련 파일
+- `config/brain_training_presets.yaml`: 프리셋 설정
+- `scripts/generate_brain_training.py`: 메인 파이프라인
+- `scripts/generate_brain_training_content.py`: GPT 기반 문제 생성
+- `scripts/make_brain_training_video.py`: 비디오 클립 생성 및 합성
+- `scripts/generate_brain_training_metadata.py`: YouTube 메타데이터 생성
+
+### 사용법
+```bash
+python main.py --mode brain_training --preset number_memory_senior
+python main.py --mode brain_training --preset mixed_brain_training_senior
+```
+
+### 디자인 원칙
+- 큰 글자 (font_size: 80-96)
+- 따뜻한 색상 (파스텔 톤)
+- 높은 대비 (시니어 가독성)
+- 느린 전환 (transition_seconds: 2)
+- 충분한 시간 (display_seconds: 5-10, countdown_seconds: 10-15)
+
+## 사용자 상호작용 규칙
+
+### 승인 요청 원칙
+- **중요한 결정사항만 물어보기**: 아키텍처 변경, 데이터 손실 위험, 비용 발생 등
+- **구현 세부사항은 자동 진행**: 코드 작성, 파일 생성, 문서 업데이트 등
+- **불필요한 승인 요청 금지**: 사소한 변경, 일반적인 구현 패턴 적용 등
+
+### 예시
+- ✅ 물어봐야 할 것: "기존 데이터베이스 스키마를 변경하시겠습니까?"
+- ✅ 물어봐야 할 것: "유료 API를 사용하는 새 기능을 추가하시겠습니까?"
+- ❌ 물어보지 말 것: "함수 이름을 변경해도 될까요?"
+- ❌ 물어보지 말 것: "README에 사용법을 추가해도 될까요?"
+- ❌ 물어보지 말 것: "로깅을 추가해도 될까요?"
+

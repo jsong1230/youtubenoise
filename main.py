@@ -170,6 +170,12 @@ def main():
   # 시니어용 틀린그림찾기 영상 생성
   python main.py --mode spot_difference --preset senior_easy
   
+  # 시니어용 두뇌훈련 영상 생성 (숫자 기억)
+  python main.py --mode brain_training --preset number_memory_senior
+  
+  # 시니어용 종합 두뇌훈련 영상 생성
+  python main.py --mode brain_training --preset mixed_brain_training_senior
+  
   # YouTube 채널에서 영상 목록 동기화
   python main.py --sync-youtube
   
@@ -184,7 +190,7 @@ def main():
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["longform_bgm", "spot_difference"],
+        choices=["longform_bgm", "spot_difference", "brain_training"],
         default="longform_bgm",
         help="실행 모드 (기본값: longform_bgm)"
     )
@@ -274,6 +280,14 @@ def main():
         from scripts.generate_spot_difference import generate_spot_difference_video
         output_path = generate_spot_difference_video(args.preset)
         logger.info(f"틀린그림찾기 영상 생성 완료: {output_path}")
+    elif args.mode == "brain_training":
+        if not args.preset:
+            parser.error("--preset이 필요합니다. 두뇌훈련 프리셋을 지정해주세요.")
+        
+        # 두뇌훈련 파이프라인 실행
+        from scripts.generate_brain_training import generate_brain_training_video
+        output_path = generate_brain_training_video(args.preset)
+        logger.info(f"두뇌훈련 영상 생성 완료: {output_path}")
     else:
         parser.error(f"지원하지 않는 모드: {args.mode}")
 

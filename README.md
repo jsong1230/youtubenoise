@@ -168,6 +168,31 @@ python main.py --update-stats
 python main.py --report
 ```
 
+### 시니어용 두뇌훈련 모드
+
+시니어(60~80대)를 위한 치매 예방 두뇌훈련 롱폼 영상을 생성합니다.
+
+#### 기본 사용법
+
+```bash
+# 숫자 기억 훈련 영상 생성
+python main.py --mode brain_training --preset number_memory_senior
+
+# 사라진 물건 찾기 영상 생성
+python main.py --mode brain_training --preset missing_object_senior
+
+# 종합 두뇌훈련 영상 생성 (여러 모듈 혼합)
+python main.py --mode brain_training --preset mixed_brain_training_senior
+```
+
+#### 특징
+
+- **시니어 친화적 디자인**: 큰 글자, 따뜻한 색상, 높은 대비
+- **느린 템포**: 충분한 시간과 부드러운 화면 전환
+- **다양한 모듈**: 숫자 기억, 관찰력, 패턴 인식, 언어, 시간 인지 등
+- **GPT 기반 콘텐츠**: 매번 새로운 문제 자동 생성
+- **수동 업로드**: 영상과 메타데이터 파일 생성, YouTube 업로드는 수동
+
 ### 기존 노이즈 모드
 
 기존의 화이트노이즈/자연음 생성 모드도 사용할 수 있습니다:
@@ -201,6 +226,16 @@ python scripts/make_video.py images/bg.png audio/noise.mp3
 - `fireplace`: 벽난로 소리
 - `lofi`: 로파이 힙합 비트 (공부/집중용)
 - `asmr`: ASMR 소리 (속삭임, 타이핑, 물소리 등)
+
+### 시니어용 두뇌훈련 프리셋
+
+- `number_memory_senior`: 숫자 기억 훈련 (4자리 숫자, 쉬운 난이도)
+- `missing_object_senior`: 사라진 물건 찾기 (관찰력 훈련)
+- `pattern_sequence_senior`: 패턴 순서 맞추기 (패턴 인식)
+- `word_association_senior`: 단어 연상 게임 (언어 능력)
+- `clock_reading_senior`: 시계 읽기 훈련 (시간 인지)
+- `korean_word_puzzle_senior`: 한글 단어 퍼즐 (초성 퀴즈)
+- `mixed_brain_training_senior`: 종합 두뇌훈련 (여러 모듈 혼합)
 
 ## Public Domain 음악 사용 가이드
 
