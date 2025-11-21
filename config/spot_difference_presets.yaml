@@ -1,0 +1,58 @@
+# 시니어용 틀린그림찾기 프리셋 설정
+
+presets:
+  senior_easy:
+    name: "시니어용 쉬운 난이도"
+    description: "시니어 친화적인 쉬운 틀린그림찾기 (3개 차이점, 15초 카운트다운)"
+    difficulty: "easy"
+    num_differences: 3
+    countdown_seconds: 15
+    num_problems: 15
+    themes:
+      - "집안 풍경"
+      - "음식"
+      - "공원"
+      - "자연"
+      - "시장"
+      - "한국 전통"
+    color_scheme:
+      background: [240, 240, 235]  # 부드러운 베이지
+      text: [50, 50, 50]  # 진한 회색
+      highlight: [255, 200, 100]  # 따뜻한 노란색
+      countdown: [200, 50, 50]  # 부드러운 빨강
+    font_size: 72
+    image_style: "warm, clear, high contrast, senior-friendly illustration"
+    
+  senior_normal:
+    name: "시니어용 보통 난이도"
+    description: "시니어 친화적인 보통 틀린그림찾기 (4~5개 차이점, 10초 카운트다운)"
+    difficulty: "normal"
+    num_differences: 5
+    countdown_seconds: 10
+    num_problems: 20
+    themes:
+      - "집안 풍경"
+      - "음식"
+      - "공원"
+      - "자연"
+      - "시장"
+      - "한국 전통"
+      - "일상 생활"
+    color_scheme:
+      background: [240, 240, 235]
+      text: [50, 50, 50]
+      highlight: [255, 200, 100]
+      countdown: [200, 50, 50]
+    font_size: 64
+    image_style: "warm, clear, high contrast, senior-friendly illustration"
+
+# 기본 설정
+defaults:
+  image_width: 1920
+  image_height: 1080
+  output_width: 1920
+  output_height: 1080
+  bgm_path: null  # BGM 파일 경로 (선택사항)
+  enable_narration: false  # 내레이션 사용 여부
+  enable_subtitles: true  # 자막 사용 여부
+

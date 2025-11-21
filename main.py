@@ -167,6 +167,9 @@ def main():
   # 크리스마스 카페 BGM 생성 및 YouTube 업로드
   python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes 180 --upload
   
+  # 시니어용 틀린그림찾기 영상 생성
+  python main.py --mode spot_difference --preset senior_easy
+  
   # YouTube 채널에서 영상 목록 동기화
   python main.py --sync-youtube
   
@@ -181,7 +184,7 @@ def main():
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["longform_bgm"],
+        choices=["longform_bgm", "spot_difference"],
         default="longform_bgm",
         help="실행 모드 (기본값: longform_bgm)"
     )
@@ -263,6 +266,14 @@ def main():
         
         # 파이프라인 실행
         run_longform_bgm(args.preset, args.duration_minutes, args.upload)
+    elif args.mode == "spot_difference":
+        if not args.preset:
+            parser.error("--preset이 필요합니다. 틀린그림찾기 프리셋을 지정해주세요.")
+        
+        # 틀린그림찾기 파이프라인 실행
+        from scripts.generate_spot_difference import generate_spot_difference_video
+        output_path = generate_spot_difference_video(args.preset)
+        logger.info(f"틀린그림찾기 영상 생성 완료: {output_path}")
     else:
         parser.error(f"지원하지 않는 모드: {args.mode}")
 

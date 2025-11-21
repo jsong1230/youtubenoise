@@ -11,8 +11,10 @@
 - [x] DALL·E 이미지 생성 통합
 - [x] 썸네일 압축 기능 추가
 - [x] 롱폼 BGM 자동 생성 파이프라인 구축
-- [x] 장르별 3시간 BGM 프리셋 추가 (ambient, classical, electronic)
+- [x] 장르별 3시간 BGM 프리셋 추가 (ambient, classical, electronic, blues, folk, lofi)
 - [x] 장르별 BGM 및 영상 생성 및 YouTube 업로드
+- [x] 썸네일 이미지 비율 문제 해결 (16:9 정확한 크롭)
+- [x] 시니어용 틀린그림찾기 롱폼 생성 기능 추가 (GPT API 기반)
 - [x] Blues/Folk/Lofi 3시간 BGM 생성 및 업로드
 
 ## 향후 계획

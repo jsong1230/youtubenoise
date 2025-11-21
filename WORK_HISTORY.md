@@ -13,6 +13,15 @@
   - `generate_image.py`에 16:9 크롭 & 리사이즈 로직 추가
   - 썸네일이 좌우로 늘어나는 문제 해결
 
+- [x] 시니어용 틀린그림찾기 롱폼 생성 기능 추가
+  - GPT API 기반 이미지 생성 및 편집 파이프라인 구축
+  - `generate_spot_difference.py`: 메인 파이프라인
+  - `generate_spot_difference_image.py`: DALL·E 이미지 생성 및 차이점 적용
+  - `generate_spot_difference_metadata.py`: GPT로 텍스트/메타데이터 생성
+  - `make_spot_difference_video.py`: 영상 합성 (비교 화면, 카운트다운, 정답 화면)
+  - `spot_difference_presets.yaml`: 프리셋 설정 파일
+  - `main.py`에 `spot_difference` 모드 추가
+
 ### 생성된 파일
 - `audio/2025-11-20_combined_blues_3h_180min.wav`
 - `audio/2025-11-20_combined_folk_3h_180min.wav`
@@ -23,10 +32,17 @@
 - `videos/2025-11-20_2025-11-20_combined_blues_3h_180min.mp4`
 - `videos/2025-11-20_2025-11-20_combined_folk_3h_180min.mp4`
 - `videos/2025-11-20_2025-11-20_combined_lofi_3h_180min.mp4`
+- `config/spot_difference_presets.yaml`: 틀린그림찾기 프리셋 설정
+- `scripts/generate_spot_difference.py`: 메인 파이프라인
+- `scripts/generate_spot_difference_image.py`: 이미지 생성 및 편집
+- `scripts/generate_spot_difference_metadata.py`: 메타데이터 생성
+- `scripts/make_spot_difference_video.py`: 영상 합성
+- `docs/SPOT_DIFFERENCE_GUIDE.md`: 사용 가이드
 
 ### 다음 작업 계획
-- 기타 장르(Bossa, Meditation 등) 프리셋 추가
-- 썸네일 스타일 가이드 정립
+- 틀린그림찾기 이미지 편집 기능 개선 (GPT 이미지 편집 API 활용)
+- 다양한 테마 및 난이도 프리셋 추가
+- TTS 내레이션 기능 추가 (선택사항)
 
 ---
 
