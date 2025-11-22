@@ -28,25 +28,57 @@ logger = setup_logging()
 
 
 def generate_video_metadata(preset_name: str, num_problems: int, 
-                           module_counts: Dict[str, int]) -> Dict:
+                           module_counts: Dict[str, int],
+                           languages: List[str] = None) -> Dict:
     """
-    영상 메타데이터 생성 (제목, 설명, 태그)
+    영상 메타데이터 생성 (제목, 설명, 태그) - 다국어 지원
     
     Args:
         preset_name: 프리셋 이름
         num_problems: 총 문제 수
         module_counts: 모듈별 문제 수
+        languages: 지원 언어 리스트 (예: ["ko", "en"])
     
     Returns:
         메타데이터 딕셔너리
     """
+    languages = languages or ["ko"]
+    is_bilingual = len(languages) >= 2 and "ko" in languages and "en" in languages
+    
     try:
         # 모듈 정보 텍스트 생성
         module_info = ", ".join([f"{module}: {count}문제" 
                                 for module, count in module_counts.items()])
         
-        # GPT로 메타데이터 생성
-        prompt = f"""
+        # 다국어 메타데이터 생성
+        if is_bilingual:
+            prompt = f"""Create bilingual YouTube video metadata for a senior (60-80 years old) dementia prevention brain training video.
+
+Preset: {preset_name}
+Total problems: {num_problems}
+Module composition: {module_info}
+Primary Language: Korean
+Secondary Language: English
+
+Return JSON with:
+{{
+  "title": "Korean Title | English Title (max 100 characters total)",
+  "description": "Section 1 (Korean description, 2-3 paragraphs)...\n\n---\n\nSection 2 (English description, 2-3 paragraphs)...\n\n---\n\nSection 3 (Mixed section with key info in both languages)...",
+  "tags": ["tag1", "tag2", "태그1", "태그2", ...] (mix both languages, 15-20 tags)
+}}
+
+Title format: "한국어 제목 | English Title"
+Description should include:
+- Purpose of the video
+- What viewers will learn
+- Module composition
+- Benefits for seniors
+- Hashtags at the end in both languages
+
+Tags should mix Korean and English terms for SEO.
+"""
+        else:
+            prompt = f"""
 시니어(60~80대)를 위한 치매 예방 두뇌훈련 영상의 YouTube 메타데이터를 생성해주세요.
 
 프리셋: {preset_name}
@@ -64,10 +96,12 @@ def generate_video_metadata(preset_name: str, num_problems: int,
 설명에는 영상의 목적, 구성, 효과 등을 포함해주세요.
 """
         
+        system_prompt = "You are a bilingual YouTube content metadata expert for senior brain training videos." if is_bilingual else "당신은 시니어용 YouTube 콘텐츠 메타데이터 작성 전문가입니다."
+        
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "당신은 시니어용 YouTube 콘텐츠 메타데이터 작성 전문가입니다."},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt}
             ],
             response_format={"type": "json_object"},
@@ -82,11 +116,18 @@ def generate_video_metadata(preset_name: str, num_problems: int,
     except Exception as e:
         logger.error(f"메타데이터 생성 실패: {e}", exc_info=True)
         # 기본 메타데이터 반환
-        return {
-            "title": f"시니어 두뇌훈련 - {preset_name} ({num_problems}문제)",
-            "description": f"치매 예방을 위한 두뇌훈련 영상입니다.\n총 {num_problems}개의 문제로 구성되어 있습니다.",
-            "tags": ["시니어", "두뇌훈련", "치매예방", "인지훈련", "노인", "기억력"]
-        }
+        if is_bilingual:
+            return {
+                "title": f"시니어 두뇌훈련 | Senior Brain Training - {preset_name} ({num_problems}문제)",
+                "description": f"치매 예방을 위한 두뇌훈련 영상입니다.\n\nDementia prevention brain training video.\n\n총 {num_problems}개의 문제로 구성되어 있습니다.\nTotal {num_problems} problems included.",
+                "tags": ["시니어", "두뇌훈련", "치매예방", "senior", "brain training", "dementia prevention", "인지훈련", "cognitive training"]
+            }
+        else:
+            return {
+                "title": f"시니어 두뇌훈련 - {preset_name} ({num_problems}문제)",
+                "description": f"치매 예방을 위한 두뇌훈련 영상입니다.\n총 {num_problems}개의 문제로 구성되어 있습니다.",
+                "tags": ["시니어", "두뇌훈련", "치매예방", "인지훈련", "노인", "기억력"]
+            }
 
 
 def generate_chapters(problems: List[Dict]) -> List[Dict]:

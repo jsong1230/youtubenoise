@@ -28,7 +28,8 @@ logger = setup_logging()
 
 def load_brain_training_presets() -> dict:
     """두뇌훈련 프리셋 설정 파일 로드"""
-    presets_path = DATA_DIR / "brain_training_presets.yaml"
+    # config 디렉토리에서 프리셋 파일 로드
+    presets_path = PROJECT_ROOT / "config" / "brain_training_presets.yaml"
     return load_yaml_file(presets_path)
 
 
@@ -89,6 +90,7 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
         modules = preset.get('modules', [])
         problem_settings = preset.get('problem_settings', {})
         themes = preset.get('themes', [])
+        languages = preset.get('languages', ['ko'])  # 다국어 지원
         
         # 출력 디렉토리 설정
         if output_path is None:
@@ -129,9 +131,30 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
             # 테마가 필요한 모듈 처리
             if module_type == "missing_object" and themes:
                 theme = random.choice(themes)
-                problem_data = generator(settings, theme)
+                # languages 파라미터 지원 확인
+                import inspect
+                sig = inspect.signature(generator)
+                if 'languages' in sig.parameters:
+                    problem_data = generator(settings, theme, languages=languages, problem_index=i-1)
+                elif 'languages' in sig.parameters and 'problem_index' not in sig.parameters:
+                    problem_data = generator(settings, theme, languages=languages)
+                else:
+                    problem_data = generator(settings, theme)
             else:
-                problem_data = generator(settings)
+                # 문제 인덱스와 언어를 전달하여 다양성 및 다국어 지원 확보
+                import inspect
+                sig = inspect.signature(generator)
+                params = sig.parameters
+                kwargs = {}
+                if 'languages' in params:
+                    kwargs['languages'] = languages
+                if 'problem_index' in params:
+                    kwargs['problem_index'] = i-1
+                
+                if kwargs:
+                    problem_data = generator(settings, **kwargs)
+                else:
+                    problem_data = generator(settings)
             
             if not problem_data:
                 logger.warning(f"문제 {i} 생성 실패, 건너뜁니다.")
@@ -164,7 +187,7 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
             format_chapters_for_youtube
         )
         
-        metadata = generate_video_metadata(preset_name, len(all_problems), dict(module_counts))
+        metadata = generate_video_metadata(preset_name, len(all_problems), dict(module_counts), languages)
         chapters = generate_chapters(all_problems)
         
         metadata_dir = output_path.parent
