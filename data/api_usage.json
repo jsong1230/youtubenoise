@@ -3,19 +3,19 @@
   "usage": {},
   "daily": {
     "2025-11-22": {
-      "cost": 0.32,
-      "requests": 8,
+      "cost": 0.43999999999999995,
+      "requests": 11,
       "providers": {}
     }
   },
   "monthly": {
     "2025-11": {
-      "cost": 0.32,
-      "requests": 8
+      "cost": 0.43999999999999995,
+      "requests": 11
     }
   },
   "total": {
-    "cost": 0.32,
-    "requests": 8
+    "cost": 0.43999999999999995,
+    "requests": 11
   }
 }

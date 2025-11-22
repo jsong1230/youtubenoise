@@ -9,6 +9,31 @@
 
 ### ✅ 최근 완료된 작업
 
+#### 1. 프로세스 중복 실행 방지 시스템 구현 (2025-11-22)
+- **`scripts/utils.py`에 `check_running_process()` 함수 추가**
+  - Python 프로세스 확인 (zsh 셸 래퍼 제외)
+  - FFmpeg 프로세스 확인 (같은 프리셋 관련)
+  - psutil 사용, fallback으로 subprocess 사용
+  - zsh 셸 래퍼(extendedglob, builtin, unsetopt 등) 필터링
+
+- **`main.py`의 모든 모드에 중복 확인 로직 추가**
+  - `longform_bgm` 모드
+  - `spot_difference` 모드
+  - `brain_training` 모드
+  - `ai_explainer` 모드
+  - 실행 전 반드시 `check_running_process()` 호출
+  - 중복 발견 시 즉시 `sys.exit(1)`로 종료
+
+- **`.cursorrules`에 프로세스 중복 실행 방지 규칙 추가**
+  - 반드시 준수해야 할 사항 명시
+  - 절대 금지 사항 명시
+  - 예시 코드 포함
+
+- **BGM 영상 생성 및 업로드**
+  - piano_3h 영상 생성 및 YouTube 업로드 완료
+  - rock_3h 영상 생성 및 YouTube 업로드 완료
+  - world_3h 영상 생성 및 YouTube 업로드 진행 중
+
 #### 1. 타입 힌팅 전면 적용 (2025-11-22)
 - **`scripts/utils.py` 타입 힌팅 보완**
   - `Dict[str, Any]` 타입 추가 (`load_yaml_file`, `load_json_file`, `save_json_file`)
