@@ -8,12 +8,15 @@ from datetime import datetime
 from typing import List, Dict
 
 # 프로젝트 루트 설정
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+from config import OUTPUT_DIR, PROJECT_ROOT
+
 def load_history() -> List[Dict]:
     """히스토리 파일 로드"""
-    history_file = project_root / "logs" / "history.json"
+    history_file = OUTPUT_DIR / "logs" / "history.json"
     if not history_file.exists():
         return []
     
@@ -28,7 +31,7 @@ def load_history() -> List[Dict]:
 
 def save_history(history: List[Dict]):
     """히스토리 파일 저장"""
-    history_file = project_root / "logs" / "history.json"
+    history_file = OUTPUT_DIR / "logs" / "history.json"
     history_file.parent.mkdir(parents=True, exist_ok=True)
     
     try:

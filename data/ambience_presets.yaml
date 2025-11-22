@@ -1,0 +1,193 @@
+# 환경음 프리셋 설정
+# 다양한 환경음 조합과 파라미터를 정의
+
+presets:
+  # 수면용 환경음
+  deep_sleep:
+    name: "Deep Sleep"
+    description: "깊은 수면을 위한 부드러운 환경음"
+    audio_layers:
+      - type: "brown_noise"
+        volume: 0.6
+        fade_in: 5.0  # 초
+        fade_out: 5.0
+      - type: "rain"
+        volume: 0.3
+        fade_in: 10.0
+    color_scheme:
+      start: [20, 30, 60]  # RGB
+      end: [40, 60, 100]
+      gradient_direction: "vertical"
+    duration_hours: 8
+    tags: ["deep sleep", "sleep sounds", "relaxation", "meditation", "brown noise", "rain"]
+
+  cozy_night:
+    name: "Cozy Night"
+    description: "따뜻한 밤을 위한 벽난로 소리"
+    audio_layers:
+      - type: "fireplace"
+        volume: 0.7
+        fade_in: 3.0
+      - type: "brown_noise"
+        volume: 0.2
+        fade_in: 5.0
+    color_scheme:
+      start: [80, 50, 30]
+      end: [120, 70, 40]
+      gradient_direction: "radial"
+    duration_hours: 6
+    tags: ["fireplace", "cozy", "warm", "winter", "relaxation", "sleep"]
+
+  ocean_dreams:
+    name: "Ocean Dreams"
+    description: "바다 파도 소리로 잠들기"
+    audio_layers:
+      - type: "ocean"
+        volume: 0.8
+        fade_in: 8.0
+      - type: "pink_noise"
+        volume: 0.15
+        fade_in: 10.0
+    color_scheme:
+      start: [20, 40, 60]
+      end: [40, 70, 100]
+      gradient_direction: "horizontal"
+    duration_hours: 10
+    tags: ["ocean", "waves", "beach", "sleep", "meditation", "nature sounds"]
+
+  # 집중/공부용 환경음
+  focus_mode:
+    name: "Focus Mode"
+    description: "집중력을 높이는 화이트 노이즈"
+    audio_layers:
+      - type: "white_noise"
+        volume: 0.5
+        fade_in: 2.0
+      - type: "pink_noise"
+        volume: 0.2
+        fade_in: 3.0
+    color_scheme:
+      start: [30, 30, 40]
+      end: [50, 50, 60]
+      gradient_direction: "vertical"
+    duration_hours: 2
+    tags: ["focus", "study", "concentration", "white noise", "productivity"]
+
+  lofi_study:
+    name: "Lo-Fi Study"
+    description: "공부할 때 듣기 좋은 로파이 비트"
+    audio_layers:
+      - type: "lofi"
+        volume: 0.7
+        fade_in: 1.0
+      - type: "rain"
+        volume: 0.2
+        fade_in: 5.0
+    color_scheme:
+      start: [40, 30, 50]
+      end: [80, 60, 90]
+      gradient_direction: "radial"
+    duration_hours: 2
+    tags: ["lofi", "study", "focus", "chill", "beats", "music"]
+
+  # 명상/요가용
+  meditation_zen:
+    name: "Meditation Zen"
+    description: "명상과 요가를 위한 평화로운 환경음"
+    audio_layers:
+      - type: "pink_noise"
+        volume: 0.4
+        fade_in: 10.0
+      - type: "ocean"
+        volume: 0.3
+        fade_in: 15.0
+    color_scheme:
+      start: [50, 40, 60]
+      end: [90, 80, 100]
+      gradient_direction: "diagonal"
+    duration_hours: 1
+    tags: ["meditation", "yoga", "zen", "mindfulness", "peace", "calm"]
+
+  asmr_relax:
+    name: "ASMR Relax"
+    description: "ASMR 트리거로 긴장 완화"
+    audio_layers:
+      - type: "asmr"
+        volume: 0.6
+        fade_in: 5.0
+      - type: "rain"
+        volume: 0.2
+        fade_in: 8.0
+    color_scheme:
+      start: [50, 40, 60]
+      end: [90, 80, 100]
+      gradient_direction: "diagonal"
+    duration_hours: 3
+    tags: ["asmr", "relaxation", "tingles", "sleep", "calm", "whisper"]
+
+  # 자연 환경음
+  forest_rain:
+    name: "Forest Rain"
+    description: "숲속 빗소리"
+    audio_layers:
+      - type: "rain"
+        volume: 0.7
+        fade_in: 5.0
+      - type: "brown_noise"
+        volume: 0.2
+        fade_in: 7.0
+    color_scheme:
+      start: [30, 40, 60]
+      end: [50, 70, 90]
+      gradient_direction: "vertical"
+    duration_hours: 4
+    tags: ["rain", "forest", "nature", "sleep", "relaxation", "ambient"]
+
+  tropical_beach:
+    name: "Tropical Beach"
+    description: "열대 해변의 파도 소리"
+    audio_layers:
+      - type: "ocean"
+        volume: 0.8
+        fade_in: 6.0
+      - type: "white_noise"
+        volume: 0.1
+        fade_in: 8.0
+    color_scheme:
+      start: [30, 50, 70]
+      end: [60, 90, 120]
+      gradient_direction: "horizontal"
+    duration_hours: 6
+    tags: ["beach", "ocean", "tropical", "vacation", "relaxation", "nature"]
+
+# 프리셋 카테고리
+categories:
+  sleep:
+    - deep_sleep
+    - cozy_night
+    - ocean_dreams
+    - asmr_relax
+  
+  focus:
+    - focus_mode
+    - lofi_study
+  
+  meditation:
+    - meditation_zen
+    - asmr_relax
+  
+  nature:
+    - forest_rain
+    - tropical_beach
+    - ocean_dreams
+
+# 기본 설정
+defaults:
+  sample_rate: 44100
+  bitrate: "192k"
+  fade_in_default: 3.0
+  fade_out_default: 3.0
+  image_resolution:
+    width: 1920
+    height: 1080
+

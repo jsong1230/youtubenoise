@@ -11,7 +11,12 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 
 # 프로젝트 루트
+# 프로젝트 루트
 project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+from config import DATA_DIR, PROJECT_ROOT
+
 load_dotenv(project_root / ".env")
 
 # YouTube API 스코프
@@ -43,7 +48,7 @@ def main():
     }
     
     # 임시 파일에 클라이언트 정보 저장
-    temp_config_file = project_root / "config" / "temp_client_secret.json"
+    temp_config_file = DATA_DIR / "temp_client_secret.json"
     temp_config_file.parent.mkdir(parents=True, exist_ok=True)
     
     with open(temp_config_file, 'w') as f:
@@ -64,7 +69,7 @@ def main():
         print("\n이 토큰을 .env 파일의 YOUTUBE_REFRESH_TOKEN에 업데이트해주세요.")
         
         # 토큰 정보 저장 (선택사항)
-        token_file = project_root / "config" / "token.json"
+        token_file = PROJECT_ROOT / "token.json"
         with open(token_file, 'w') as f:
             f.write(creds.to_json())
         print(f"\n토큰이 {token_file}에 저장되었습니다.")

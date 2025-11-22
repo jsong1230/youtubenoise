@@ -13,18 +13,19 @@ from PIL import Image
 import io
 
 # 프로젝트 루트 설정
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
+from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -47,7 +48,7 @@ def download_from_unsplash(query: str, output_dir: Optional[Path] = None, width:
     """
     try:
         if output_dir is None:
-            output_dir = project_root / "images" / "downloaded"
+            output_dir = OUTPUT_DIR / "images" / "downloaded"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Unsplash API 키 확인
@@ -128,7 +129,7 @@ def download_from_pexels(query: str, output_dir: Optional[Path] = None, width: i
     """
     try:
         if output_dir is None:
-            output_dir = project_root / "images" / "downloaded"
+            output_dir = OUTPUT_DIR / "images" / "downloaded"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Pexels API 키 확인
@@ -210,7 +211,7 @@ def download_from_pixabay(query: str, output_dir: Optional[Path] = None, width: 
     """
     try:
         if output_dir is None:
-            output_dir = project_root / "images" / "downloaded"
+            output_dir = OUTPUT_DIR / "images" / "downloaded"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Pixabay API 사용 중단 안내
@@ -308,7 +309,7 @@ def get_background_image_for_preset(preset_name: str, width: int = 1920, height:
     query = query_mapping.get(preset_name.lower(), preset_name.replace("_", " "))
     
     # 기존 다운로드된 이미지 확인
-    output_dir = project_root / "images" / "downloaded"
+    output_dir = OUTPUT_DIR / "images" / "downloaded"
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # 프리셋 이름으로 기존 이미지 찾기

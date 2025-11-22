@@ -1,42 +1,33 @@
 # TODO 목록
 
-## 진행 중
-- [ ] 
+> **참고**: 상세한 2025 전략 및 로드맵은 `TODO_2025_STRATEGY.md`를 참조하세요.
 
-## 대기 중
+## 🚀 현재 진행 중 (Phase 1)
 
-### 틀린그림찾기 기능 개선
-- [ ] 다양한 테마 및 난이도 프리셋 추가
-- [ ] TTS 내레이션 기능 추가 (선택사항)
+- [x] HISTORY.md 생성
+- [x] data/channel_state.json 생성
+- [x] data/api_usage.json 생성
+- [x] scripts/sync_channel_state.py 생성
+- [x] .gitignore 업데이트 (채널 상태 포함)
+- [x] requirements.txt 업데이트 (Flask, anthropic 추가)
+- [ ] API Manager 구현 (src/api/)
+- [ ] Flask 웹 대시보드 구현 (src/web/)
+- [ ] 채널 상태 동기화 테스트
 
-### BGM 및 영상 생성
-- [ ] 다양한 장르 프리셋 추가 (jazz, piano 등)
-- [ ] 앞으로 mode와 preset을 다양하게 추가하는 목표
-- [ ] 영상 메타데이터 최적화
-- [ ] 기존 크리스마스 음악 파일 장르별 폴더 정리 실행
-- [ ] 다양한 장르 음악 다운로드 테스트
+## 📅 다음 단계 (Phase 2-3)
 
-### 시스템 개선
-- [ ] SORA를 통한 배경 이미지 생성 (테스트 필요)
-- [ ] 음악 다운로드 자동화 개선
-- [ ] 영상 품질 최적화
-- [ ] 자동 업로드 스케줄링 개선
+- [ ] 이중언어 메타데이터 시스템 구현
+- [ ] Claude API 통합
+- [ ] 무료 이미지 API 통합 (Unsplash, Pexels, Pixabay)
+- [ ] API 사용량 추적 시스템
 
-## 완료
-- [x] Public Domain 음악 분류 시스템 구축
-- [x] DALL·E 이미지 생성 통합
-- [x] 썸네일 압축 기능 추가
-- [x] 롱폼 BGM 자동 생성 파이프라인 구축
-- [x] 장르별 3시간 BGM 프리셋 추가 (ambient, classical, electronic, blues, folk, lofi)
-- [x] 장르별 BGM 및 영상 생성 및 YouTube 업로드
-- [x] 썸네일 이미지 비율 문제 해결 (16:9 정확한 크롭)
-- [x] 시니어용 틀린그림찾기 롱폼 생성 기능 추가 (GPT API 기반)
-- [x] Blues/Folk/Lofi 3시간 BGM 생성 및 업로드
-- [x] 시니어용 종합 두뇌훈련 롱폼 생성 기능 추가 (7가지 모듈)
+## 📚 참고 문서
 
-## 버그/이슈
-- [ ] 
+- `TODO_2025_STRATEGY.md`: 전체 로드맵 및 Phase 1-7 계획
+- `docs/API_INTEGRATION_STRATEGY.md`: API 통합 전략 및 비용 절감 계획
+- `HISTORY.md`: 프로젝트 히스토리 및 API 설정 가이드
+- `implementation_plan.md`: 상세 구현 계획
 
 ---
-**마지막 업데이트**: 2025-11-21 (두뇌훈련 시스템 추가)
 
+**마지막 업데이트**: 2025-11-22 (Phase 1 진행 중)

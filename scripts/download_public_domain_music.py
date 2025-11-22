@@ -11,18 +11,19 @@ from typing import Optional
 from dotenv import load_dotenv
 
 # 프로젝트 루트 설정
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
+from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -43,7 +44,7 @@ def download_from_freepd(query: str = "christmas", output_dir: Optional[Path] = 
     """
     try:
         if output_dir is None:
-            output_dir = project_root / "audio" / "public_domain"
+            output_dir = OUTPUT_DIR / "audio" / "public_domain"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         logger.info(f"FreePD에서 '{query}' Public Domain 음악 다운로드 시도 중...")
@@ -141,7 +142,7 @@ def download_christmas_music_from_url(url: str, filename: str, output_dir: Optio
     """
     try:
         if output_dir is None:
-            output_dir = project_root / "audio" / "public_domain"
+            output_dir = OUTPUT_DIR / "audio" / "public_domain"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         output_path = output_dir / filename
@@ -196,7 +197,7 @@ def download_from_freesound(query: str = "christmas", output_dir: Optional[Path]
     """
     try:
         if output_dir is None:
-            output_dir = project_root / "audio" / "public_domain"
+            output_dir = OUTPUT_DIR / "audio" / "public_domain"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         logger.info(f"Freesound 웹사이트에서 '{query}' CC0 음악 검색 중...")
@@ -225,7 +226,7 @@ def download_from_pixabay(query: str = "christmas", output_dir: Optional[Path] =
     """
     try:
         if output_dir is None:
-            output_dir = project_root / "audio" / "public_domain"
+            output_dir = OUTPUT_DIR / "audio" / "public_domain"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Pixabay API 키 확인 (선택사항, 없어도 웹 스크래핑 가능)
@@ -359,7 +360,7 @@ def download_from_musopen(query: str = "christmas", output_dir: Optional[Path] =
     """
     try:
         if output_dir is None:
-            output_dir = project_root / "audio" / "public_domain"
+            output_dir = OUTPUT_DIR / "audio" / "public_domain"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         logger.info(f"Musopen에서 '{query}' Public Domain 녹음 검색 중...")
@@ -420,7 +421,7 @@ def download_from_incompetech() -> Optional[Path]:
     Incompetech (Kevin MacLeod)에서 Public Domain 크리스마스 음악 다운로드
     Kevin MacLeod의 음악은 모두 Public Domain입니다.
     """
-    output_dir = project_root / "audio" / "public_domain"
+    output_dir = OUTPUT_DIR / "audio" / "public_domain"
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Incompetech의 Public Domain 크리스마스 음악 직접 다운로드 링크
@@ -457,7 +458,7 @@ def get_public_domain_christmas_music() -> Optional[Path]:
     Returns:
         다운로드된 파일 경로
     """
-    output_dir = project_root / "audio" / "public_domain"
+    output_dir = OUTPUT_DIR / "audio" / "public_domain"
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # 이미 다운로드된 파일 확인
@@ -539,7 +540,7 @@ def main():
             else:
                 print("\n자동 다운로드 불가. 위 안내를 따라 수동으로 다운로드하세요.")
                 print(f"다운로드한 파일을 다음 위치에 저장하세요:")
-                print(f"{project_root / 'audio' / 'public_domain' / 'christmas_cafe.mp3'}")
+                print(f"{OUTPUT_DIR / 'audio' / 'public_domain' / 'christmas_cafe.mp3'}")
         
     except Exception as e:
         logger.error(f"실행 중 오류 발생: {e}", exc_info=True)

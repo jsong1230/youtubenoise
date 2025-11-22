@@ -13,20 +13,21 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 # 프로젝트 루트를 sys.path에 추가
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
+
+from config import LOG_FILE, BGM_PRESETS_FILE, CONFIG_JSON_FILE, OUTPUT_DIR, PROJECT_ROOT
 
 # .env 파일 로드
 load_dotenv(project_root / ".env")
 
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -35,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 def load_config() -> dict:
     """config.json 파일 로드"""
-    config_path = project_root / "config" / "config.json"
+    config_path = CONFIG_JSON_FILE
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -105,7 +106,7 @@ def generate_metadata_for_bgm(preset_name: str, duration_minutes: int) -> Dict[s
         model = config.get("openai_model", "gpt-4o-mini")
         
         # 프리셋 정보 로드
-        presets_path = project_root / "config" / "bgm_presets.yaml"
+        presets_path = BGM_PRESETS_FILE
         with open(presets_path, 'r', encoding='utf-8') as f:
             presets_data = yaml.safe_load(f)
             presets = presets_data.get("presets", {})
@@ -207,7 +208,7 @@ Return the response as a JSON object with the following structure:
 def generate_fallback_metadata_for_bgm(preset_name: str, duration_minutes: int) -> Dict[str, any]:
     """BGM API 실패 시 사용할 기본 메타데이터"""
     import yaml
-    presets_path = project_root / "config" / "bgm_presets.yaml"
+    presets_path = BGM_PRESETS_FILE
     try:
         with open(presets_path, 'r', encoding='utf-8') as f:
             presets_data = yaml.safe_load(f)
@@ -413,7 +414,7 @@ def main():
         print(f"\n태그:\n{', '.join(metadata['tags'])}")
         
         # JSON 파일로 저장 (선택사항)
-        output_file = project_root / "logs" / f"metadata_{noise_type}_{duration_hours}h.json"
+        output_file = OUTPUT_DIR / "logs" / f"metadata_{noise_type}_{duration_hours}h.json"
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, ensure_ascii=False, indent=2)
         logger.info(f"메타데이터 저장 완료: {output_file}")

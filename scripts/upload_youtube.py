@@ -20,18 +20,19 @@ from googleapiclient.http import MediaFileUpload
 from googleapiclient.errors import HttpError
 
 # 프로젝트 루트 설정
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
+from config import LOG_FILE, CONFIG_JSON_FILE, DATA_DIR, PROJECT_ROOT
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -43,7 +44,7 @@ SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
 def load_config() -> dict:
     """config.json 파일 로드"""
-    config_path = project_root / "config" / "config.json"
+    config_path = CONFIG_JSON_FILE
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -87,14 +88,14 @@ def get_authenticated_service():
     # 파일 기반 인증 (기존 방식, 우선순위 2)
     logger.info("파일 기반 YouTube 인증 사용")
     config = load_config()
-    client_secret_file = config.get("youtube", {}).get("client_secret_file", "config/youtube_client_secret.json")
-    token_file = config.get("youtube", {}).get("token_file", "config/token.json")
+    client_secret_file = config.get("youtube", {}).get("client_secret_file", str(DATA_DIR / "youtube_client_secret.json"))
+    token_file = config.get("youtube", {}).get("token_file", str(PROJECT_ROOT / "token.json"))
     
     # 경로를 절대 경로로 변환
     if not Path(client_secret_file).is_absolute():
-        client_secret_file = project_root / client_secret_file
+        client_secret_file = PROJECT_ROOT / client_secret_file
     if not Path(token_file).is_absolute():
-        token_file = project_root / token_file
+        token_file = PROJECT_ROOT / token_file
     
     creds = None
     
@@ -248,7 +249,7 @@ def upload_video(
         
         # 상대 경로를 절대 경로로 변환
         if not video_path.is_absolute():
-            video_path = project_root / video_path
+            video_path = PROJECT_ROOT / video_path
         
         logger.info(f"유튜브 업로드 시작...")
         logger.info(f"영상 파일: {video_path}")
@@ -320,7 +321,7 @@ def upload_video(
             try:
                 # 썸네일 경로를 절대 경로로 변환
                 if not Path(thumbnail_path).is_absolute():
-                    thumbnail_path = project_root / thumbnail_path
+                    thumbnail_path = PROJECT_ROOT / thumbnail_path
                 
                 # 썸네일 압축 (2MB 이하로)
                 compressed_thumbnail = compress_thumbnail(Path(thumbnail_path))

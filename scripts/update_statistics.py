@@ -16,18 +16,19 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 # 프로젝트 루트 설정
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
+from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -375,7 +376,7 @@ def sync_from_youtube() -> List[Dict]:
 
 def load_history() -> List[Dict]:
     """히스토리 파일 로드"""
-    history_file = project_root / "logs" / "history.json"
+    history_file = OUTPUT_DIR / "logs" / "history.json"
     if not history_file.exists():
         logger.warning(f"히스토리 파일이 없습니다: {history_file}")
         return []
@@ -391,7 +392,7 @@ def load_history() -> List[Dict]:
 
 def save_history(history: List[Dict]):
     """히스토리 파일 저장"""
-    history_file = project_root / "logs" / "history.json"
+    history_file = OUTPUT_DIR / "logs" / "history.json"
     history_file.parent.mkdir(parents=True, exist_ok=True)
     
     try:

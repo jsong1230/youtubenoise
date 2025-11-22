@@ -1,0 +1,469 @@
+# 롱폼 BGM 프리셋 설정
+# 저작권 문제 없는 오리지널 음악 생성용 프리셋
+
+presets:
+  # 크리스마스 분위기 프리셋
+  christmas_cafe_3h:
+    name: "Christmas Cafe BGM"
+    description: "크리스마스 분위기의 카페 BGM (3시간)"
+    style: "christmas_jazz"
+    tempo_bpm: 80
+    key: "C_major"
+    public_domain_categories:
+      include: ["lofi", "piano", "calm"]
+      exclude: ["kids", "electronic"]
+    # Public Domain 음악 자동 사용: audio/public_domain/ 폴더의 음악 파일을 자동으로 찾아 사용
+    # 수동 설정하려면 아래 주석 해제:
+    # use_external_audio: true
+    # external_audio_path: "audio/public_domain/christmas_cafe.mp3"
+    instruments:
+      - type: "piano"
+        volume: 0.6
+        style: "gentle_chord_progression"
+      - type: "strings"
+        volume: 0.3
+        style: "warm_pad"
+      - type: "bells"
+        volume: 0.2
+        style: "soft_chimes"
+    color_scheme:
+      start: [100, 30, 30]  # 따뜻한 빨강
+      end: [150, 80, 50]    # 크리스마스 골드
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["christmas", "cafe", "bgm", "jazz", "holiday", "cozy", "winter", "ambient"]
+    
+  christmas_classical_2h:
+    name: "Christmas Classical BGM"
+    description: "크리스마스 분위기의 클래식 스타일 BGM (2시간)"
+    style: "christmas_classical"
+    tempo_bpm: 70
+    key: "G_major"
+    public_domain_categories:
+      include: ["piano", "strings", "traditional"]
+      exclude: ["lofi", "electronic"]
+    instruments:
+      - type: "piano"
+        volume: 0.5
+        style: "classical_arpeggio"
+      - type: "strings"
+        volume: 0.4
+        style: "orchestral_pad"
+      - type: "flute"
+        volume: 0.2
+        style: "melodic_line"
+    color_scheme:
+      start: [80, 100, 120]  # 차분한 파란색
+      end: [120, 140, 160]   # 따뜻한 파란색
+      gradient_direction: "vertical"
+    duration_minutes: 120
+    tags: ["christmas", "classical", "bgm", "orchestral", "holiday", "peaceful", "winter"]
+    
+  christmas_ambient_4h:
+    name: "Christmas Ambient BGM"
+    description: "크리스마스 분위기의 앰비언트 BGM (4시간)"
+    style: "christmas_ambient"
+    tempo_bpm: 60
+    key: "D_major"
+    public_domain_categories:
+      include: ["ambient", "bells"]
+      exclude: ["upbeat", "kids"]
+    instruments:
+      - type: "pads"
+        volume: 0.5
+        style: "ambient_drone"
+      - type: "bells"
+        volume: 0.3
+        style: "sparse_chimes"
+      - type: "strings"
+        volume: 0.2
+        style: "long_sustains"
+    color_scheme:
+      start: [40, 60, 80]   # 어두운 파란색
+      end: [80, 100, 120]   # 밝은 파란색
+      gradient_direction: "diagonal"
+    duration_minutes: 240
+    tags: ["christmas", "ambient", "bgm", "relaxing", "holiday", "meditation", "winter"]
+
+  jazz_bar_3h:
+    name: "Jazz Bar BGM"
+    description: "재즈 바 감성의 저녁 BGM (3시간)"
+    style: "jazz"
+    tempo_bpm: 85
+    key: "D_minor"
+    public_domain_categories:
+      include: ["jazz", "lofi_jazz", "piano", "ambient"]
+      exclude: ["electronic", "rock", "kids"]
+    instruments:
+      - type: "piano"
+        volume: 0.55
+        style: "jazz_chords"
+      - type: "bass"
+        volume: 0.3
+        style: "walking_bass"
+      - type: "drums"
+        volume: 0.15
+        style: "brush_swing"
+    color_scheme:
+      start: [25, 20, 35]    # 어두운 퍼플
+      end: [80, 50, 40]      # 따뜻한 앰버
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["jazz", "bar", "evening", "bgm", "lounge", "cozy", "night"]
+
+  lofi_jazz_3h:
+    name: "Lofi Jazz Winter Lounge"
+    description: "공개 도메인 lofi jazz & chillhop 트랙을 조합한 3시간짜리 겨울 카페 BGM"
+    style: "jazz"
+    tempo_bpm: 75
+    key: "C_major"
+    use_public_domain_catalog: true
+    public_domain_categories:
+      include: ["lofi_jazz"]
+    public_domain_exclude_categories: ["kids", "electronic"]
+    combine_mode: "combine"
+    color_scheme:
+      start: [30, 25, 45]   # 어두운 퍼플
+      end: [90, 70, 110]    # 따뜻한 라벤더
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["lofi", "jazz", "bgm", "winter", "study", "relax", "cafe", "sleep"]
+
+  # 카페 BGM 프리셋
+  cafe_jazz_2h:
+    name: "Cafe Jazz BGM"
+    description: "카페 분위기의 재즈 스타일 BGM (2시간)"
+    style: "jazz"
+    tempo_bpm: 90
+    key: "F_major"
+    instruments:
+      - type: "piano"
+        volume: 0.5
+        style: "jazz_chords"
+      - type: "bass"
+        volume: 0.3
+        style: "walking_bass"
+      - type: "drums"
+        volume: 0.2
+        style: "brush_swing"
+    color_scheme:
+      start: [60, 50, 40]   # 따뜻한 브라운
+      end: [100, 80, 60]    # 카페 브라운
+      gradient_direction: "radial"
+    duration_minutes: 120
+    tags: ["cafe", "jazz", "bgm", "cozy", "study", "work", "relaxing", "ambient"]
+    
+  cafe_classical_3h:
+    name: "Cafe Classical BGM"
+    description: "카페 분위기의 클래식 스타일 BGM (3시간)"
+    style: "classical"
+    tempo_bpm: 75
+    key: "C_major"
+    instruments:
+      - type: "piano"
+        volume: 0.6
+        style: "classical_arpeggio"
+      - type: "strings"
+        volume: 0.3
+        style: "soft_pad"
+      - type: "harp"
+        volume: 0.1
+        style: "gentle_plucks"
+    color_scheme:
+      start: [50, 60, 70]   # 부드러운 그레이
+      end: [90, 100, 110]   # 밝은 그레이
+      gradient_direction: "vertical"
+    duration_minutes: 180
+    tags: ["cafe", "classical", "bgm", "study", "work", "focus", "peaceful", "elegant"]
+
+  jazz_cafe_3h:
+    name: "Jazz Cafe BGM"
+    description: "재즈 카페 감성의 롱폼 BGM (3시간)"
+    style: "jazz"
+    tempo_bpm: 85
+    key: "D_minor"
+    public_domain_categories:
+      include: ["jazz", "lofi_jazz", "piano"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "jazz"
+    instruments: []  # Public Domain 전용, 알고리즘 악기 사용 안 함
+    color_scheme:
+      start: [45, 30, 55]    # 딥 퍼플
+      end: [110, 70, 45]     # 앰버 브라운
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["jazz", "cafe", "bgm", "night", "bar", "lofi", "lounge"]
+
+  # 클래식 BGM 프리셋
+  classical_piano_2h:
+    name: "Classical Piano BGM"
+    description: "클래식 피아노 스타일 BGM (2시간)"
+    style: "classical"
+    tempo_bpm: 70
+    key: "A_major"
+    instruments:
+      - type: "piano"
+        volume: 0.7
+        style: "classical_arpeggio"
+      - type: "strings"
+        volume: 0.2
+        style: "minimal_pad"
+    color_scheme:
+      start: [30, 40, 50]   # 어두운 그레이
+      end: [70, 80, 90]     # 밝은 그레이
+      gradient_direction: "vertical"
+    duration_minutes: 120
+    tags: ["classical", "piano", "bgm", "study", "focus", "elegant", "peaceful", "instrumental"]
+
+  # 장르별 3시간 BGM 프리셋
+  ambient_3h:
+    name: "Ambient BGM"
+    description: "앰비언트 장르의 롱폼 BGM (3시간)"
+    style: "ambient"
+    tempo_bpm: 60
+    key: "D_major"
+    public_domain_categories:
+      include: ["ambient"]
+      exclude: ["upbeat", "kids", "rock"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "ambient"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [40, 60, 80]   # 어두운 파란색
+      end: [80, 100, 120]   # 밝은 파란색
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["ambient", "bgm", "relaxing", "meditation", "calm", "peaceful", "study", "focus"]
+
+  classical_3h:
+    name: "Classical BGM"
+    description: "클래식 장르의 롱폼 BGM (3시간)"
+    style: "classical"
+    tempo_bpm: 70
+    key: "C_major"
+    public_domain_categories:
+      include: ["classical", "piano", "strings"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "classical"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [30, 40, 50]   # 어두운 그레이
+      end: [70, 80, 90]     # 밝은 그레이
+      gradient_direction: "vertical"
+    duration_minutes: 180
+    tags: ["classical", "bgm", "study", "focus", "elegant", "peaceful", "instrumental", "orchestral"]
+
+  electronic_3h:
+    name: "Electronic BGM"
+    description: "일렉트로닉 장르의 롱폼 BGM (3시간)"
+    style: "electronic"
+    tempo_bpm: 120
+    key: "A_minor"
+    public_domain_categories:
+      include: ["electronic"]
+      exclude: ["classical", "jazz", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "electronic"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [80, 40, 100]  # 어두운 퍼플
+      end: [120, 60, 140]   # 밝은 퍼플
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["electronic", "bgm", "edm", "synth", "energetic", "workout", "focus", "modern"]
+
+  blues_3h:
+    name: "Blues BGM"
+    description: "블루스 장르의 롱폼 BGM (3시간)"
+    style: "blues"
+    tempo_bpm: 90
+    key: "A_minor"
+    public_domain_categories:
+      include: ["blues", "jazz"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "blues"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [30, 40, 60]   # 어두운 블루
+      end: [60, 80, 100]    # 밝은 블루
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["blues", "bgm", "jazz", "relaxing", "soulful", "guitar", "night", "bar"]
+
+  folk_3h:
+    name: "Folk BGM"
+    description: "포크 장르의 롱폼 BGM (3시간)"
+    style: "folk"
+    tempo_bpm: 85
+    key: "G_major"
+    public_domain_categories:
+      include: ["folk", "acoustic"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "folk"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [60, 50, 40]   # 따뜻한 브라운
+      end: [100, 80, 60]    # 카페 브라운
+      gradient_direction: "vertical"
+    duration_minutes: 180
+    tags: ["folk", "bgm", "acoustic", "guitar", "cozy", "campfire", "nature", "peaceful"]
+
+  lofi_3h:
+    name: "Lofi BGM"
+    description: "로파이 힙합 장르의 롱폼 BGM (3시간)"
+    style: "lofi"
+    tempo_bpm: 85
+    key: "C_major"
+    public_domain_categories:
+      include: ["lofi", "chillhop", "study"]
+      exclude: ["rock", "kids", "upbeat"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "lofi"
+    instruments: []  # Public Domain 전용
+    color_scheme:
+      start: [40, 30, 50]   # 로파이 퍼플
+      end: [80, 60, 90]     # 밝은 로파이 핑크
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["lofi", "bgm", "chillhop", "study", "focus", "relaxing", "beats", "cozy"]
+
+# 스타일별 설정
+styles:
+  christmas_jazz:
+    chord_progression: "jazz_christmas"
+    harmony_style: "warm_jazz"
+    melody_complexity: "medium"
+    rhythm_style: "swing"
+    
+  christmas_classical:
+    chord_progression: "classical_christmas"
+    harmony_style: "orchestral"
+    melody_complexity: "medium"
+    rhythm_style: "rubato"
+    
+  christmas_ambient:
+    chord_progression: "ambient_drone"
+    harmony_style: "minimal"
+    melody_complexity: "low"
+    rhythm_style: "free"
+    
+  jazz:
+    chord_progression: "jazz_standard"
+    harmony_style: "jazz_harmony"
+    melody_complexity: "high"
+    rhythm_style: "swing"
+    
+  classical:
+    chord_progression: "classical_progression"
+    harmony_style: "classical_harmony"
+    melody_complexity: "medium"
+    rhythm_style: "rubato"
+    
+  ambient:
+    chord_progression: "ambient_drone"
+    harmony_style: "minimal"
+    melody_complexity: "low"
+    rhythm_style: "free"
+    
+  electronic:
+    chord_progression: "electronic_progression"
+    harmony_style: "synthetic"
+    melody_complexity: "medium"
+    rhythm_style: "steady"
+    
+  blues:
+    chord_progression: "blues_progression"
+    harmony_style: "blues_harmony"
+    melody_complexity: "medium"
+    rhythm_style: "swing"
+    
+  folk:
+    chord_progression: "folk_progression"
+    harmony_style: "simple"
+    melody_complexity: "low"
+    rhythm_style: "steady"
+    
+  lofi:
+    chord_progression: "jazz_standard"
+    harmony_style: "jazz_harmony"
+    melody_complexity: "low"
+    rhythm_style: "chill"
+
+# 악기 타입별 설정
+instruments:
+  piano:
+    waveform: "sine"  # sine, triangle, sawtooth
+    attack: 0.1
+    decay: 0.3
+    sustain: 0.5
+    release: 0.5
+    
+  strings:
+    waveform: "sine"
+    attack: 1.0
+    decay: 0.5
+    sustain: 0.7
+    release: 2.0
+    
+  bells:
+    waveform: "sine"
+    attack: 0.05
+    decay: 0.2
+    sustain: 0.3
+    release: 1.5
+    
+  bass:
+    waveform: "sine"
+    attack: 0.1
+    decay: 0.2
+    sustain: 0.6
+    release: 0.3
+    
+  drums:
+    waveform: "noise"
+    attack: 0.01
+    decay: 0.1
+    sustain: 0.0
+    release: 0.2
+    
+  pads:
+    waveform: "sine"
+    attack: 2.0
+    decay: 1.0
+    sustain: 0.8
+    release: 3.0
+    
+  flute:
+    waveform: "sine"
+    attack: 0.2
+    decay: 0.3
+    sustain: 0.6
+    release: 0.5
+    
+  harp:
+    waveform: "sine"
+    attack: 0.05
+    decay: 0.1
+    sustain: 0.4
+    release: 0.8
+
+# 기본 설정
+defaults:
+  sample_rate: 44100
+  bitrate: "192k"
+  channels: 2  # 스테레오
+  volume_normalization: true
+  fade_in_seconds: 3.0
+  fade_out_seconds: 3.0
+

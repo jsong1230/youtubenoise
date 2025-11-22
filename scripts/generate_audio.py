@@ -16,17 +16,18 @@ from pydub import AudioSegment
 from pydub.generators import WhiteNoise, Sine
 
 # 프로젝트 루트를 sys.path에 추가
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+from config import LOG_FILE, CONFIG_JSON_FILE, OUTPUT_DIR, PROJECT_ROOT
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -35,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 def load_config() -> dict:
     """config.json 파일 로드"""
-    config_path = project_root / "config" / "config.json"
+    config_path = CONFIG_JSON_FILE
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -424,7 +425,7 @@ def generate_noise(noise_type: str, duration_sec: int) -> Path:
             audio_segment = audio_segment.set_channels(2)
         
         # 출력 디렉토리 확인
-        output_dir = project_root / "audio"
+        output_dir = OUTPUT_DIR / "audio"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # 파일명 생성

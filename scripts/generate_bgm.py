@@ -25,17 +25,14 @@ from scripts.public_domain_catalog import (
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-# .env 파일 로드
-load_dotenv(project_root / ".env")
+from config import LOG_FILE, BGM_PRESETS_FILE, OUTPUT_DIR, PROJECT_ROOT
 
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -44,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 def load_bgm_presets() -> dict:
     """BGM 프리셋 설정 파일 로드"""
-    presets_path = project_root / "config" / "bgm_presets.yaml"
+    presets_path = BGM_PRESETS_FILE
     try:
         with open(presets_path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f)
@@ -388,7 +385,7 @@ def load_external_audio(audio_path: Path, duration_minutes: int) -> Optional[Pat
         audio_segment = audio_segment[:duration_sec]
         
         # 출력 경로
-        output_dir = project_root / "audio"
+        output_dir = OUTPUT_DIR / "audio"
         output_dir.mkdir(parents=True, exist_ok=True)
         date_str = datetime.now().strftime("%Y-%m-%d")
         output_path = output_dir / f"{date_str}_external_{duration_minutes}min.wav"
@@ -410,7 +407,7 @@ def _select_public_domain_audio(
     duration_minutes: int,
 ) -> Optional[Path]:
     """프리셋 설정에 따라 Public Domain 음악을 선택 또는 조합"""
-    public_domain_dir = project_root / "audio" / "public_domain"
+    public_domain_dir = PROJECT_ROOT / "audio" / "public_domain"
     public_domain_dir.mkdir(parents=True, exist_ok=True)
 
     catalog = build_public_domain_catalog()
@@ -502,10 +499,6 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
         # Public Domain 외부 음악 파일 사용 (우선순위 1)
         use_external = preset.get("use_external_audio", False)
         external_path = preset.get("external_audio_path")
-<<<<<<< Updated upstream
-        force_public_domain_only = preset.get("public_domain_only", False)
-=======
-        
         # Public Domain 라이브러리 사용 여부 판단
         has_public_domain_config = any([
             bool(preset.get("public_domain_categories")),
@@ -518,21 +511,13 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
         
         if should_use_public_domain:
             logger.info("Public Domain 음악 자동 검색 및 조합 시도 중...")
-            public_domain_dir = project_root / "audio" / "public_domain"
+            public_domain_dir = PROJECT_ROOT / "audio" / "public_domain"
             public_domain_dir.mkdir(parents=True, exist_ok=True)
             
             catalog = build_public_domain_catalog()
             all_tracks = catalog.get("tracks", [])
->>>>>>> Stashed changes
 
-        use_public_domain_library = (
-            not use_external
-            and (
-                bool(preset.get("public_domain_categories"))
-                or preset.get("use_public_domain_library", False)
-                or "christmas" in preset_name.lower()
-            )
-        )
+        use_public_domain_library = should_use_public_domain
 
         if use_public_domain_library:
             result = _select_public_domain_audio(preset, preset_name, duration_minutes)
@@ -558,7 +543,7 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
         
         # 명시적으로 설정된 외부 음악 파일 사용
         if use_external and external_path:
-            external_audio_path = project_root / external_path
+            external_audio_path = PROJECT_ROOT / external_path
             result = load_external_audio(external_audio_path, duration_minutes)
             if result:
                 return result
@@ -632,7 +617,7 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
         )
         
         # 출력 디렉토리 확인
-        output_dir = project_root / "audio"
+        output_dir = OUTPUT_DIR / "audio"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # 파일명 생성

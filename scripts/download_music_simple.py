@@ -7,6 +7,12 @@ import sys
 import requests
 from pathlib import Path
 
+# 프로젝트 루트 설정
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+from config import OUTPUT_DIR
+
 def download_music(url: str, output_path: Path):
     """음악 다운로드"""
     print(f"다운로드 중: {url}")
@@ -50,7 +56,7 @@ if __name__ == "__main__":
     
     url = sys.argv[1]
     filename = sys.argv[2] if len(sys.argv) > 2 else "downloaded_music.mp3"
-    output_path = Path("audio/public_domain") / filename
+    output_path = OUTPUT_DIR / "audio" / "public_domain" / filename
     
     download_music(url, output_path)
 

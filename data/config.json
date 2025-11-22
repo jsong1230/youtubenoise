@@ -1,0 +1,12 @@
+{
+  "audio_length_sec": 1800,
+  "noise_types": ["white_noise", "brown_noise", "pink_noise", "rain", "ocean", "fireplace", "lofi", "asmr"],
+  "language": "en",
+  "openai_model": "gpt-4o-mini",
+  "youtube": {
+    "client_secret_file": "config/youtube_client_secret.json",
+    "token_file": "config/token.json",
+    "default_tags": ["white noise", "sleep", "relax", "study", "asmr"]
+  }
+}
+

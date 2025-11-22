@@ -11,17 +11,18 @@ from datetime import datetime
 from typing import Optional
 
 # 프로젝트 루트를 sys.path에 추가
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -66,7 +67,7 @@ def make_video(background_image: Path, audio_file: Path, output_path: Optional[P
         
         # 출력 경로 자동 생성
         if output_path is None:
-            output_dir = project_root / "videos"
+            output_dir = OUTPUT_DIR / "videos"
             output_dir.mkdir(parents=True, exist_ok=True)
             
             date_str = datetime.now().strftime("%Y-%m-%d")
@@ -152,9 +153,9 @@ def main():
         
         # 상대 경로를 절대 경로로 변환
         if not background_image.is_absolute():
-            background_image = project_root / background_image
+            background_image = PROJECT_ROOT / background_image
         if not audio_file.is_absolute():
-            audio_file = project_root / audio_file
+            audio_file = PROJECT_ROOT / audio_file
         
         # 영상 생성
         output_path = make_video(background_image, audio_file, output_path)

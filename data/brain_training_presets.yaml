@@ -1,0 +1,271 @@
+# 시니어용 종합 두뇌훈련 프리셋 설정
+# 치매 예방을 위한 다양한 인지 기능 훈련 모듈
+
+presets:
+  # 숫자 기억 훈련
+  number_memory_senior:
+    name: "숫자 기억 훈련"
+    description: "시니어용 숫자 기억력 훈련 (쉬운 난이도, 3~4자리)"
+    difficulty: "easy"
+    modules:
+      - type: "number_memory"
+        weight: 1.0
+    num_problems: 20
+    problem_settings:
+      number_memory:
+        digit_count: 4
+        display_seconds: 5
+        countdown_seconds: 10
+    color_scheme:
+      background: [245, 240, 235]  # 따뜻한 아이보리
+      text: [40, 40, 40]  # 진한 회색
+      highlight: [100, 150, 200]  # 부드러운 파란색
+      correct: [80, 160, 80]  # 부드러운 초록
+      countdown: [200, 80, 60]  # 부드러운 빨강
+    font_size: 96
+    transition_seconds: 2
+    
+  # 사라진 물건 찾기
+  missing_object_senior:
+    name: "사라진 물건 찾기"
+    description: "시니어용 관찰력 훈련 (그림에서 사라진 물건 찾기)"
+    difficulty: "easy"
+    modules:
+      - type: "missing_object"
+        weight: 1.0
+    num_problems: 15
+    problem_settings:
+      missing_object:
+        num_objects: 8
+        num_missing: 2
+        display_seconds: 10
+        countdown_seconds: 15
+    themes:
+      - "주방 풍경"
+      - "거실"
+      - "공원"
+      - "시장"
+      - "정원"
+    color_scheme:
+      background: [240, 245, 240]  # 부드러운 민트
+      text: [40, 40, 40]
+      highlight: [255, 200, 100]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+    
+  # 패턴 순서 맞추기
+  pattern_sequence_senior:
+    name: "패턴 순서 맞추기"
+    description: "시니어용 패턴 인식 훈련 (색상, 도형 순서)"
+    difficulty: "easy"
+    modules:
+      - type: "pattern_sequence"
+        weight: 1.0
+    num_problems: 15
+    problem_settings:
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "shapes"  # shapes, colors, numbers
+        display_seconds: 8
+        countdown_seconds: 12
+    color_scheme:
+      background: [245, 245, 250]  # 연한 라벤더
+      text: [40, 40, 40]
+      highlight: [180, 120, 200]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    transition_seconds: 2
+    
+  # 단어 연상 게임
+  word_association_senior:
+    name: "단어 연상 게임"
+    description: "시니어용 언어 능력 훈련 (한글 단어 연상)"
+    difficulty: "easy"
+    modules:
+      - type: "word_association"
+        weight: 1.0
+    num_problems: 20
+    problem_settings:
+      word_association:
+        word_category: "일상"  # 일상, 자연, 음식, 계절
+        num_choices: 3
+        display_seconds: 10
+        countdown_seconds: 15
+    color_scheme:
+      background: [250, 245, 235]  # 따뜻한 크림
+      text: [40, 40, 40]
+      highlight: [220, 150, 100]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 80
+    transition_seconds: 2
+    
+  # 시계 읽기
+  clock_reading_senior:
+    name: "시계 읽기 훈련"
+    description: "시니어용 시간 인지 훈련 (아날로그 시계)"
+    difficulty: "easy"
+    modules:
+      - type: "clock_reading"
+        weight: 1.0
+    num_problems: 15
+    problem_settings:
+      clock_reading:
+        time_type: "hour_half"  # hour, hour_half, hour_quarter, exact
+        display_seconds: 8
+        countdown_seconds: 12
+    color_scheme:
+      background: [240, 245, 245]  # 연한 청록
+      text: [40, 40, 40]
+      highlight: [100, 180, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    transition_seconds: 2
+    
+  # 한글 단어 퍼즐
+  korean_word_puzzle_senior:
+    name: "한글 단어 퍼즐"
+    description: "시니어용 한글 능력 훈련 (초성 퀴즈, 단어 완성)"
+    difficulty: "easy"
+    modules:
+      - type: "korean_word_puzzle"
+        weight: 1.0
+    num_problems: 15
+    problem_settings:
+      korean_word_puzzle:
+        puzzle_type: "initial_sound"  # initial_sound, word_completion
+        word_length: 3
+        num_hints: 2
+        display_seconds: 10
+        countdown_seconds: 15
+    color_scheme:
+      background: [245, 240, 250]  # 연한 보라
+      text: [40, 40, 40]
+      highlight: [160, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 88
+    transition_seconds: 2
+    
+  # 종합 두뇌훈련 (여러 모듈 혼합)
+  mixed_brain_training_senior:
+    name: "종합 두뇌훈련"
+    description: "시니어용 종합 인지 기능 훈련 (여러 모듈 혼합)"
+    difficulty: "easy"
+    modules:
+      - type: "number_memory"
+        weight: 0.25
+      - type: "missing_object"
+        weight: 0.20
+      - type: "pattern_sequence"
+        weight: 0.15
+      - type: "word_association"
+        weight: 0.20
+      - type: "clock_reading"
+        weight: 0.10
+      - type: "korean_word_puzzle"
+        weight: 0.10
+    num_problems: 30
+    problem_settings:
+      number_memory:
+        digit_count: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      missing_object:
+        num_objects: 8
+        num_missing: 2
+        display_seconds: 10
+        countdown_seconds: 15
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "shapes"
+        display_seconds: 8
+        countdown_seconds: 12
+      word_association:
+        word_category: "일상"
+        num_choices: 3
+        display_seconds: 10
+        countdown_seconds: 15
+      clock_reading:
+        time_type: "hour_half"
+        display_seconds: 8
+        countdown_seconds: 12
+      korean_word_puzzle:
+        puzzle_type: "initial_sound"
+        word_length: 3
+        num_hints: 2
+        display_seconds: 10
+        countdown_seconds: 15
+    themes:
+      - "주방 풍경"
+      - "거실"
+      - "공원"
+      - "시장"
+      - "정원"
+      - "자연"
+    color_scheme:
+      background: [245, 243, 240]  # 중립적인 베이지
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+
+# 모듈별 설정
+modules:
+  number_memory:
+    name: "숫자 기억"
+    description: "화면에 나타나는 숫자를 기억하는 훈련"
+    instruction_template: "화면에 나오는 {digit_count}자리 숫자를 기억해보세요."
+    answer_template: "정답은 {answer}입니다."
+    
+  missing_object:
+    name: "사라진 물건 찾기"
+    description: "두 그림을 비교하여 사라진 물건을 찾는 훈련"
+    instruction_template: "두 그림을 비교하여 사라진 물건 {num_missing}개를 찾아보세요."
+    answer_template: "사라진 물건은 {answer_list}입니다."
+    
+  pattern_sequence:
+    name: "패턴 순서"
+    description: "패턴의 규칙을 찾아 다음 순서를 맞추는 훈련"
+    instruction_template: "패턴의 규칙을 찾아 다음에 올 것을 골라보세요."
+    answer_template: "정답은 {answer}입니다."
+    
+  word_association:
+    name: "단어 연상"
+    description: "제시된 단어와 관련된 단어를 찾는 훈련"
+    instruction_template: "'{keyword}'와 관련된 단어를 골라보세요."
+    answer_template: "정답은 '{answer}'입니다."
+    
+  clock_reading:
+    name: "시계 읽기"
+    description: "아날로그 시계를 보고 시간을 맞추는 훈련"
+    instruction_template: "시계가 가리키는 시간을 맞춰보세요."
+    answer_template: "정답은 {answer}입니다."
+    
+  korean_word_puzzle:
+    name: "한글 퍼즐"
+    description: "초성이나 힌트를 보고 단어를 맞추는 훈련"
+    instruction_template: "힌트를 보고 단어를 맞춰보세요."
+    answer_template: "정답은 '{answer}'입니다."
+
+# 기본 설정
+defaults:
+  video_width: 1920
+  video_height: 1080
+  fps: 30
+  bgm_path: null  # BGM 파일 경로 (선택사항)
+  enable_narration: false  # TTS 내레이션 사용 여부
+  enable_subtitles: true  # 자막 사용 여부
+  intro_duration: 5  # 인트로 길이 (초)
+  outro_duration: 5  # 아웃트로 길이 (초)
+  problem_intro_duration: 3  # 문제 소개 화면 길이 (초)
+  answer_display_duration: 5  # 정답 화면 길이 (초)
+

@@ -14,18 +14,19 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 # 프로젝트 루트 설정
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
+from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT, DATA_DIR
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -34,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 def load_spot_difference_presets() -> dict:
     """틀린그림찾기 프리셋 설정 파일 로드"""
-    presets_path = project_root / "config" / "spot_difference_presets.yaml"
+    presets_path = DATA_DIR / "spot_difference_presets.yaml"
     try:
         with open(presets_path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f)
@@ -77,7 +78,7 @@ def generate_spot_difference_video(preset_name: str, output_path: Optional[Path]
         
         # 출력 디렉토리 설정
         if output_path is None:
-            output_dir = project_root / "videos" / "spot_difference"
+            output_dir = OUTPUT_DIR / "videos" / "spot_difference"
             output_dir.mkdir(parents=True, exist_ok=True)
             date_str = datetime.now().strftime("%Y-%m-%d")
             output_path = output_dir / f"{date_str}_{preset_name}_ep01.mp4"
@@ -141,7 +142,7 @@ def generate_spot_difference_video(preset_name: str, output_path: Optional[Path]
         logger.info(f"\n전체 영상 합성 중... ({len(all_clips)}개 클립)")
         bgm_path = None
         if defaults.get('bgm_path'):
-            bgm_path = project_root / defaults['bgm_path']
+            bgm_path = PROJECT_ROOT / defaults['bgm_path']
         
         combine_clips(all_clips, output_path, bgm_path)
         

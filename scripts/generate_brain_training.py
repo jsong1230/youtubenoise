@@ -15,18 +15,19 @@ from collections import Counter
 from dotenv import load_dotenv
 
 # 프로젝트 루트 설정
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
+from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT, DATA_DIR
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -35,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 def load_brain_training_presets() -> dict:
     """두뇌훈련 프리셋 설정 파일 로드"""
-    presets_path = project_root / "config" / "brain_training_presets.yaml"
+    presets_path = DATA_DIR / "brain_training_presets.yaml"
     try:
         with open(presets_path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f)
@@ -107,7 +108,7 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
         
         # 출력 디렉토리 설정
         if output_path is None:
-            output_dir = project_root / "videos" / "brain_training"
+            output_dir = OUTPUT_DIR / "videos" / "brain_training"
             output_dir.mkdir(parents=True, exist_ok=True)
             date_str = datetime.now().strftime("%Y-%m-%d")
             output_path = output_dir / f"{date_str}_{preset_name}_ep01.mp4"
@@ -167,7 +168,7 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
         logger.info(f"\n전체 영상 합성 중... ({len(all_clips)}개 클립)")
         bgm_path = None
         if defaults.get('bgm_path'):
-            bgm_path = project_root / defaults['bgm_path']
+            bgm_path = PROJECT_ROOT / defaults['bgm_path']
         
         combine_clips(all_clips, output_path, bgm_path)
         

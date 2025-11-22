@@ -8,8 +8,16 @@ google-auth-httplib2>=0.1.1
 Pillow>=10.0.0
 requests>=2.31.0
 PyYAML>=6.0
-pyyaml>=6.0.0
 freesound-python>=0.1.0
 selenium>=4.15.0
 webdriver-manager>=4.0.0
 
+# 2025 Strategy: Flask Dashboard
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+
+# 2025 Strategy: Claude API
+anthropic>=0.18.0
+
+# 2025 Strategy: Image APIs (already have requests)
+# Unsplash, Pexels, Pixabay use requests library

@@ -24,6 +24,7 @@ wheels/
 venv/
 env/
 ENV/
+.venv/
 
 # Environment variables
 .env
@@ -36,23 +37,24 @@ ENV/
 *.swo
 *~
 
-# Logs
+# Output (Generated files)
+output/videos/*
+!output/videos/.gitkeep
+output/images/*
+!output/images/.gitkeep
+output/logs/*
+!output/logs/.gitkeep
+
+# Logs (Legacy or root)
 logs/*.log
 logs/history.json
 
-# Generated files
+# Audio (Legacy or root)
 audio/*.mp3
 audio/*.wav
-images/
-videos/
-
-# Keep directories
 !audio/.gitkeep
-!images/.gitkeep
-!videos/.gitkeep
-!logs/.gitkeep
 
-# Public Domain music (keep README)
+# Public Domain music (keep README if exists)
 audio/public_domain/*.mp3
 audio/public_domain/*.wav
 audio/public_domain/**/*.mp3
@@ -60,9 +62,15 @@ audio/public_domain/**/*.wav
 !audio/public_domain/README.md
 audio/public_domain/catalog.json
 
-# Config (keep examples)
-config/token.json
-config/youtube_client_secret.json
+# Config (Secrets - exclude these)
+token.json
+client_secrets.json
+data/youtube_client_secret.json
+
+# Config (State tracking - INCLUDE these in Git)
+!data/channel_state.json
+!data/api_usage.json
+
 
 # OS
 .DS_Store

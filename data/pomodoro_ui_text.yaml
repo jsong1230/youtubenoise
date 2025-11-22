@@ -1,0 +1,241 @@
+# Pomodoro 타이머 UI 디자인 문구
+# 뽀모도로 타이머 기능을 위한 UI 텍스트 및 메시지
+
+# 타이머 상태별 문구
+states:
+  focus:
+    title: "집중 시간"
+    subtitle: "지금은 집중할 시간입니다"
+    message: "모든 방해를 멀리하고 현재 작업에 집중하세요"
+    button_text: "휴식 시작"
+    button_icon: "☕"
+    color_theme: "blue"
+    
+  short_break:
+    title: "짧은 휴식"
+    subtitle: "5분간 휴식을 취하세요"
+    message: "잠시 일어나서 스트레칭하거나 물을 마셔보세요"
+    button_text: "집중 시작"
+    button_icon: "▶️"
+    color_theme: "green"
+    
+  long_break:
+    title: "긴 휴식"
+    subtitle: "15분간 충분히 휴식을 취하세요"
+    message: "산책하거나 가벼운 스트레칭으로 몸을 풀어보세요"
+    button_text: "집중 시작"
+    button_icon: "▶️"
+    color_theme: "purple"
+    
+  paused:
+    title: "일시 정지"
+    subtitle: "타이머가 일시 정지되었습니다"
+    message: "준비되면 다시 시작하세요"
+    button_text: "재개"
+    button_icon: "▶️"
+    color_theme: "gray"
+
+# 알림 메시지
+notifications:
+  focus_start:
+    title: "집중 시간 시작"
+    message: "25분간 집중하세요! 화이팅! 💪"
+    sound: "gentle_bell"
+    
+  focus_end:
+    title: "집중 시간 완료"
+    message: "잘하셨어요! 이제 휴식을 취하세요 🎉"
+    sound: "success_chime"
+    
+  break_start:
+    title: "휴식 시간"
+    message: "잠시 쉬어가세요. 몸과 마음을 풀어주세요 😌"
+    sound: "gentle_bell"
+    
+  break_end:
+    title: "휴식 종료"
+    message: "다시 집중할 준비가 되셨나요? 시작해볼까요? 🚀"
+    sound: "gentle_bell"
+    
+  pomodoro_complete:
+    title: "뽀모도로 완료!"
+    message: "4개의 뽀모도로를 완료하셨어요! 훌륭합니다! 🌟"
+    sound: "celebration"
+    
+  session_complete:
+    title: "세션 완료"
+    message: "오늘도 수고하셨어요! 내일도 화이팅! 💪"
+    sound: "success_chime"
+
+# 통계 및 피드백 메시지
+statistics:
+  daily_summary:
+    title: "오늘의 집중 시간"
+    templates:
+      - "오늘 {count}개의 뽀모도로를 완료하셨어요! 🎯"
+      - "총 {hours}시간 {minutes}분 집중하셨습니다! 💪"
+      - "훌륭한 하루였어요! 내일도 이 기세로! 🌟"
+      
+  weekly_summary:
+    title: "이번 주 집중 시간"
+    templates:
+      - "이번 주 총 {total_pomodoros}개의 뽀모도로를 완료하셨어요! 🎉"
+      - "평균 하루 {avg_pomodoros}개의 뽀모도로를 완료하셨습니다! 📊"
+      - "꾸준함이 최고의 무기예요! 계속 화이팅! 💪"
+      
+  achievements:
+    first_pomodoro:
+      title: "첫 뽀모도로"
+      message: "첫 번째 뽀모도로를 완료하셨어요! 🎊"
+      icon: "🎯"
+      
+    streak_3:
+      title: "3일 연속"
+      message: "3일 연속으로 뽀모도로를 완료하셨어요! 🔥"
+      icon: "🔥"
+      
+    streak_7:
+      title: "일주일 연속"
+      message: "일주일 연속 완료! 정말 대단해요! 🌟"
+      icon: "⭐"
+      
+    streak_30:
+      title: "한 달 연속"
+      message: "한 달 연속 완료! 당신은 진정한 집중의 달인입니다! 👑"
+      icon: "👑"
+      
+    milestone_100:
+      title: "100개 달성"
+      message: "100개의 뽀모도로를 완료하셨어요! 🎉"
+      icon: "💯"
+      
+    milestone_500:
+      title: "500개 달성"
+      message: "500개 달성! 놀라운 성취입니다! 🏆"
+      icon: "🏆"
+
+# 설정 화면 문구
+settings:
+  sections:
+    timer:
+      title: "타이머 설정"
+      description: "집중 시간과 휴식 시간을 설정하세요"
+      
+    notifications:
+      title: "알림 설정"
+      description: "알림 소리와 메시지를 설정하세요"
+      
+    appearance:
+      title: "외관 설정"
+      description: "테마와 색상을 선택하세요"
+      
+    statistics:
+      title: "통계"
+      description: "집중 시간 통계를 확인하세요"
+  
+  options:
+    focus_duration:
+      label: "집중 시간"
+      description: "한 뽀모도로의 집중 시간 (분)"
+      default: 25
+      min: 5
+      max: 60
+      
+    short_break_duration:
+      label: "짧은 휴식 시간"
+      description: "짧은 휴식 시간 (분)"
+      default: 5
+      min: 1
+      max: 15
+      
+    long_break_duration:
+      label: "긴 휴식 시간"
+      description: "긴 휴식 시간 (분)"
+      default: 15
+      min: 5
+      max: 30
+      
+    pomodoros_until_long_break:
+      label: "긴 휴식까지 뽀모도로 수"
+      description: "몇 개의 뽀모도로 후 긴 휴식을 할지 설정"
+      default: 4
+      min: 2
+      max: 8
+      
+    auto_start_breaks:
+      label: "자동 휴식 시작"
+      description: "집중 시간 종료 후 자동으로 휴식 시작"
+      default: false
+      
+    auto_start_focus:
+      label: "자동 집중 시작"
+      description: "휴식 종료 후 자동으로 집중 시간 시작"
+      default: false
+      
+    sound_enabled:
+      label: "소리 켜기"
+      description: "타이머 종료 시 소리 재생"
+      default: true
+      
+    desktop_notifications:
+      label: "데스크톱 알림"
+      description: "타이머 상태 변경 시 알림 표시"
+      default: true
+
+# 도움말 및 가이드
+help:
+  welcome:
+    title: "뽀모도로 기법이란?"
+    content: |
+      뽀모도로 기법은 25분 집중 후 5분 휴식을 반복하는 시간 관리 방법입니다.
+      
+      • 25분 집중 → 5분 휴식 (짧은 휴식)
+      • 4번 반복 후 → 15분 휴식 (긴 휴식)
+      
+      이 방법으로 집중력을 높이고 피로를 줄일 수 있습니다.
+  
+  tips:
+    title: "집중력 향상 팁"
+    items:
+      - "집중 시간에는 스마트폰을 멀리 두세요"
+      - "할 일 목록을 미리 작성해두세요"
+      - "집중 시간에는 한 가지 작업만 하세요"
+      - "휴식 시간에는 일어나서 몸을 움직이세요"
+      - "규칙적인 뽀모도로 습관을 만들어보세요"
+
+# 에러 메시지
+errors:
+  timer_already_running:
+    message: "타이머가 이미 실행 중입니다"
+    
+  timer_not_running:
+    message: "실행 중인 타이머가 없습니다"
+    
+  invalid_duration:
+    message: "올바른 시간을 입력해주세요"
+    
+  save_failed:
+    message: "설정 저장에 실패했습니다. 다시 시도해주세요"
+
+# 버튼 및 액션 레이블
+buttons:
+  start: "시작"
+  pause: "일시정지"
+  resume: "재개"
+  reset: "초기화"
+  skip: "건너뛰기"
+  settings: "설정"
+  statistics: "통계"
+  help: "도움말"
+  close: "닫기"
+  save: "저장"
+  cancel: "취소"
+  reset_stats: "통계 초기화"
+  export_data: "데이터 내보내기"
+
+# 시간 표시 형식
+time_format:
+  minutes_seconds: "{minutes:02d}:{seconds:02d}"
+  hours_minutes: "{hours}시간 {minutes}분"
+  compact: "{m}분 {s}초"
+

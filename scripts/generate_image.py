@@ -40,7 +40,7 @@ def get_openai_client() -> Optional[OpenAI]:
 def load_bgm_preset(preset_name: str) -> Optional[dict]:
     """BGM 프리셋 정보 로드"""
     import yaml
-    presets_path = project_root / "config" / "bgm_presets.yaml"
+    presets_path = BGM_PRESETS_FILE
     try:
         with open(presets_path, 'r', encoding='utf-8') as f:
             presets_data = yaml.safe_load(f)
@@ -52,16 +52,15 @@ def load_bgm_preset(preset_name: str) -> Optional[dict]:
 # 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-load_dotenv(project_root / ".env")
+
+from config import LOG_FILE, BGM_PRESETS_FILE, CONFIG_JSON_FILE, OUTPUT_DIR, PROJECT_ROOT
 
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -70,7 +69,7 @@ logger = logging.getLogger(__name__)
 
 def load_config() -> dict:
     """config.json 파일 로드"""
-    config_path = project_root / "config" / "config.json"
+    config_path = CONFIG_JSON_FILE
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -561,7 +560,7 @@ def generate_image_with_dalle(preset_name: str, width: int, height: int) -> Opti
             dalle_img = dalle_img.convert("RGB")
             dalle_img = resize_and_crop_to_aspect(dalle_img, width, height)
             
-            output_dir = project_root / "images"
+            output_dir = OUTPUT_DIR / "images"
             output_dir.mkdir(parents=True, exist_ok=True)
             date_str = datetime.now().strftime("%Y-%m-%d")
             filename = f"{date_str}_{preset_name}_bg.png"
@@ -640,7 +639,7 @@ def generate_background_image_for_bgm(preset_name: str) -> Path:
         img = add_texture(img, "bgm")
         
         # 출력 디렉토리 확인
-        output_dir = project_root / "images"
+        output_dir = OUTPUT_DIR / "images"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # 파일명 생성
@@ -699,7 +698,7 @@ def generate_background_image(noise_type: str) -> Path:
         img = add_texture(img, noise_type)
         
         # 출력 디렉토리 확인
-        output_dir = project_root / "images"
+        output_dir = OUTPUT_DIR / "images"
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # 파일명 생성

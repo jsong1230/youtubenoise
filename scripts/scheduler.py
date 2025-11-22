@@ -13,17 +13,18 @@ from datetime import datetime
 from typing import Dict, Optional
 
 # 프로젝트 루트를 sys.path에 추가
+# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+from config import LOG_FILE, CONFIG_JSON_FILE, OUTPUT_DIR, PROJECT_ROOT
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -32,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 def load_config() -> dict:
     """config.json 파일 로드"""
-    config_path = project_root / "config" / "config.json"
+    config_path = CONFIG_JSON_FILE
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -56,7 +57,7 @@ def run_script(script_name: str, args: list = None) -> tuple:
         (성공 여부, 출력 메시지)
     """
     try:
-        script_path = project_root / "scripts" / script_name
+        script_path = PROJECT_ROOT / "scripts" / script_name
         if not script_path.exists():
             raise FileNotFoundError(f"스크립트를 찾을 수 없습니다: {script_path}")
         
@@ -70,7 +71,7 @@ def run_script(script_name: str, args: list = None) -> tuple:
             capture_output=True,
             text=True,
             check=True,
-            cwd=str(project_root)
+            cwd=str(PROJECT_ROOT)
         )
         
         output = result.stdout + result.stderr
@@ -103,7 +104,7 @@ def import_and_call_function(module_name: str, function_name: str, *args, **kwar
 
 def save_history(history_data: Dict):
     """히스토리 파일에 기록 저장"""
-    history_file = project_root / "logs" / "history.json"
+    history_file = OUTPUT_DIR / "logs" / "history.json"
     
     # 기존 히스토리 로드
     history = []

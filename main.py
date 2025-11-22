@@ -12,17 +12,14 @@ from datetime import datetime
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from dotenv import load_dotenv
-load_dotenv(project_root / ".env")
+from config import LOG_FILE, BGM_PRESETS_FILE
 
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
+        logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -129,8 +126,7 @@ def list_presets():
     """사용 가능한 프리셋 목록 출력"""
     try:
         import yaml
-        presets_path = project_root / "config" / "bgm_presets.yaml"
-        with open(presets_path, 'r', encoding='utf-8') as f:
+        with open(BGM_PRESETS_FILE, 'r', encoding='utf-8') as f:
             presets_data = yaml.safe_load(f)
             presets = presets_data.get("presets", {})
             
