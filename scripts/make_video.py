@@ -64,6 +64,12 @@ def make_video(background_image: Path, audio_file: Path, output_path: Optional[P
         logger.info(f"오디오 파일: {audio_file}")
         logger.info(f"출력 파일: {output_path}")
         
+        # 오디오 길이 확인 (초 단위)
+        from pydub import AudioSegment
+        audio_segment = AudioSegment.from_file(str(audio_file))
+        audio_duration_sec = len(audio_segment) / 1000.0
+        logger.info(f"오디오 길이: {audio_duration_sec:.1f}초 ({audio_duration_sec/60:.1f}분)")
+        
         # FFmpeg 명령어 구성
         # -y: 기존 파일 덮어쓰기
         # -loop 1: 이미지를 반복 재생
@@ -73,7 +79,7 @@ def make_video(background_image: Path, audio_file: Path, output_path: Optional[P
         # -c:a aac: 오디오 코덱
         # -b:a 192k: 오디오 비트레이트
         # -pix_fmt yuv420p: 픽셀 포맷 (호환성)
-        # -shortest: 오디오 길이에 맞춤
+        # -t: 오디오 길이에 맞춤 (명시적으로 지정)
         # -vf scale=1920:1080: 해상도 설정
         cmd = [
             "ffmpeg",
@@ -87,7 +93,7 @@ def make_video(background_image: Path, audio_file: Path, output_path: Optional[P
             "-b:a", "192k",  # 오디오 비트레이트
             "-pix_fmt", "yuv420p",  # 픽셀 포맷
             "-vf", "scale=1920:1080",  # 해상도 설정
-            "-shortest",  # 오디오 길이에 맞춤
+            "-t", str(int(audio_duration_sec)),  # 오디오 길이에 맞춤 (초 단위)
             "-r", "30",  # 프레임레이트
             str(output_path)  # 출력 파일
         ]

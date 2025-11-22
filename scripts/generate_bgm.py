@@ -430,19 +430,35 @@ def _select_public_domain_audio(
             selected_metadata = all_tracks
 
     music_files: List[Path] = []
-    for track in selected_metadata:
-        track_path = project_root / track["path"]
-        if target_subdir:
-            try:
-                track_path.relative_to(public_domain_dir / target_subdir)
-            except ValueError:
-                continue
-        if track_path.exists():
-            music_files.append(track_path)
-        else:
-            logger.debug(f"분류된 파일을 찾을 수 없습니다: {track['path']}")
+    
+    # target_subdir이 지정된 경우, 해당 폴더의 모든 파일을 직접 사용
+    if target_subdir:
+        subdir_path = public_domain_dir / target_subdir
+        if subdir_path.exists():
+            logger.info(f"Public Domain 폴더에서 직접 검색: {subdir_path}")
+            for audio_file in subdir_path.glob("*.mp3"):
+                if audio_file.exists():
+                    music_files.append(audio_file)
+            for audio_file in subdir_path.glob("*.wav"):
+                if audio_file.exists():
+                    music_files.append(audio_file)
+    
+    # 카탈로그에서 필터링된 트랙 사용 (target_subdir이 없거나 파일을 찾지 못한 경우)
+    if not music_files:
+        for track in selected_metadata:
+            track_path = project_root / track["path"]
+            if target_subdir:
+                try:
+                    track_path.relative_to(public_domain_dir / target_subdir)
+                except ValueError:
+                    continue
+            if track_path.exists():
+                music_files.append(track_path)
+            else:
+                logger.debug(f"분류된 파일을 찾을 수 없습니다: {track['path']}")
 
     if not music_files:
+        logger.warning(f"Public Domain 음악 파일을 찾을 수 없습니다 (폴더: {target_subdir})")
         return None
 
     logger.info(f"Public Domain 음악 파일 {len(music_files)}개 발견")
@@ -483,6 +499,7 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
         # Public Domain 외부 음악 파일 사용 (우선순위 1)
         use_external = preset.get("use_external_audio", False)
         external_path = preset.get("external_audio_path")
+        force_public_domain_only = preset.get("public_domain_only", False)
         # Public Domain 라이브러리 사용 여부 판단
         has_public_domain_config = any([
             bool(preset.get("public_domain_categories")),
@@ -490,7 +507,7 @@ def generate_bgm(preset_name: str, duration_minutes: int) -> Path:
             bool(preset.get("use_public_domain_catalog")),
         ])
         should_use_public_domain = (not use_external) and (
-            has_public_domain_config or "christmas" in preset_name.lower()
+            has_public_domain_config or "christmas" in preset_name.lower() or force_public_domain_only
         )
         
         if should_use_public_domain:

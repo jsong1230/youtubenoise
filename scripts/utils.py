@@ -295,3 +295,126 @@ def safe_execute(
         logger.error(f"{msg}: {e}", exc_info=True)
         return default
 
+
+def check_running_process(
+    script_name: str,
+    preset_name: Optional[str] = None,
+    exclude_pid: Optional[int] = None,
+    check_ffmpeg: bool = True,
+    logger: Optional[logging.Logger] = None
+) -> bool:
+    """
+    동일한 작업이 이미 실행 중인지 확인 (필수: 모든 작업 실행 전 반드시 호출)
+    
+    Args:
+        script_name: 확인할 스크립트 이름 (예: "main.py")
+        preset_name: 프리셋 이름 (같은 프리셋이 실행 중이면 True 반환)
+        exclude_pid: 제외할 프로세스 ID (현재 프로세스)
+        check_ffmpeg: FFmpeg 프로세스도 확인할지 여부
+        logger: 로거 (None이면 기본 로거 사용)
+    
+    Returns:
+        실행 중이면 True, 아니면 False
+    """
+    if logger is None:
+        logger = logging.getLogger(__name__)
+    
+    try:
+        import psutil
+        current_pid = os.getpid()
+        
+        # Python 프로세스 확인
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                if proc.info['pid'] == current_pid:
+                    continue
+                if exclude_pid and proc.info['pid'] == exclude_pid:
+                    continue
+                
+                cmdline = proc.info.get('cmdline', [])
+                if not cmdline:
+                    continue
+                
+                cmdline_str = ' '.join(cmdline)
+                
+                # 스크립트 이름 확인
+                if script_name not in cmdline_str:
+                    continue
+                
+                # 프리셋 이름이 지정된 경우, 같은 프리셋이 실행 중인지 확인
+                if preset_name:
+                    if f"--preset {preset_name}" in cmdline_str or f'--preset={preset_name}' in cmdline_str:
+                        logger.error(f"❌ 동일한 작업이 이미 실행 중입니다: PID {proc.info['pid']}, 프리셋: {preset_name}")
+                        logger.error(f"   명령어: {cmdline_str[:100]}")
+                        return True
+                else:
+                    # 프리셋이 지정되지 않은 경우, 같은 스크립트가 실행 중인지 확인
+                    if 'python' in cmdline_str and script_name in cmdline_str:
+                        logger.error(f"❌ 동일한 스크립트가 이미 실행 중입니다: PID {proc.info['pid']}")
+                        logger.error(f"   명령어: {cmdline_str[:100]}")
+                        return True
+                    
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                continue
+        
+        # FFmpeg 프로세스 확인 (영상 생성 중인지 확인)
+        if check_ffmpeg:
+            for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+                try:
+                    if proc.info['name'] and 'ffmpeg' in proc.info['name'].lower():
+                        cmdline = proc.info.get('cmdline', [])
+                        if cmdline:
+                            cmdline_str = ' '.join(cmdline)
+                            # 같은 프리셋 관련 파일이 FFmpeg에 사용 중인지 확인
+                            if preset_name:
+                                if preset_name in cmdline_str:
+                                    logger.error(f"❌ FFmpeg가 이미 실행 중입니다 (프리셋: {preset_name}): PID {proc.info['pid']}")
+                                    logger.error(f"   명령어: {cmdline_str[:100]}")
+                                    return True
+                            else:
+                                # 프리셋이 없어도 FFmpeg가 실행 중이면 경고
+                                logger.warning(f"⚠️  FFmpeg 프로세스가 실행 중입니다: PID {proc.info['pid']}")
+                                logger.warning(f"   명령어: {cmdline_str[:100]}")
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    continue
+                
+    except ImportError:
+        # psutil이 없으면 subprocess로 확인
+        try:
+            result = subprocess.run(
+                ['ps', 'aux'],
+                capture_output=True,
+                text=True,
+                check=False
+            )
+            
+            lines = result.stdout.split('\n')
+            for line in lines:
+                if script_name not in line:
+                    continue
+                if exclude_pid and str(exclude_pid) in line:
+                    continue
+                
+                if preset_name:
+                    if f"--preset {preset_name}" in line or f'--preset={preset_name}' in line:
+                        logger.error(f"❌ 동일한 작업이 이미 실행 중입니다: {line[:100]}")
+                        return True
+                else:
+                    if 'python' in line and script_name in line:
+                        logger.error(f"❌ 동일한 스크립트가 이미 실행 중입니다: {line[:100]}")
+                        return True
+            
+            # FFmpeg 확인
+            if check_ffmpeg:
+                for line in lines:
+                    if 'ffmpeg' in line.lower():
+                        if preset_name and preset_name in line:
+                            logger.error(f"❌ FFmpeg가 이미 실행 중입니다 (프리셋: {preset_name}): {line[:100]}")
+                            return True
+                        elif not preset_name:
+                            logger.warning(f"⚠️  FFmpeg 프로세스가 실행 중입니다: {line[:100]}")
+        except Exception as e:
+            logger.debug(f"프로세스 확인 중 오류: {e}")
+    
+    return False
+

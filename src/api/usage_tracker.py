@@ -54,14 +54,7 @@ class UsageTracker:
     
     def _load_data(self) -> Dict:
         """사용량 데이터 로드"""
-        if self.usage_file.exists():
-            try:
-                with open(self.usage_file, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-            except Exception as e:
-                logger.warning(f"사용량 파일 로드 실패: {e}, 새로 생성합니다.")
-        
-        return {
+        default_data = {
             "daily": {},
             "monthly": {},
             "total": {
@@ -69,6 +62,29 @@ class UsageTracker:
                 "requests": 0
             }
         }
+        
+        if self.usage_file.exists():
+            try:
+                with open(self.usage_file, 'r', encoding='utf-8') as f:
+                    loaded_data = json.load(f)
+                    # 기존 데이터 구조가 다를 수 있으므로 기본 구조로 병합
+                    if not isinstance(loaded_data, dict):
+                        logger.warning("사용량 파일 형식이 올바르지 않습니다. 기본 구조로 재생성합니다.")
+                        return default_data
+                    
+                    # 필수 키가 없으면 기본값으로 채움
+                    if "daily" not in loaded_data:
+                        loaded_data["daily"] = {}
+                    if "monthly" not in loaded_data:
+                        loaded_data["monthly"] = {}
+                    if "total" not in loaded_data:
+                        loaded_data["total"] = {"cost": 0.0, "requests": 0}
+                    
+                    return loaded_data
+            except Exception as e:
+                logger.warning(f"사용량 파일 로드 실패: {e}, 새로 생성합니다.")
+        
+        return default_data
     
     def _save_data(self):
         """사용량 데이터 저장"""

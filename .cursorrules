@@ -130,6 +130,33 @@ python main.py --mode brain_training --preset mixed_brain_training_senior
 - 느린 전환 (transition_seconds: 2)
 - 충분한 시간 (display_seconds: 5-10, countdown_seconds: 10-15)
 
+## 프로세스 중복 실행 방지 규칙 (필수)
+
+### 반드시 준수해야 할 사항
+- **모든 작업 실행 전 반드시 중복 확인**: `check_running_process()` 함수를 사용하여 동일한 작업이 이미 실행 중인지 확인
+- **Python 프로세스 확인**: 같은 프리셋으로 `main.py`가 실행 중인지 확인
+- **FFmpeg 프로세스 확인**: 같은 프리셋 관련 FFmpeg 프로세스가 실행 중인지 확인
+- **중복 발견 시 즉시 종료**: 중복 실행이 발견되면 에러 메시지 출력 후 `sys.exit(1)`로 종료
+
+### 구현 위치
+- `main.py`의 모든 모드 (`longform_bgm`, `spot_difference`, `brain_training`, `ai_explainer`)에서 실행 전 반드시 확인
+- `scripts/utils.py`의 `check_running_process()` 함수 사용
+- `check_ffmpeg=True` 옵션으로 FFmpeg 프로세스도 함께 확인
+
+### 예시 코드
+```python
+# 모든 모드에서 실행 전 반드시 추가
+from scripts.utils import check_running_process
+if check_running_process("main.py", preset_name=args.preset, check_ffmpeg=True, logger=logger):
+    logger.error("❌ 동일한 작업이 이미 실행 중입니다. 중복 실행을 방지하기 위해 종료합니다.")
+    sys.exit(1)
+```
+
+### 절대 금지 사항
+- ❌ 중복 확인 없이 작업 실행
+- ❌ 사용자에게 물어보지 않고 실행 중인 프로세스 종료
+- ❌ 중복 프로세스 발견 시 무시하고 계속 진행
+
 ## 사용자 상호작용 규칙
 
 ### 승인 요청 원칙

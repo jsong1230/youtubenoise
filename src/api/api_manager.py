@@ -195,11 +195,18 @@ class APIManager:
             if not self.openai_provider:
                 raise ValueError("OpenAI Provider가 초기화되지 않았습니다.")
             
+            # DALL-E 3는 1920x1080을 지원하지 않으므로, 1792x1024로 생성 후 리사이즈
+            # DALL-E 지원 크기: 1024x1024, 1024x1792, 1792x1024
+            dalle_size = "1792x1024"  # 16:9에 가장 가까운 크기
+            target_width, target_height = width, height
+            
             logger.info("DALL-E 3로 이미지 생성 중...")
             result = self.openai_provider.generate_image(
                 prompt=prompt,
-                size=f"{width}x{height}",
-                output_path=output_path
+                size=dalle_size,
+                output_path=output_path,
+                target_width=target_width,
+                target_height=target_height
             )
             
             if result:
@@ -234,10 +241,14 @@ class APIManager:
             logger.error("OpenAI Provider가 초기화되지 않았습니다.")
             return None
         
+        # DALL-E 3는 1920x1080을 지원하지 않으므로, 1792x1024로 생성 후 리사이즈
+        dalle_size = "1792x1024"  # 16:9에 가장 가까운 크기
         result = self.openai_provider.generate_image(
             prompt=prompt,
-            size=f"{width}x{height}",
-            output_path=output_path
+            size=dalle_size,
+            output_path=output_path,
+            target_width=width,
+            target_height=height
         )
         
         if result:

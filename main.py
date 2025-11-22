@@ -37,6 +37,12 @@ def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = Fal
         upload: YouTube 업로드 여부
     """
     try:
+        # 중복 실행 방지: 동일한 프리셋이 이미 실행 중인지 확인 (필수)
+        from scripts.utils import check_running_process
+        if check_running_process("main.py", preset_name=preset_name, check_ffmpeg=True, logger=logger):
+            logger.error(f"❌ 동일한 작업({preset_name})이 이미 실행 중입니다. 중복 실행을 방지하기 위해 종료합니다.")
+            sys.exit(1)
+        
         logger.info("=" * 60)
         logger.info("롱폼 BGM 생성 파이프라인 시작")
         logger.info(f"프리셋: {preset_name}, 길이: {duration_minutes}분")
@@ -53,6 +59,25 @@ def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = Fal
         from scripts.generate_image import generate_background_image_for_bgm
         image_path = generate_background_image_for_bgm(preset_name)
         logger.info(f"이미지 생성 완료: {image_path}")
+        
+        # 이미지 확인 정보 출력
+        if image_path.exists():
+            from PIL import Image
+            with Image.open(image_path) as img:
+                width, height = img.size
+                file_size_mb = image_path.stat().st_size / (1024 * 1024)
+                logger.info("=" * 60)
+                logger.info("📸 생성된 이미지 정보")
+                logger.info(f"   경로: {image_path}")
+                logger.info(f"   크기: {width}x{height} 픽셀")
+                logger.info(f"   파일 크기: {file_size_mb:.2f} MB")
+                logger.info(f"   형식: {img.format}")
+                logger.info("=" * 60)
+                logger.info("💡 이미지를 확인하려면 다음 명령어를 실행하세요:")
+                logger.info(f"   open '{image_path}'")
+                logger.info("=" * 60)
+        else:
+            logger.warning(f"⚠️  이미지 파일이 존재하지 않습니다: {image_path}")
         
         # 3. 메타데이터 생성
         logger.info("\n[3/5] 메타데이터 생성 중...")
@@ -298,11 +323,23 @@ def main():
         if not args.duration_minutes:
             parser.error("--duration-minutes가 필요합니다.")
         
+        # 중복 실행 방지: 실행 전 반드시 확인
+        from scripts.utils import check_running_process
+        if check_running_process("main.py", preset_name=args.preset, check_ffmpeg=True, logger=logger):
+            logger.error("❌ 동일한 작업이 이미 실행 중입니다. 중복 실행을 방지하기 위해 종료합니다.")
+            sys.exit(1)
+        
         # 파이프라인 실행
         run_longform_bgm(args.preset, args.duration_minutes, args.upload)
     elif args.mode == "spot_difference":
         if not args.preset:
             parser.error("--preset이 필요합니다. 틀린그림찾기 프리셋을 지정해주세요.")
+        
+        # 중복 실행 방지: 실행 전 반드시 확인
+        from scripts.utils import check_running_process
+        if check_running_process("main.py", preset_name=args.preset, check_ffmpeg=True, logger=logger):
+            logger.error("❌ 동일한 작업이 이미 실행 중입니다. 중복 실행을 방지하기 위해 종료합니다.")
+            sys.exit(1)
         
         # 틀린그림찾기 파이프라인 실행
         from scripts.generate_spot_difference import generate_spot_difference_video
@@ -312,6 +349,12 @@ def main():
         if not args.preset:
             parser.error("--preset이 필요합니다. 두뇌훈련 프리셋을 지정해주세요.")
         
+        # 중복 실행 방지: 실행 전 반드시 확인
+        from scripts.utils import check_running_process
+        if check_running_process("main.py", preset_name=args.preset, check_ffmpeg=True, logger=logger):
+            logger.error("❌ 동일한 작업이 이미 실행 중입니다. 중복 실행을 방지하기 위해 종료합니다.")
+            sys.exit(1)
+        
         # 두뇌훈련 파이프라인 실행
         from scripts.generate_brain_training import generate_brain_training_video
         output_path = generate_brain_training_video(args.preset)
@@ -319,6 +362,12 @@ def main():
     elif args.mode == "ai_explainer":
         if not args.preset:
             parser.error("--preset이 필요합니다. AI Explainer 주제를 지정해주세요.")
+        
+        # 중복 실행 방지: 실행 전 반드시 확인
+        from scripts.utils import check_running_process
+        if check_running_process("main.py", preset_name=args.preset, check_ffmpeg=True, logger=logger):
+            logger.error("❌ 동일한 작업이 이미 실행 중입니다. 중복 실행을 방지하기 위해 종료합니다.")
+            sys.exit(1)
         
         # AI Explainer 파이프라인 실행
         from scripts.generate_ai_explainers import generate_ai_explainer_script

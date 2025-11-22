@@ -498,15 +498,36 @@ def build_dalle_prompt_for_preset(preset_name: str) -> Optional[str]:
     tags = preset.get("tags", [])
     tag_phrase = ", ".join(tags[:8]) if tags else ""
     
+    # 프리셋별 맞춤 분위기 설정
+    if "rock" in preset_name.lower():
+        atmosphere = "energetic rock music atmosphere with electric guitars, powerful stage lighting, dynamic energy, bold colors"
+        mood = "powerful, energetic, driving"
+    elif "world" in preset_name.lower():
+        atmosphere = "world music atmosphere with diverse cultural elements, global instruments, ethnic patterns, traditional motifs"
+        mood = "exotic, cultural, diverse, authentic"
+    elif "piano" in preset_name.lower() or "classical" in preset_name.lower():
+        atmosphere = "elegant classical music atmosphere with grand piano, concert hall, soft lighting, sophisticated ambiance"
+        mood = "elegant, peaceful, sophisticated"
+    elif "jazz" in preset_name.lower():
+        atmosphere = "smooth jazz atmosphere with dimly lit jazz club, warm lighting, intimate setting"
+        mood = "smooth, warm, intimate"
+    elif "lofi" in preset_name.lower():
+        atmosphere = "cozy lofi hip hop atmosphere with retro aesthetics, warm colors, nostalgic vibes"
+        mood = "cozy, nostalgic, chill"
+    else:
+        atmosphere = f"relaxing {name.lower()} music atmosphere with soft lighting, peaceful ambiance"
+        mood = "relaxing, peaceful, calm"
+    
     color_start, color_end, _ = get_color_scheme_for_bgm_preset(preset_name)
     color_phrase = f"color palette mixing RGB {color_start} to {color_end}"
     
     prompt = (
-        f"Ultra realistic, cinematic illustration for a YouTube video background depicting {description}. "
-        f"Atmosphere: cozy {name.lower()} with gentle holiday lights, soft depth of field, "
-        f"warm bokeh, subtle snowflakes outside the window. Style: {style}. "
+        f"Ultra realistic, cinematic illustration for a YouTube video background for {name}. "
+        f"Atmosphere: {atmosphere}. "
+        f"Mood: {mood}. "
+        f"Style: {style if style else 'cinematic'}. "
         f"Keywords: {tag_phrase}. {color_phrase}. "
-        f"No text, no watermark, 4K detailed lighting, perfect for a relaxing music video."
+        f"No text, no watermark, 4K detailed lighting, perfect for a music video background."
     )
     return prompt
 
@@ -624,18 +645,66 @@ def generate_background_image_for_bgm(preset_name: str) -> Path:
             dalle_prompt = build_dalle_prompt_for_preset(preset_name)
             if dalle_prompt:
                 logger.info("DALL-E 3로 이미지 생성 시도...")
+                
+                # 최종 저장 경로 미리 설정 (프리셋 이름 포함하여 고유하게)
+                output_dir = OUTPUT_DIR / "images"
+                output_dir.mkdir(parents=True, exist_ok=True)
+                date_str = datetime.now().strftime("%Y-%m-%d")
+                final_path = output_dir / f"{date_str}_{preset_name}_bg.png"
+                
+                # 기존 파일이 있으면 삭제 (덮어쓰기 방지)
+                if final_path.exists():
+                    logger.info(f"기존 이미지 파일 삭제: {final_path}")
+                    final_path.unlink()
+                
                 dalle_image = api_manager.generate_image(
                     prompt=dalle_prompt,
                     use_dalle=True,
                     width=width,
-                    height=height
+                    height=height,
+                    output_path=final_path  # 최종 경로를 직접 전달
                 )
                 
-                if dalle_image and dalle_image.exists():
-                    logger.info(f"DALL-E 이미지 생성 완료: {dalle_image}")
-                    return dalle_image
+                if dalle_image:
+                    dalle_path = Path(dalle_image)
+                    # 파일이 존재하는지 확인
+                    if dalle_path.exists() and dalle_path.stat().st_size > 0:
+                        logger.info(f"DALL-E 이미지 생성 완료: {dalle_image}")
+                        # 파일명이 다르면 이동 (프리셋 이름이 포함된 최종 경로로)
+                        if dalle_path != final_path:
+                            import shutil
+                            # 최종 경로에 파일이 있으면 삭제
+                            if final_path.exists():
+                                final_path.unlink()
+                            shutil.move(str(dalle_path), str(final_path))
+                            logger.info(f"이미지를 최종 경로로 이동: {dalle_path} -> {final_path}")
+                        
+                        # 최종 경로 확인 및 검증
+                        if final_path.exists() and final_path.stat().st_size > 0:
+                            logger.info(f"✅ DALL-E 이미지 최종 저장 완료: {final_path}")
+                            # 여기서 즉시 반환 (예외 발생 전에)
+                            return final_path
+                        else:
+                            logger.warning(f"⚠️  최종 경로에 파일이 없거나 비어있습니다: {final_path}")
+                    else:
+                        logger.warning(f"⚠️  DALL-E 이미지 파일이 존재하지 않거나 비어있습니다: {dalle_image}")
+                elif dalle_image:
+                    # 경로는 반환되었지만 파일이 없는 경우
+                    logger.warning(f"DALL-E 이미지 경로는 있지만 파일이 없음: {dalle_image}")
+        except KeyError as e:
+            # 딕셔너리 키 에러 (예: 'daily') - 이미지가 생성되었을 수 있으므로 확인
+            if final_path.exists() and final_path.stat().st_size > 0:
+                logger.info(f"키 에러 발생했지만 이미지가 생성되었습니다: {final_path}")
+                return final_path
+            logger.warning(f"DALL-E 생성 중 키 에러 (무료 API로 폴백): {e}")
         except Exception as e:
-            logger.debug(f"DALL-E 생성 실패 (무료 API로 폴백): {e}")
+            # 기타 예외 - 이미지가 생성되었을 수 있으므로 확인
+            if final_path.exists() and final_path.stat().st_size > 0:
+                logger.info(f"예외 발생했지만 이미지가 생성되었습니다: {final_path}")
+                return final_path
+            logger.warning(f"DALL-E 생성 실패 (무료 API로 폴백): {e}")
+            import traceback
+            logger.debug(traceback.format_exc())
         
         # 2) APIManager를 통한 무료 이미지 API 사용 (DALL-E 실패 시)
         try:

@@ -105,7 +105,9 @@ class OpenAIProvider:
         prompt: str,
         size: str = "1024x1024",
         quality: str = "standard",
-        output_path: Optional[Path] = None
+        output_path: Optional[Path] = None,
+        target_width: Optional[int] = None,
+        target_height: Optional[int] = None
     ) -> Optional[Path]:
         """
         DALL-E 3로 이미지 생성
@@ -115,6 +117,8 @@ class OpenAIProvider:
             size: 이미지 크기 ("1024x1024", "1792x1024", "1024x1792")
             quality: 품질 ("standard", "hd")
             output_path: 저장 경로 (None이면 자동 생성)
+            target_width: 리사이즈할 목표 너비 (None이면 원본 크기 유지)
+            target_height: 리사이즈할 목표 높이 (None이면 원본 크기 유지)
         
         Returns:
             저장된 이미지 파일 경로
@@ -140,6 +144,12 @@ class OpenAIProvider:
             # PIL Image로 변환
             img = Image.open(io.BytesIO(img_response.content))
             img = img.convert("RGB")
+            
+            # 목표 크기가 지정된 경우 리사이즈 (16:9 비율 유지하며 크롭)
+            if target_width and target_height:
+                from scripts.generate_image import resize_and_crop_to_aspect
+                img = resize_and_crop_to_aspect(img, target_width, target_height)
+                logger.info(f"DALL-E 이미지를 {target_width}x{target_height}로 리사이즈 완료")
             
             # 저장 경로 설정
             if output_path is None:

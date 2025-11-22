@@ -338,6 +338,75 @@ presets:
     duration_minutes: 180
     tags: ["lofi", "bgm", "chillhop", "study", "focus", "relaxing", "beats", "cozy"]
 
+  piano_3h:
+    name: "Piano BGM"
+    description: "피아노 장르의 롱폼 BGM (3시간)"
+    style: "classical"
+    tempo_bpm: 75
+    key: "C_major"
+    public_domain_categories:
+      include: ["piano", "classical", "calm"]
+      exclude: ["rock", "electronic", "kids", "upbeat"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "piano"
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["en", "ko"]
+    region_targets: ["NA", "KR"]
+    color_scheme:
+      start: [50, 40, 60]   # 따뜻한 브라운
+      end: [90, 80, 100]    # 밝은 아이보리
+      gradient_direction: "vertical"
+    duration_minutes: 180
+    tags: ["piano", "bgm", "classical", "study", "focus", "relaxing", "peaceful", "instrumental", "calm"]
+
+  rock_3h:
+    name: "Rock BGM"
+    description: "록 장르의 롱폼 BGM (3시간)"
+    style: "rock"
+    tempo_bpm: 110
+    key: "E_minor"
+    public_domain_categories:
+      include: ["rock", "guitar", "electric"]
+      exclude: ["classical", "jazz", "kids", "calm"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "rock"
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["en", "ko"]
+    region_targets: ["NA", "KR"]
+    color_scheme:
+      start: [100, 20, 20]  # 강렬한 빨강
+      end: [150, 50, 30]     # 오렌지 레드
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["rock", "bgm", "guitar", "energetic", "workout", "powerful", "electric", "driving"]
+
+  world_3h:
+    name: "World Music BGM"
+    description: "월드 뮤직 장르의 롱폼 BGM (3시간)"
+    style: "world"
+    tempo_bpm: 80
+    key: "D_major"
+    public_domain_categories:
+      include: ["world", "ethnic", "traditional"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "world"
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["en", "ko"]
+    region_targets: ["NA", "KR"]
+    color_scheme:
+      start: [80, 60, 40]   # 따뜻한 터키시
+      end: [120, 100, 60]   # 밝은 골드
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["world", "bgm", "ethnic", "traditional", "cultural", "exotic", "global", "diverse", "authentic"]
+
 # 스타일별 설정
 styles:
   christmas_jazz:
@@ -399,6 +468,30 @@ styles:
     harmony_style: "jazz_harmony"
     melody_complexity: "low"
     rhythm_style: "chill"
+    
+  rock:
+    chord_progression: "rock_progression"
+    harmony_style: "power_chords"
+    melody_complexity: "medium"
+    rhythm_style: "driving"
+    
+  world:
+    chord_progression: "world_progression"
+    harmony_style: "modal"
+    melody_complexity: "medium"
+    rhythm_style: "polyrhythmic"
+    
+  rock:
+    chord_progression: "rock_progression"
+    harmony_style: "power_chords"
+    melody_complexity: "medium"
+    rhythm_style: "driving"
+    
+  world:
+    chord_progression: "world_progression"
+    harmony_style: "modal"
+    melody_complexity: "medium"
+    rhythm_style: "polyrhythmic"
 
 # 악기 타입별 설정
 instruments:
