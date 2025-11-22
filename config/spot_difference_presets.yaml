@@ -5,6 +5,9 @@ presets:
     name: "시니어용 쉬운 난이도"
     description: "시니어 친화적인 쉬운 틀린그림찾기 (3개 차이점, 15초 카운트다운)"
     difficulty: "easy"
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     num_differences: 3
     countdown_seconds: 15
     num_problems: 15
@@ -27,6 +30,9 @@ presets:
     name: "시니어용 보통 난이도"
     description: "시니어 친화적인 보통 틀린그림찾기 (4~5개 차이점, 10초 카운트다운)"
     difficulty: "normal"
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     num_differences: 5
     countdown_seconds: 10
     num_problems: 20

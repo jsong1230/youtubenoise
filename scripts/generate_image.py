@@ -19,6 +19,16 @@ import numpy as np
 from openai import OpenAI
 from dotenv import load_dotenv
 
+# 프로젝트 루트 설정
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+from config import LOG_FILE, BGM_PRESETS_FILE, CONFIG_JSON_FILE, OUTPUT_DIR, PROJECT_ROOT
+from scripts.utils import setup_logging, load_yaml_file, load_json_file
+
+# 로깅 설정
+logger = setup_logging()
+
 _openai_client: Optional[OpenAI] = None
 
 
@@ -39,46 +49,17 @@ def get_openai_client() -> Optional[OpenAI]:
 
 def load_bgm_preset(preset_name: str) -> Optional[dict]:
     """BGM 프리셋 정보 로드"""
-    import yaml
-    presets_path = BGM_PRESETS_FILE
     try:
-        with open(presets_path, 'r', encoding='utf-8') as f:
-            presets_data = yaml.safe_load(f)
-            return presets_data.get("presets", {}).get(preset_name)
+        presets_data = load_yaml_file(BGM_PRESETS_FILE)
+        return presets_data.get("presets", {}).get(preset_name)
     except Exception as e:
         logger.warning(f"BGM 프리셋 로드 실패: {e}")
         return None
 
-# 프로젝트 루트 설정
-project_root = Path(__file__).parent.parent
-sys.path.insert(0, str(project_root))
-
-from config import LOG_FILE, BGM_PRESETS_FILE, CONFIG_JSON_FILE, OUTPUT_DIR, PROJECT_ROOT
-
-# 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
-
 
 def load_config() -> dict:
     """config.json 파일 로드"""
-    config_path = CONFIG_JSON_FILE
-    try:
-        with open(config_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        logger.error(f"설정 파일을 찾을 수 없습니다: {config_path}")
-        raise
-    except json.JSONDecodeError as e:
-        logger.error(f"설정 파일 파싱 오류: {e}")
-        raise
+    return load_json_file(CONFIG_JSON_FILE)
 
 
 def get_color_scheme_for_noise_type(noise_type: str) -> Tuple[Tuple[int, int, int], Tuple[int, int,  int]]:
@@ -573,10 +554,54 @@ def generate_image_with_dalle(preset_name: str, width: int, height: int) -> Opti
         return None
 
 
+def build_image_search_query_from_preset(preset_name: str) -> str:
+    """
+    프리셋 이름에서 이미지 검색어 추출
+    
+    Args:
+        preset_name: BGM 프리셋 이름
+    
+    Returns:
+        이미지 검색어
+    """
+    try:
+        # 프리셋 정보 로드
+        preset = load_bgm_preset(preset_name)
+        if preset:
+            style = preset.get("style", "")
+            name = preset.get("name", preset_name)
+            
+            # 스타일 기반 검색어 매핑
+            style_keywords = {
+                "christmas_jazz": "christmas cafe cozy",
+                "christmas_classical": "christmas classical elegant",
+                "christmas_ambient": "christmas winter peaceful",
+                "jazz": "jazz bar night",
+                "classical": "classical music elegant",
+                "ambient": "ambient peaceful abstract",
+                "electronic": "electronic modern abstract",
+                "blues": "blues music night",
+                "folk": "folk acoustic nature",
+                "lofi": "lofi chill study"
+            }
+            
+            if style in style_keywords:
+                return style_keywords[style]
+            
+            # 프리셋 이름에서 키워드 추출
+            keywords = name.lower().replace("bgm", "").replace("music", "").strip()
+            return keywords if keywords else preset_name
+    except Exception as e:
+        logger.debug(f"프리셋 정보 로드 실패: {e}")
+    
+    # 폴백: 프리셋 이름에서 직접 추출
+    return preset_name.replace("_", " ").replace("3h", "").replace("2h", "").strip()
+
+
 def generate_background_image_for_bgm(preset_name: str) -> Path:
     """
     BGM용 배경 이미지 생성 함수
-    먼저 무료 이미지를 다운로드 시도하고, 실패하면 생성합니다.
+    APIManager를 사용하여 무료 이미지 API 우선 사용, 실패 시 DALL-E, 최종 폴백으로 Pillow
     
     Args:
         preset_name: BGM 프리셋 이름
@@ -590,22 +615,52 @@ def generate_background_image_for_bgm(preset_name: str) -> Path:
         # 타겟 해상도
         width, height = 1920, 1080
         
-        # 1) DALL·E 이미지 생성 시도
-        dalle_image = generate_image_with_dalle(preset_name, width, height)
-        if dalle_image:
-            return dalle_image
-        
-        # 2) 무료 이미지 다운로드 시도
+        # 1) DALL·E 이미지 생성 우선 시도 (APIManager 통해서)
         try:
-            from scripts.download_public_domain_images import get_background_image_for_preset
-            downloaded_image = get_background_image_for_preset(preset_name, width, height)
+            from src.api.api_manager import APIManager
+            api_manager = APIManager()
+            
+            # DALL-E 프롬프트 생성
+            dalle_prompt = build_dalle_prompt_for_preset(preset_name)
+            if dalle_prompt:
+                logger.info("DALL-E 3로 이미지 생성 시도...")
+                dalle_image = api_manager.generate_image(
+                    prompt=dalle_prompt,
+                    use_dalle=True,
+                    width=width,
+                    height=height
+                )
+                
+                if dalle_image and dalle_image.exists():
+                    logger.info(f"DALL-E 이미지 생성 완료: {dalle_image}")
+                    return dalle_image
+        except Exception as e:
+            logger.debug(f"DALL-E 생성 실패 (무료 API로 폴백): {e}")
+        
+        # 2) APIManager를 통한 무료 이미지 API 사용 (DALL-E 실패 시)
+        try:
+            from src.api.api_manager import APIManager
+            api_manager = APIManager()
+            
+            # 프리셋에서 검색어 추출
+            search_query = build_image_search_query_from_preset(preset_name)
+            logger.info(f"무료 이미지 API로 검색 시도... (검색어: {search_query})")
+            
+            # 무료 이미지 다운로드 시도
+            downloaded_image = api_manager.generate_image(
+                prompt=search_query,
+                use_dalle=False,
+                width=width,
+                height=height
+            )
+            
             if downloaded_image and downloaded_image.exists():
-                logger.info(f"다운로드된 이미지 사용: {downloaded_image}")
+                logger.info(f"무료 이미지 API로 이미지 다운로드 완료: {downloaded_image}")
                 return downloaded_image
         except Exception as e:
-            logger.debug(f"이미지 다운로드 시도 실패 (생성으로 대체): {e}")
+            logger.debug(f"APIManager 사용 실패 (Pillow로 폴백): {e}")
         
-        # 3) Pillow 기반 이미지 생성
+        # 3) Pillow 기반 이미지 생성 (최종 폴백)
         logger.info(f"이미지 생성 중... (프리셋: {preset_name})")
         
         # 프리셋에서 색상 스킴 가져오기

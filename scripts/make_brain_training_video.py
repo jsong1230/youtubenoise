@@ -19,31 +19,10 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
+from scripts.utils import setup_logging, check_ffmpeg
+
 # 로깅 설정
-log_file = project_root / "logs" / "app.log"
-log_file.parent.mkdir(parents=True, exist_ok=True)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(log_file, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
-
-
-def check_ffmpeg() -> bool:
-    """FFmpeg 설치 여부 확인"""
-    try:
-        result = subprocess.run(
-            ["ffmpeg", "-version"],
-            capture_output=True,
-            text=True
-        )
-        return result.returncode == 0
-    except FileNotFoundError:
-        return False
+logger = setup_logging()
 
 
 def download_image(url: str, output_path: Path) -> bool:

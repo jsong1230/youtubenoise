@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}대시보드 - Brain & Calm Studio{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>채널 통계</h2>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>총 영상</h3>
+            <p class="stat-value">{{ channel_state.get('total_videos', 0) }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>총 조회수</h3>
+            <p class="stat-value">{{ "{:,}".format(channel_state.get('total_views', 0)) }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>구독자</h3>
+            <p class="stat-value">{{ "{:,}".format(channel_state.get('total_subscribers', 0)) }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>시청 시간</h3>
+            <p class="stat-value">{{ "{:.1f}".format(channel_state.get('total_watch_time_hours', 0)) }}시간</p>
+        </div>
+    </div>
+    
+    <h2>콘텐츠 필러별 성과</h2>
+    <div class="pillars-grid">
+        {% for pillar, data in channel_state.get('content_pillars', {}).items() %}
+        <div class="pillar-card">
+            <h3>{{ pillar }}</h3>
+            <ul>
+                <li>영상 수: {{ data.get('count', 0) }}</li>
+                <li>총 조회수: {{ "{:,}".format(data.get('total_views', 0)) }}</li>
+                <li>평균 조회수: {{ "{:,}".format(data.get('avg_views', 0)) }}</li>
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <h2>API 사용량</h2>
+    <div class="api-usage">
+        {% if api_usage %}
+        <div class="stat-card">
+            <h3>총 비용</h3>
+            <p class="stat-value">${{ "%.2f"|format(api_usage.get('total', {}).get('cost', 0)) }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>총 요청 수</h3>
+            <p class="stat-value">{{ "{:,}".format(api_usage.get('total', {}).get('requests', 0)) }}</p>
+        </div>
+        {% else %}
+        <p>API 사용량 데이터가 없습니다.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
+

@@ -16,30 +16,10 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT
+from scripts.utils import setup_logging, check_ffmpeg
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
-
-
-def check_ffmpeg() -> bool:
-    """FFmpeg 설치 여부 확인"""
-    try:
-        result = subprocess.run(
-            ["ffmpeg", "-version"],
-            capture_output=True,
-            text=True
-        )
-        return result.returncode == 0
-    except FileNotFoundError:
-        return False
+logger = setup_logging()
 
 
 def make_video(background_image: Path, audio_file: Path, output_path: Optional[Path] = None) -> Path:

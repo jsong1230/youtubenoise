@@ -23,6 +23,7 @@ load_dotenv(project_root / ".env")
 # Analytics API를 사용하려면 yt-analytics.readonly도 추가
 SCOPES = [
     'https://www.googleapis.com/auth/youtube.upload',
+    'https://www.googleapis.com/auth/youtube.readonly',  # 채널 정보 읽기용
     'https://www.googleapis.com/auth/yt-analytics.readonly'  # Analytics API용
 ]
 

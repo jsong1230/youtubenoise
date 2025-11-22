@@ -1,49 +1,590 @@
 {
-    "channel_id": "",
-    "channel_name": "Brain & Calm Studio",
-    "total_videos": 0,
-    "total_views": 0,
-    "total_subscribers": 0,
-    "total_watch_time_hours": 0,
-    "last_upload": null,
-    "content_pillars": {
-        "brain_training": {
-            "count": 0,
-            "total_views": 0,
-            "avg_views": 0,
-            "avg_watch_time": 0,
-            "last_upload": null
-        },
-        "spot_difference": {
-            "count": 0,
-            "total_views": 0,
-            "avg_views": 0,
-            "avg_watch_time": 0,
-            "last_upload": null
-        },
-        "bgm_focus": {
-            "count": 0,
-            "total_views": 0,
-            "avg_views": 0,
-            "avg_watch_time": 0,
-            "last_upload": null
-        },
-        "bgm_sleep": {
-            "count": 0,
-            "total_views": 0,
-            "avg_views": 0,
-            "avg_watch_time": 0,
-            "last_upload": null
-        },
-        "ai_explainer": {
-            "count": 0,
-            "total_views": 0,
-            "avg_views": 0,
-            "avg_watch_time": 0,
-            "last_upload": null
-        }
+  "channel_id": "UC1QQVN1enfrqaLhhkUnHZPQ",
+  "channel_name": "AICryptoFunk",
+  "total_videos": 49,
+  "total_views": 1205,
+  "total_subscribers": 4,
+  "total_watch_time_hours": 0,
+  "last_upload": null,
+  "content_pillars": {
+    "brain_training": {
+      "count": 0,
+      "total_views": 0,
+      "avg_views": 0,
+      "avg_watch_time": 0,
+      "last_upload": null
     },
-    "last_sync": null,
-    "created_at": "2025-11-22T00:00:00Z",
-    "notes": "이 파일은 Git으로 관리됩니다. 채널 상태를 추적하여 어디서든 git pull로 현재 상태를 파악할 수 있습니다."
+    "spot_difference": {
+      "count": 0,
+      "total_views": 0,
+      "avg_views": 0,
+      "avg_watch_time": 0,
+      "last_upload": null
+    },
+    "bgm_focus": {
+      "count": 1,
+      "total_views": 10,
+      "avg_views": 10,
+      "avg_watch_time": 0,
+      "last_upload": "2025-11-16T08:34:00Z"
+    },
+    "bgm_sleep": {
+      "count": 2,
+      "total_views": 11,
+      "avg_views": 5,
+      "avg_watch_time": 0,
+      "last_upload": "2025-11-15T16:01:15Z"
+    },
+    "ai_explainer": {
+      "count": 1,
+      "total_views": 4,
+      "avg_views": 4,
+      "avg_watch_time": 0,
+      "last_upload": "2025-11-20T15:49:03Z"
+    }
+  },
+  "last_sync": "2025-11-22T16:53:14.523634",
+  "created_at": "2025-11-22T00:00:00Z",
+  "notes": "이 파일은 Git으로 관리됩니다. 채널 상태를 추적하여 어디서든 git pull로 현재 상태를 파악할 수 있습니다.",
+  "videos": [
+    {
+      "video_id": "0DDhBYBuqaw",
+      "title": "Holiday Spending Trap: Why Americans Waste $1,500 Every December and How to Stop It #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 22일\n📌 영상 주제: ",
+      "published_at": "2025-11-21T15:18:05Z",
+      "thumbnail": "https://i.ytimg.com/vi/0DDhBYBuqaw/mqdefault.jpg",
+      "views": 9,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT56S"
+    },
+    {
+      "video_id": "Q0qk_EGmOxU",
+      "title": "December Tax Hack: How to Save ,000 Before Year-End With These 3 Moves #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 22일\n📌 영상 주제: ",
+      "published_at": "2025-11-21T15:09:33Z",
+      "thumbnail": "https://i.ytimg.com/vi/Q0qk_EGmOxU/mqdefault.jpg",
+      "views": 8,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "LEoAEnnYpGw",
+      "title": "Recession-Proof Skill Stack: Combine Storytelling + Data #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 21일\n📌 영상 주제: ",
+      "published_at": "2025-11-20T16:00:11Z",
+      "thumbnail": "https://i.ytimg.com/vi/LEoAEnnYpGw/mqdefault.jpg",
+      "views": 9,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "neKDpoaoWoQ",
+      "title": "Micro-Morning Routine for High-Energy Productivity #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 21일\n📌 영상 주제: ",
+      "published_at": "2025-11-20T15:56:21Z",
+      "thumbnail": "https://i.ytimg.com/vi/neKDpoaoWoQ/mqdefault.jpg",
+      "views": 4,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT59S"
+    },
+    {
+      "video_id": "q3uI1v923X8",
+      "title": "Credit Score Glow-Up: 30-Day Plan for Millennials #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 21일\n📌 영상 주제: ",
+      "published_at": "2025-11-20T15:52:36Z",
+      "thumbnail": "https://i.ytimg.com/vi/q3uI1v923X8/mqdefault.jpg",
+      "views": 5,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "hzXFwoh9oBs",
+      "title": "AI-Powered Savings Jar: Automate Spare Change Into Index Funds #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 21일\n📌 영상 주제: ",
+      "published_at": "2025-11-20T15:49:03Z",
+      "thumbnail": "https://i.ytimg.com/vi/hzXFwoh9oBs/mqdefault.jpg",
+      "views": 4,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "9-nuUzhT5IM",
+      "title": "Side Hustle Sprint: Flip Black Friday Deals for Extra  #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 21일\n📌 영상 주제: ",
+      "published_at": "2025-11-20T15:45:29Z",
+      "thumbnail": "https://i.ytimg.com/vi/9-nuUzhT5IM/mqdefault.jpg",
+      "views": 3,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT54S"
+    },
+    {
+      "video_id": "yyTVlenTrj4",
+      "title": "November Budget Reset: 3 Micro Habits To Kill Impulse Spending #Shorts",
+      "description": "AI Generated YouTube Shorts\n\nGenerated automatically on 2025-11-21 00:36:59 (KST).\nTopic: November Budget Reset: 3 Micro Habits To Kill Impulse Spending\nLanguage: English",
+      "published_at": "2025-11-20T15:37:47Z",
+      "thumbnail": "https://i.ytimg.com/vi/yyTVlenTrj4/mqdefault.jpg",
+      "views": 6,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT54S"
+    },
+    {
+      "video_id": "25wizh1ngvk",
+      "title": "Lofi BGM - 3시간 Long Form BGM",
+      "description": "Welcome to our Lofi BGM, a 3-hour long form background music track perfect for any occasion. This original, copyright-free music is designed to create a calming atmosphere, making it an ideal choice f",
+      "published_at": "2025-11-20T02:55:43Z",
+      "thumbnail": "https://i.ytimg.com/vi/25wizh1ngvk/mqdefault.jpg",
+      "views": 5,
+      "likes": 3,
+      "comments": 0,
+      "duration": "PT3H2S"
+    },
+    {
+      "video_id": "bnzdnCVmdZ0",
+      "title": "Folk BGM Background Music (3시간)",
+      "description": "Welcome to our original, copyright-free Folk BGM video! Immerse yourself in the soothing melodies of folk music designed to create a warm and inviting atmosphere. This 3-hour long-form background musi",
+      "published_at": "2025-11-20T02:53:58Z",
+      "thumbnail": "https://i.ytimg.com/vi/bnzdnCVmdZ0/mqdefault.jpg",
+      "views": 7,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT3H3S"
+    },
+    {
+      "video_id": "3bgt1ONfxgQ",
+      "title": "Blues BGM - 3시간 Long Form BGM",
+      "description": "Experience the soothing sounds of our original Blues BGM, a long-form background music piece that lasts for a relaxing 3 hours. This copyright-free music is perfect for creating a laid-back atmosphere",
+      "published_at": "2025-11-20T03:05:42Z",
+      "thumbnail": "https://i.ytimg.com/vi/3bgt1ONfxgQ/mqdefault.jpg",
+      "views": 4,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT3H2S"
+    },
+    {
+      "video_id": "T892L_SCKns",
+      "title": "Black Friday Sales Tip | Auto",
+      "description": "Seasonal tip reel explaining how to survive Black Friday sales while keeping Korean household budgets intact.",
+      "published_at": "2025-11-19T15:01:41Z",
+      "thumbnail": "https://i.ytimg.com/vi/T892L_SCKns/mqdefault.jpg",
+      "views": 4,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "oHHjFBFcZY0",
+      "title": "Routine Micro Story | Short Story",
+      "description": "Short inspirational narrative that shows how tiny evening routines protect your wallet and focus.",
+      "published_at": "2025-11-19T15:01:52Z",
+      "thumbnail": "https://i.ytimg.com/vi/oHHjFBFcZY0/mqdefault.jpg",
+      "views": 7,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "Vu8xrbP7Fqs",
+      "title": "Surprising Money Fact | Fact",
+      "description": "Eye-opening finance fact tailored to Korea's year-end budgeting crunch. Use it to audit your spending right now.",
+      "published_at": "2025-11-19T15:01:56Z",
+      "thumbnail": "https://i.ytimg.com/vi/Vu8xrbP7Fqs/mqdefault.jpg",
+      "views": 14,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "2Kp-2c65iyw",
+      "title": "Rebuilt Finances Story | Story",
+      "description": "Mini story of a nine-to-five worker rebuilding cash flow and savings in under a year. Practical steps you can mirror today.",
+      "published_at": "2025-11-19T15:01:42Z",
+      "thumbnail": "https://i.ytimg.com/vi/2Kp-2c65iyw/mqdefault.jpg",
+      "views": 7,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "OgUBCWgDQpE",
+      "title": "Mindset Quote Boost | Quote",
+      "description": "Power quote on resilient money mindset plus one actionable takeaway for Korean investors. Keep compounding your habits.",
+      "published_at": "2025-11-19T15:01:37Z",
+      "thumbnail": "https://i.ytimg.com/vi/OgUBCWgDQpE/mqdefault.jpg",
+      "views": 2,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "OaqGCXeROeo",
+      "title": "Autumn Routine Reset | Hook",
+      "description": "A 55-second hook about rebooting your routines for fall while keeping finances intentional. Daily money-smart actions for cozy months.",
+      "published_at": "2025-11-19T15:01:35Z",
+      "thumbnail": "https://i.ytimg.com/vi/OaqGCXeROeo/mqdefault.jpg",
+      "views": 6,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "hOhbr8yeRLw",
+      "title": "Electronic BGM - 3시간 Long Form Background Music",
+      "description": "Welcome to our original, copyright-free Electronic BGM designed to elevate your experience over 3 hours of continuous music. This algorithmically generated track belongs to the electronic genre, creat",
+      "published_at": "2025-11-19T04:20:35Z",
+      "thumbnail": "https://i.ytimg.com/vi/hOhbr8yeRLw/mqdefault.jpg",
+      "views": 7,
+      "likes": 0,
+      "comments": 0,
+      "duration": "PT3H3S"
+    },
+    {
+      "video_id": "QhgPX_2m3Fo",
+      "title": "Classical BGM - 3시간 Long Form Background Music",
+      "description": "Welcome to our tranquil and elegant Classical BGM, a 3-hour long-form background music experience designed to enhance your environment. This original, copyright-free music is perfect for those seeking",
+      "published_at": "2025-11-19T04:17:55Z",
+      "thumbnail": "https://i.ytimg.com/vi/QhgPX_2m3Fo/mqdefault.jpg",
+      "views": 5,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT3H3S"
+    },
+    {
+      "video_id": "GDoAlLF3wvE",
+      "title": "Ambient BGM - 3시간 Long Form BGM",
+      "description": "Welcome to our Ambient BGM, an original and copyright-free background music experience designed to enhance your environment. This long-form BGM track spans 3 hours, providing a soothing and immersive ",
+      "published_at": "2025-11-19T04:18:08Z",
+      "thumbnail": "https://i.ytimg.com/vi/GDoAlLF3wvE/mqdefault.jpg",
+      "views": 3,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT3H2S"
+    },
+    {
+      "video_id": "4tiIqSZKK08",
+      "title": "연말정산 직전, 난방비 환급 체크리스트 (에너지바우처·카드 소득공제·지자체 지원금 신청 순서) #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 19일\n📌 영상 주제: ",
+      "published_at": "2025-11-18T15:48:06Z",
+      "thumbnail": "https://i.ytimg.com/vi/4tiIqSZKK08/mqdefault.jpg",
+      "views": 11,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT56S"
+    },
+    {
+      "video_id": "SKTn3EX0gpg",
+      "title": "계절 가전 재활용: 구형 온풍기·전기장판 중고 재판매로 월 30만 원 만드는 겨울 벼룩장 플립 #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 19일\n📌 영상 주제: ",
+      "published_at": "2025-11-18T15:44:28Z",
+      "thumbnail": "https://i.ytimg.com/vi/SKTn3EX0gpg/mqdefault.jpg",
+      "views": 8,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "uSS_eRmA_hE",
+      "title": "전세 보증금 안심 플랜: 만기 90일 전부터 준비하는 비상자금-대출 조합 전략 #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 19일\n📌 영상 주제: ",
+      "published_at": "2025-11-18T15:38:26Z",
+      "thumbnail": "https://i.ytimg.com/vi/uSS_eRmA_hE/mqdefault.jpg",
+      "views": 7,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "YOuBbhH7bmM",
+      "title": "퇴근 후 20분, 한국 직장인을 위한 전기요금 누진 방지 야간 라이트 관리 루틴 #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 19일\n📌 영상 주제: ",
+      "published_at": "2025-11-18T15:35:44Z",
+      "thumbnail": "https://i.ytimg.com/vi/YOuBbhH7bmM/mqdefault.jpg",
+      "views": 9,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT53S"
+    },
+    {
+      "video_id": "F6STtPHt7uw",
+      "title": "난방비 폭탄 대비, 전기요금 누진 구간 안 넘는 24시간 난방 루틴 #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 19일\n📌 영상 주제: ",
+      "published_at": "2025-11-18T15:07:32Z",
+      "thumbnail": "https://i.ytimg.com/vi/F6STtPHt7uw/mqdefault.jpg",
+      "views": 4,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "ocJwmNoEEHM",
+      "title": "겨울 난방비를 절반으로 줄이는 3단계 준비 체크리스트 #Shorts",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 18일\n📌 영상 주제: ",
+      "published_at": "2025-11-18T13:56:31Z",
+      "thumbnail": "https://i.ytimg.com/vi/ocJwmNoEEHM/mqdefault.jpg",
+      "views": 5,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "5nRxfR12RpE",
+      "title": "Jazz Cafe BGM - 3시간 Long Form BGM",
+      "description": "Welcome to our Jazz Cafe BGM, a 3-hour long-form background music experience crafted to evoke the cozy ambiance of a jazz café. This original, copyright-free music is perfect for creating a relaxed at",
+      "published_at": "2025-11-18T08:42:26Z",
+      "thumbnail": "https://i.ytimg.com/vi/5nRxfR12RpE/mqdefault.jpg",
+      "views": 10,
+      "likes": 3,
+      "comments": 0,
+      "duration": "PT3H2S"
+    },
+    {
+      "video_id": "VTt_1M4pUoc",
+      "title": "옷장 정리 하나로 출근 스트레스가 줄어든 이야기",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 18일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-17T15:36:48Z",
+      "thumbnail": "https://i.ytimg.com/vi/VTt_1M4pUoc/mqdefault.jpg",
+      "views": 10,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT55S"
+    },
+    {
+      "video_id": "zlkLKCvDOks",
+      "title": "가을 환절기에 집이 가장 더러워지는 이유",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 18일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-17T15:34:34Z",
+      "thumbnail": "https://i.ytimg.com/vi/zlkLKCvDOks/mqdefault.jpg",
+      "views": 8,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "gpGcPT0JdxA",
+      "title": "옷장이 항상 지저분하던 사람이 계절 교체 루틴으로 변한 과정",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 18일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-17T15:32:03Z",
+      "thumbnail": "https://i.ytimg.com/vi/gpGcPT0JdxA/mqdefault.jpg",
+      "views": 4,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT56S"
+    },
+    {
+      "video_id": "3FCQ28D1QxA",
+      "title": "계절이 바뀌면 삶도 정리할 때다.",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 18일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-17T15:29:31Z",
+      "thumbnail": "https://i.ytimg.com/vi/3FCQ28D1QxA/mqdefault.jpg",
+      "views": 7,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "B9NqW86tcDM",
+      "title": "Lofi Jazz Winter Lounge - 3시간 Long Form BGM",
+      "description": "Welcome to the 'Lofi Jazz Winter Lounge', a delightful 3-hour compilation of original, copyright-free lofi jazz and chillhop tracks designed to create the perfect winter cafe ambiance. Immerse yoursel",
+      "published_at": "2025-11-17T13:28:25Z",
+      "thumbnail": "https://i.ytimg.com/vi/B9NqW86tcDM/mqdefault.jpg",
+      "views": 7,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT3H1S"
+    },
+    {
+      "video_id": "V5KG5nTIjCI",
+      "title": "Christmas Cafe BGM Piano - 3시간 Long Form BGM",
+      "description": "Welcome to the soothing sounds of our original, copyright-free music piece, \"Christmas Cafe BGM Piano\". This enchanting background music, crafted in a delightful christmas_jazz style, perfectly captur",
+      "published_at": "2025-11-17T09:56:49Z",
+      "thumbnail": "https://i.ytimg.com/vi/V5KG5nTIjCI/mqdefault.jpg",
+      "views": 3,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT3H3S"
+    },
+    {
+      "video_id": "8Q99UdhWqCA",
+      "title": "Christmas Cafe BGM - 3시간 Long Form BGM",
+      "description": "Experience the warmth of the festive season with our original, copyright-free Christmas Cafe BGM, designed to immerse you in a cozy and cheerful atmosphere. This 3-hour long-form background music feat",
+      "published_at": "2025-11-16T15:40:16Z",
+      "thumbnail": "https://i.ytimg.com/vi/8Q99UdhWqCA/mqdefault.jpg",
+      "views": 20,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT3H2S"
+    },
+    {
+      "video_id": "np3BuZ5-fgM",
+      "title": "연봉보다 중요한 자산 개념",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 17일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-16T15:13:37Z",
+      "thumbnail": "https://i.ytimg.com/vi/np3BuZ5-fgM/mqdefault.jpg",
+      "views": 10,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT53S"
+    },
+    {
+      "video_id": "jnJZjVlbo5k",
+      "title": "리스크 관리의 핵심 원리",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 17일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-16T15:12:00Z",
+      "thumbnail": "https://i.ytimg.com/vi/jnJZjVlbo5k/mqdefault.jpg",
+      "views": 10,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "1OtQEJP-hdU",
+      "title": "절세에 대한 놀라운 사실",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 17일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-16T15:09:41Z",
+      "thumbnail": "https://i.ytimg.com/vi/1OtQEJP-hdU/mqdefault.jpg",
+      "views": 4,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT56S"
+    },
+    {
+      "video_id": "-1g1pmuZYio",
+      "title": "돈을 버는 사람과 못 버는 사람의 차이",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 17일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-16T15:07:38Z",
+      "thumbnail": "https://i.ytimg.com/vi/-1g1pmuZYio/mqdefault.jpg",
+      "views": 3,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT56S"
+    },
+    {
+      "video_id": "fzBRQijxNDI",
+      "title": "가난으로 가는 습관 하나",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 17일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-16T15:05:27Z",
+      "thumbnail": "https://i.ytimg.com/vi/fzBRQijxNDI/mqdefault.jpg",
+      "views": 10,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT54S"
+    },
+    {
+      "video_id": "4kl-AfZDfsI",
+      "title": "부자가 되는 길은 생각보다 단순하다",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 17일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-16T15:02:48Z",
+      "thumbnail": "https://i.ytimg.com/vi/4kl-AfZDfsI/mqdefault.jpg",
+      "views": 4,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT55S"
+    },
+    {
+      "video_id": "tw-Dos5FGJc",
+      "title": "Lofi Hip Hop for Deep Focus and Relaxation (4 Hours)",
+      "description": "Immerse yourself in this 4-hour Lofi Hip Hop audio journey designed to enhance your productivity and relaxation. Perfect for creating a calming atmosphere, this playlist features soothing beats that h",
+      "published_at": "2025-11-16T08:34:00Z",
+      "thumbnail": "https://i.ytimg.com/vi/tw-Dos5FGJc/mqdefault.jpg",
+      "views": 10,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT4H2S"
+    },
+    {
+      "video_id": "46XATy0FW_A",
+      "title": "절약이 아니라 투자를 해야 하는 이유",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 16일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-15T16:31:56Z",
+      "thumbnail": "https://i.ytimg.com/vi/46XATy0FW_A/mqdefault.jpg",
+      "views": 8,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT54S"
+    },
+    {
+      "video_id": "-2LtbtOP0i8",
+      "title": "평범한 사람이 부자가 되는 3단계",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 16일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-15T16:18:27Z",
+      "thumbnail": "https://i.ytimg.com/vi/-2LtbtOP0i8/mqdefault.jpg",
+      "views": 6,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "QllpZtl1mr8",
+      "title": "리치들이 절대 하지 않는 행동",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 16일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-15T16:08:41Z",
+      "thumbnail": "https://i.ytimg.com/vi/QllpZtl1mr8/mqdefault.jpg",
+      "views": 12,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT53S"
+    },
+    {
+      "video_id": "_wNxHp-ed_A",
+      "title": "투자 지혜 한 줄",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 16일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-15T16:01:05Z",
+      "thumbnail": "https://i.ytimg.com/vi/_wNxHp-ed_A/mqdefault.jpg",
+      "views": 297,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT58S"
+    },
+    {
+      "video_id": "YwWoyZwkUUY",
+      "title": "성공한 사람들의 명언",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 16일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-15T15:55:09Z",
+      "thumbnail": "https://i.ytimg.com/vi/YwWoyZwkUUY/mqdefault.jpg",
+      "views": 306,
+      "likes": 3,
+      "comments": 0,
+      "duration": "PT56S"
+    },
+    {
+      "video_id": "RfjRr8Fissc",
+      "title": "Pink Noise for Deep Sleep (4 Hours)",
+      "description": "Welcome to our 4-hour pink noise audio experience, designed specifically to help you drift off into a deep, restful sleep. Pink noise, known for its soothing and consistent sound, creates a perfect ba",
+      "published_at": "2025-11-15T16:01:15Z",
+      "thumbnail": "https://i.ytimg.com/vi/RfjRr8Fissc/mqdefault.jpg",
+      "views": 7,
+      "likes": 1,
+      "comments": 0,
+      "duration": "PT4H2S"
+    },
+    {
+      "video_id": "a0G-4_rks-M",
+      "title": "성공한 사람들의 비밀",
+      "description": "AI Generated YouTube Shorts\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📺 영상 정보\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n📅 업로드 날짜: 2025년 11월 16일\n⏱️ 영상 길이:",
+      "published_at": "2025-11-15T15:50:27Z",
+      "thumbnail": "https://i.ytimg.com/vi/a0G-4_rks-M/mqdefault.jpg",
+      "views": 307,
+      "likes": 3,
+      "comments": 0,
+      "duration": "PT57S"
+    },
+    {
+      "video_id": "2l0o6ZoVSUI",
+      "title": "Pink Noise for Deep Sleep (0.25 Hours)",
+      "description": "Welcome to our soothing Pink Noise audio designed to help you relax and drift off into a peaceful slumber. Pink noise is a gentle sound that contains equal energy across octaves, making it ideal for m",
+      "published_at": "2025-11-15T15:50:15Z",
+      "thumbnail": "https://i.ytimg.com/vi/2l0o6ZoVSUI/mqdefault.jpg",
+      "views": 4,
+      "likes": 2,
+      "comments": 0,
+      "duration": "PT15M2S"
+    }
+  ]
 }

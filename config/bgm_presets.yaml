@@ -12,6 +12,9 @@ presets:
     public_domain_categories:
       include: ["lofi", "piano", "calm"]
       exclude: ["kids", "electronic"]
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     # Public Domain 음악 자동 사용: audio/public_domain/ 폴더의 음악 파일을 자동으로 찾아 사용
     # 수동 설정하려면 아래 주석 해제:
     # use_external_audio: true
@@ -85,33 +88,6 @@ presets:
     duration_minutes: 240
     tags: ["christmas", "ambient", "bgm", "relaxing", "holiday", "meditation", "winter"]
 
-<<<<<<< Updated upstream
-  jazz_bar_3h:
-    name: "Jazz Bar BGM"
-    description: "재즈 바 감성의 저녁 BGM (3시간)"
-    style: "jazz"
-    tempo_bpm: 85
-    key: "D_minor"
-    public_domain_categories:
-      include: ["jazz", "lofi_jazz", "piano", "ambient"]
-      exclude: ["electronic", "rock", "kids"]
-    instruments:
-      - type: "piano"
-        volume: 0.55
-        style: "jazz_chords"
-      - type: "bass"
-        volume: 0.3
-        style: "walking_bass"
-      - type: "drums"
-        volume: 0.15
-        style: "brush_swing"
-    color_scheme:
-      start: [25, 20, 35]    # 어두운 퍼플
-      end: [80, 50, 40]      # 따뜻한 앰버
-      gradient_direction: "diagonal"
-    duration_minutes: 180
-    tags: ["jazz", "bar", "evening", "bgm", "lounge", "cozy", "night"]
-=======
   lofi_jazz_3h:
     name: "Lofi Jazz Winter Lounge"
     description: "공개 도메인 lofi jazz & chillhop 트랙을 조합한 3시간짜리 겨울 카페 BGM"
@@ -129,7 +105,6 @@ presets:
       gradient_direction: "diagonal"
     duration_minutes: 180
     tags: ["lofi", "jazz", "bgm", "winter", "study", "relax", "cafe", "sleep"]
->>>>>>> Stashed changes
 
   # 카페 BGM 프리셋
   cafe_jazz_2h:
@@ -233,6 +208,9 @@ presets:
     combine_mode: "combine"
     public_domain_subdir: "ambient"
     instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     color_scheme:
       start: [40, 60, 80]   # 어두운 파란색
       end: [80, 100, 120]   # 밝은 파란색
@@ -253,6 +231,9 @@ presets:
     combine_mode: "combine"
     public_domain_subdir: "classical"
     instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     color_scheme:
       start: [30, 40, 50]   # 어두운 그레이
       end: [70, 80, 90]     # 밝은 그레이
@@ -273,6 +254,9 @@ presets:
     combine_mode: "combine"
     public_domain_subdir: "electronic"
     instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     color_scheme:
       start: [80, 40, 100]  # 어두운 퍼플
       end: [120, 60, 140]   # 밝은 퍼플
@@ -293,6 +277,9 @@ presets:
     combine_mode: "combine"
     public_domain_subdir: "blues"
     instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     color_scheme:
       start: [30, 40, 60]   # 어두운 블루
       end: [60, 80, 100]    # 밝은 블루
@@ -313,6 +300,9 @@ presets:
     combine_mode: "combine"
     public_domain_subdir: "folk"
     instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     color_scheme:
       start: [60, 50, 40]   # 따뜻한 브라운
       end: [100, 80, 60]    # 카페 브라운
@@ -333,6 +323,9 @@ presets:
     combine_mode: "combine"
     public_domain_subdir: "lofi"
     instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     color_scheme:
       start: [40, 30, 50]   # 로파이 퍼플
       end: [80, 60, 90]     # 밝은 로파이 핑크
@@ -468,4 +461,7 @@ defaults:
   volume_normalization: true
   fade_in_seconds: 3.0
   fade_out_seconds: 3.0
+  # 이중언어 메타데이터 기본 설정
+  languages: ["en", "ko"]  # 주 언어, 보조 언어 (기본값: 영어 우선)
+  region_targets: ["NA", "KR"]  # 타겟 지역 (기본값: 북미 우선)
 

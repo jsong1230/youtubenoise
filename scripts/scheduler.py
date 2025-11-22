@@ -1,10 +1,12 @@
 """
 스케줄러 스크립트
-전체 파이프라인을 자동으로 실행하여 영상을 생성하고 업로드
+요일별 필러 로테이션 및 자동 업로드
+upload_schedule.yaml을 읽어서 자동 실행
 """
 import os
 import sys
 import json
+import yaml
 import random
 import logging
 import subprocess
@@ -18,31 +20,18 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from config import LOG_FILE, CONFIG_JSON_FILE, OUTPUT_DIR, PROJECT_ROOT
+from scripts.utils import setup_logging, load_json_file, load_yaml_file
+
+# 업로드 스케줄 파일 경로
+UPLOAD_SCHEDULE_FILE = project_root / "data" / "upload_schedule.yaml"
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 
 def load_config() -> dict:
     """config.json 파일 로드"""
-    config_path = CONFIG_JSON_FILE
-    try:
-        with open(config_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        logger.error(f"설정 파일을 찾을 수 없습니다: {config_path}")
-        raise
-    except json.JSONDecodeError as e:
-        logger.error(f"설정 파일 파싱 오류: {e}")
-        raise
+    return load_json_file(CONFIG_JSON_FILE)
 
 
 def run_script(script_name: str, args: list = None) -> tuple:
@@ -127,116 +116,137 @@ def save_history(history_data: Dict):
         logger.error(f"히스토리 저장 실패: {e}")
 
 
-def main():
-    """메인 실행 함수 - 전체 파이프라인 실행"""
+def load_upload_schedule() -> dict:
+    """업로드 스케줄 파일 로드"""
     try:
-        logger.info("=" * 60)
-        logger.info("스케줄러 시작 - 영상 생성 및 업로드 파이프라인")
-        logger.info("=" * 60)
+        if not UPLOAD_SCHEDULE_FILE.exists():
+            logger.warning(f"업로드 스케줄 파일을 찾을 수 없습니다: {UPLOAD_SCHEDULE_FILE}")
+            return {}
+        return load_yaml_file(UPLOAD_SCHEDULE_FILE)
+    except Exception as e:
+        logger.error(f"업로드 스케줄 파일 로드 오류: {e}")
+        return {}
+
+
+def get_today_schedule() -> Optional[Dict]:
+    """
+    오늘 요일에 해당하는 스케줄 가져오기
+    
+    Returns:
+        오늘의 스케줄 딕셔너리 (없으면 None)
+    """
+    try:
+        schedule_data = load_upload_schedule()
+        schedule = schedule_data.get("schedule", {})
         
-        # 설정 로드
-        config = load_config()
-        audio_length_sec = config.get("audio_length_sec", 14400)
-        noise_types = config.get("noise_types", ["white_noise"])
+        # 요일 이름 매핑 (0=월요일, 6=일요일)
+        weekday_names = {
+            0: "monday",
+            1: "tuesday",
+            2: "wednesday",
+            3: "thursday",
+            4: "friday",
+            5: "saturday",
+            6: "sunday"
+        }
         
-        # 노이즈 타입 선택 (랜덤 또는 순차)
-        noise_type = random.choice(noise_types)
-        duration_hours = audio_length_sec // 3600
+        today = datetime.now().weekday()
+        day_name = weekday_names.get(today, "monday")
         
-        logger.info(f"선택된 노이즈 타입: {noise_type}")
-        logger.info(f"영상 길이: {duration_hours}시간 ({audio_length_sec}초)")
+        today_schedule = schedule.get(day_name)
+        if today_schedule:
+            logger.info(f"오늘({day_name}) 스케줄: {today_schedule.get('mode')} - {today_schedule.get('preset')}")
+            return today_schedule
+        
+        # 폴백 스케줄 사용
+        fallback = schedule_data.get("fallback_schedule", [])
+        if fallback:
+            selected = random.choice(fallback)
+            logger.info(f"스케줄이 없어 폴백 사용: {selected.get('mode')} - {selected.get('preset')}")
+            return selected
+        
+        return None
+        
+    except Exception as e:
+        logger.error(f"스케줄 가져오기 실패: {e}", exc_info=True)
+        return None
+
+
+def run_scheduled_content(schedule: Dict) -> Dict:
+    """
+    스케줄에 따라 콘텐츠 생성 및 업로드
+    
+    Args:
+        schedule: 스케줄 딕셔너리
+    
+    Returns:
+        실행 결과 딕셔너리
+    """
+    try:
+        mode = schedule.get("mode")
+        preset = schedule.get("preset")
+        upload = schedule.get("upload", True)
+        language = schedule.get("language", "en")
         
         start_time = datetime.now()
         result = {
             "start_time": start_time.isoformat(),
-            "noise_type": noise_type,
-            "duration_hours": duration_hours,
+            "mode": mode,
+            "preset": preset,
             "status": "in_progress",
             "files": {},
             "video_id": None,
             "error": None
         }
         
-        # 1. 오디오 생성
-        logger.info("\n[1/6] 오디오 생성 중...")
-        try:
-            from scripts.generate_audio import generate_noise
-            audio_path = generate_noise(noise_type, audio_length_sec)
-            result["files"]["audio"] = str(audio_path)
-            logger.info(f"오디오 생성 완료: {audio_path}")
-        except Exception as e:
-            result["status"] = "failed"
-            result["error"] = f"오디오 생성 실패: {e}"
-            logger.error(result["error"], exc_info=True)
-            save_history(result)
-            raise
+        logger.info("=" * 60)
+        logger.info(f"스케줄 실행: {mode} - {preset}")
+        logger.info("=" * 60)
         
-        # 2. 이미지 생성
-        logger.info("\n[2/6] 배경 이미지 생성 중...")
-        try:
-            from scripts.generate_image import generate_background_image
-            image_path = generate_background_image(noise_type)
-            result["files"]["image"] = str(image_path)
-            logger.info(f"이미지 생성 완료: {image_path}")
-        except Exception as e:
-            result["status"] = "failed"
-            result["error"] = f"이미지 생성 실패: {e}"
-            logger.error(result["error"], exc_info=True)
-            save_history(result)
-            raise
-        
-        # 3. 메타데이터 생성
-        logger.info("\n[3/6] 메타데이터 생성 중...")
-        try:
-            from scripts.generate_title_description import generate_metadata
-            metadata = generate_metadata(noise_type, duration_hours)
-            result["metadata"] = metadata
-            logger.info(f"메타데이터 생성 완료")
-            logger.info(f"제목: {metadata['title']}")
-        except Exception as e:
-            result["status"] = "failed"
-            result["error"] = f"메타데이터 생성 실패: {e}"
-            logger.error(result["error"], exc_info=True)
-            save_history(result)
-            raise
-        
-        # 4. 영상 생성
-        logger.info("\n[4/6] 영상 생성 중...")
-        try:
-            from scripts.make_video import make_video
-            video_path = make_video(image_path, audio_path)
+        # 모드별 실행
+        if mode == "longform_bgm":
+            duration_minutes = schedule.get("duration_minutes", 180)
+            from main import run_longform_bgm
+            run_longform_bgm(preset, duration_minutes, upload)
+            
+        elif mode == "spot_difference":
+            from scripts.generate_spot_difference import generate_spot_difference_video
+            video_path = generate_spot_difference_video(preset)
             result["files"]["video"] = str(video_path)
-            logger.info(f"영상 생성 완료: {video_path}")
-        except Exception as e:
-            result["status"] = "failed"
-            result["error"] = f"영상 생성 실패: {e}"
-            logger.error(result["error"], exc_info=True)
-            save_history(result)
-            raise
+            
+            if upload:
+                # 업로드 로직 (향후 구현)
+                logger.info("틀린그림찾기 업로드는 향후 구현 예정")
+            
+        elif mode == "brain_training":
+            from scripts.generate_brain_training import generate_brain_training_video
+            video_path = generate_brain_training_video(preset)
+            result["files"]["video"] = str(video_path)
+            
+            if upload:
+                # 업로드 로직 (향후 구현)
+                logger.info("두뇌훈련 업로드는 향후 구현 예정")
+            
+        elif mode == "ai_explainer":
+            from scripts.generate_ai_explainers import generate_ai_explainer_script
+            from scripts.make_ai_explainer_video import make_ai_explainer_video
+            from pathlib import Path
+            
+            # 스크립트 생성
+            script_data = generate_ai_explainer_script(preset)
+            script_file_path = Path(script_data.get("script_file_path"))
+            
+            # 영상 제작
+            video_path = make_ai_explainer_video(script_file_path)
+            result["files"]["video"] = str(video_path)
+            
+            if upload:
+                # 업로드 로직 (향후 구현)
+                logger.info("AI Explainer 업로드는 향후 구현 예정")
         
-        # 5. 유튜브 업로드
-        logger.info("\n[5/6] 유튜브 업로드 중...")
-        try:
-            from scripts.upload_youtube import upload_video
-            video_id = upload_video(
-                video_path=video_path,
-                title=metadata["title"],
-                description=metadata["description"],
-                tags=metadata["tags"],
-                thumbnail_path=image_path  # 썸네일로 이미지 사용
-            )
-            result["video_id"] = video_id
-            result["files"]["thumbnail"] = str(image_path)
-            logger.info(f"유튜브 업로드 완료! Video ID: {video_id}")
-            logger.info(f"영상 URL: https://www.youtube.com/watch?v={video_id}")
-        except Exception as e:
-            result["status"] = "failed"
-            result["error"] = f"유튜브 업로드 실패: {e}"
-            logger.error(result["error"], exc_info=True)
-            save_history(result)
-            raise
+        else:
+            raise ValueError(f"지원하지 않는 모드: {mode}")
         
-        # 6. 완료
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
         
@@ -244,9 +254,7 @@ def main():
         result["end_time"] = end_time.isoformat()
         result["duration_seconds"] = duration
         
-        logger.info("\n[6/6] 파이프라인 완료!")
-        logger.info(f"총 소요 시간: {duration / 60:.2f}분")
-        logger.info(f"Video ID: {result['video_id']}")
+        logger.info(f"\n스케줄 실행 완료! (소요 시간: {duration / 60:.2f}분)")
         logger.info("=" * 60)
         
         # 히스토리 저장
@@ -255,11 +263,35 @@ def main():
         return result
         
     except Exception as e:
-        logger.error(f"파이프라인 실행 중 오류 발생: {e}", exc_info=True)
+        logger.error(f"스케줄 실행 중 오류 발생: {e}", exc_info=True)
         if 'result' in locals():
             result["status"] = "failed"
             result["error"] = str(e)
             save_history(result)
+        raise
+
+
+def main():
+    """메인 실행 함수 - 오늘의 스케줄에 따라 자동 실행"""
+    try:
+        logger.info("=" * 60)
+        logger.info("스케줄러 시작 - 요일별 필러 로테이션")
+        logger.info("=" * 60)
+        
+        # 오늘의 스케줄 가져오기
+        schedule = get_today_schedule()
+        
+        if not schedule:
+            logger.warning("오늘의 스케줄이 없습니다. 종료합니다.")
+            return
+        
+        # 스케줄 실행
+        result = run_scheduled_content(schedule)
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"스케줄러 실행 중 오류 발생: {e}", exc_info=True)
         sys.exit(1)
 
 

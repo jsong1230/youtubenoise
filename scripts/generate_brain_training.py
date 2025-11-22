@@ -15,37 +15,21 @@ from collections import Counter
 from dotenv import load_dotenv
 
 # 프로젝트 루트 설정
-# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
 from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT, DATA_DIR
+from scripts.utils import setup_logging, load_yaml_file
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 
 def load_brain_training_presets() -> dict:
     """두뇌훈련 프리셋 설정 파일 로드"""
     presets_path = DATA_DIR / "brain_training_presets.yaml"
-    try:
-        with open(presets_path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f)
-    except FileNotFoundError:
-        logger.error(f"프리셋 파일을 찾을 수 없습니다: {presets_path}")
-        raise
-    except Exception as e:
-        logger.error(f"프리셋 파일 로드 오류: {e}")
-        raise
+    return load_yaml_file(presets_path)
 
 
 def select_problems_by_weight(modules: List[Dict], num_problems: int) -> List[str]:

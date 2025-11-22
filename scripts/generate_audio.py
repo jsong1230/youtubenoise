@@ -15,37 +15,20 @@ import numpy as np
 from pydub import AudioSegment
 from pydub.generators import WhiteNoise, Sine
 
-# 프로젝트 루트를 sys.path에 추가
 # 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from config import LOG_FILE, CONFIG_JSON_FILE, OUTPUT_DIR, PROJECT_ROOT
+from scripts.utils import setup_logging, load_json_file
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 
 def load_config() -> dict:
     """config.json 파일 로드"""
-    config_path = CONFIG_JSON_FILE
-    try:
-        with open(config_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        logger.error(f"설정 파일을 찾을 수 없습니다: {config_path}")
-        raise
-    except json.JSONDecodeError as e:
-        logger.error(f"설정 파일 파싱 오류: {e}")
-        raise
+    return load_json_file(CONFIG_JSON_FILE)
 
 
 def generate_white_noise(duration_sec: int, sample_rate: int = 44100) -> AudioSegment:

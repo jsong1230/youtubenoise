@@ -8,7 +8,7 @@ import json
 import logging
 import tempfile
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 from dotenv import load_dotenv
 from PIL import Image
@@ -20,40 +20,23 @@ from googleapiclient.http import MediaFileUpload
 from googleapiclient.errors import HttpError
 
 # 프로젝트 루트 설정
-# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
 from config import LOG_FILE, CONFIG_JSON_FILE, DATA_DIR, PROJECT_ROOT
+from scripts.utils import setup_logging, load_json_file
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 # YouTube API 스코프
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 
 
-def load_config() -> dict:
+def load_config() -> Dict[str, Any]:
     """config.json 파일 로드"""
-    config_path = CONFIG_JSON_FILE
-    try:
-        with open(config_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        logger.error(f"설정 파일을 찾을 수 없습니다: {config_path}")
-        raise
-    except json.JSONDecodeError as e:
-        logger.error(f"설정 파일 파싱 오류: {e}")
-        raise
+    return load_json_file(CONFIG_JSON_FILE)
 
 
 def get_authenticated_service():

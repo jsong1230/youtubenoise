@@ -6,7 +6,21 @@
 
 ## 📅 Timeline
 
-### 2025-11-22: 2025 전략 수립 및 인프라 구축 시작
+### 2025-11-22: 코드 품질 개선 완료
+- **목표**: 코드 중복 제거, 공통 유틸리티 모듈화, 에러 처리 표준화
+- **주요 변경사항**:
+  - `scripts/utils.py` 생성: 공통 유틸리티 함수 모듈화
+  - 모든 스크립트(14개)가 `setup_logging()` 사용하도록 통합
+  - `retry_with_backoff` 데코레이터 추가: API 호출 재시도 로직
+  - API Provider에 재시도 로직 적용 (OpenAI, Claude, Image Provider)
+  - 파일 I/O 유틸리티 통합 (`load_json_file`, `load_yaml_file` 등)
+- **영향받은 파일**:
+  - `scripts/utils.py` (신규)
+  - `scripts/upload_youtube.py`, `scripts/sync_channel_state.py` 등 14개 파일
+  - `src/api/providers/openai_provider.py`, `claude_provider.py`, `image_provider.py`
+- **참고 문서**: `WORK_HISTORY.md` (상세 작업 히스토리)
+
+### 2025-11-21: 2025 전략 수립 및 인프라 구축 시작
 - **목표**: 한국(KR) + 북미(NA) 타깃, 이중언어 지원, 다양한 콘텐츠 필러
 - **주요 결정사항**:
   - Claude API 통합으로 비용 96% 절감 (GPT 대비)

@@ -1,0 +1,101 @@
+# 요일별 업로드 스케줄 정의
+# 각 요일마다 어떤 콘텐츠 필러를 사용할지 정의
+
+schedule:
+  # 월요일: Brain Training (두뇌훈련)
+  monday:
+    mode: "brain_training"
+    preset: "mixed_brain_training_senior"
+    upload_time: "09:00"  # 오전 9시 (한국 시간)
+    upload: true
+    language: "ko"
+  
+  # 화요일: Spot Difference (틀린그림찾기)
+  tuesday:
+    mode: "spot_difference"
+    preset: "senior_easy"
+    upload_time: "09:00"
+    upload: true
+    language: "ko"
+  
+  # 수요일: Focus BGM (집중용 BGM)
+  wednesday:
+    mode: "longform_bgm"
+    preset: "lofi_3h"
+    duration_minutes: 180
+    upload_time: "10:00"
+    upload: true
+    language: "en"
+  
+  # 목요일: AI Explainer (AI 설명 영상)
+  thursday:
+    mode: "ai_explainer"
+    preset: "ChatGPT로 코딩하기: 실전 팁"
+    upload_time: "11:00"
+    upload: true
+    language: "ko"
+  
+  # 금요일: Classical BGM (클래식 BGM)
+  friday:
+    mode: "longform_bgm"
+    preset: "classical_3h"
+    duration_minutes: 180
+    upload_time: "10:00"
+    upload: true
+    language: "en"
+  
+  # 토요일: Ambient BGM (앰비언트 BGM)
+  saturday:
+    mode: "longform_bgm"
+    preset: "ambient_3h"
+    duration_minutes: 180
+    upload_time: "09:00"
+    upload: true
+    language: "en"
+  
+  # 일요일: Electronic BGM (일렉트로닉 BGM)
+  sunday:
+    mode: "longform_bgm"
+    preset: "electronic_3h"
+    duration_minutes: 180
+    upload_time: "10:00"
+    upload: true
+    language: "en"
+
+# 기본 설정
+defaults:
+  upload_time: "09:00"  # 기본 업로드 시간
+  upload: true  # 기본적으로 업로드
+  language: "en"  # 기본 언어
+
+# 최적 업로드 시간 (시간대별)
+optimal_upload_times:
+  KR:  # 한국 시간대
+    monday: "09:00"
+    tuesday: "09:00"
+    wednesday: "10:00"
+    thursday: "11:00"
+    friday: "10:00"
+    saturday: "09:00"
+    sunday: "10:00"
+  NA:  # 북미 시간대
+    monday: "08:00"  # PST 기준
+    tuesday: "08:00"
+    wednesday: "09:00"
+    thursday: "10:00"
+    friday: "09:00"
+    saturday: "08:00"
+    sunday: "09:00"
+
+# 콘텐츠 필러 우선순위 (스케줄이 없을 때 사용)
+fallback_schedule:
+  - mode: "longform_bgm"
+    preset: "lofi_3h"
+    duration_minutes: 180
+  - mode: "brain_training"
+    preset: "number_memory_senior"
+  - mode: "spot_difference"
+    preset: "senior_easy"
+  - mode: "ai_explainer"
+    preset: "ChatGPT로 코딩하기: 실전 팁"
+

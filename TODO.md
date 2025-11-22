@@ -14,24 +14,27 @@
 - [x] scripts/sync_channel_state.py 생성
 - [x] .gitignore 업데이트 (채널 상태 포함)
 - [x] requirements.txt 업데이트 (Flask, anthropic 추가)
-- [ ] API Manager 구현 (src/api/)
-- [ ] Flask 웹 대시보드 구현 (src/web/)
-- [ ] 채널 상태 동기화 테스트
+- [x] API Manager 구현 (src/api/)
+- [x] Flask 웹 대시보드 구현 (src/web/)
+- [x] 채널 상태 동기화 테스트
 
 ## 📅 다음 단계 (Phase 2-3)
 
-- [ ] 이중언어 메타데이터 시스템 구현
-- [ ] Claude API 통합
-- [ ] 무료 이미지 API 통합 (Unsplash, Pexels, Pixabay)
-- [ ] API 사용량 추적 시스템
+- [x] 이중언어 메타데이터 시스템 구현
+- [x] Claude API 통합
+- [x] 무료 이미지 API 통합 (Unsplash, Pexels, Pixabay)
+- [x] API 사용량 추적 시스템
+- [x] AI Explainer 콘텐츠 필러 추가
+- [x] 스케줄링 & 자동화 시스템 (요일별 필러 로테이션)
 
 ## 프로젝트 개선 사항
 
 ### 코드 품질 및 구조
-- [ ] 공통 유틸리티 함수 모듈화 (`scripts/utils.py` 생성)
-- [ ] 로깅 설정 중복 제거 (공통 로깅 모듈 생성)
-- [ ] 에러 처리 표준화 및 재시도 로직 추가
-- [ ] 타입 힌팅 전면 적용
+- [x] 공통 유틸리티 함수 모듈화 (`scripts/utils.py` 생성)
+- [x] 로깅 설정 중복 제거 (공통 로깅 모듈 생성)
+- [x] 에러 처리 표준화 및 재시도 로직 추가
+- [x] 나머지 스크립트들도 공통 유틸리티 사용하도록 업데이트 (14개 파일)
+- [x] 타입 힌팅 전면 적용 (`scripts/utils.py`, 주요 스크립트들, mypy 설정)
 - [ ] 단위 테스트 추가 (pytest)
 - [ ] 코드 리팩토링 (중복 코드 제거)
 
@@ -76,5 +79,20 @@
 - `HISTORY.md`: 프로젝트 히스토리 및 API 설정 가이드
 - `implementation_plan.md`: 상세 구현 계획
 
+## ✅ 최근 완료된 작업 (2025-11)
+
+- [x] 이중언어 메타데이터 시스템 구현 (한글/영어 자동 생성)
+- [x] generate_image.py APIManager 통합 (DALL-E 우선, 무료 API 폴백)
+- [x] AI Explainer 콘텐츠 필러 추가 (Claude 3.5 Sonnet 사용)
+- [x] 스케줄링 & 자동화 시스템 (요일별 필러 로테이션)
+- [x] main.py에 --mode auto 옵션 추가
+- [x] 문서 업데이트 (README.md, TODO.md)
+- [x] 코드 품질 개선: 공통 유틸리티 모듈화 (`scripts/utils.py`)
+- [x] 로깅 설정 중복 제거 (모든 스크립트가 `setup_logging()` 사용)
+- [x] 에러 처리 표준화 및 재시도 로직 추가 (`retry_with_backoff` 데코레이터)
+- [x] API Provider에 재시도 로직 적용 (OpenAI, Claude, Image Provider)
+- [x] 타입 힌팅 전면 적용 (`scripts/utils.py`, 주요 스크립트들)
+- [x] mypy 정적 타입 체크 설정 (`mypy.ini`)
+
 ---
-**마지막 업데이트**: 2025-11-22 (프로젝트 개선 사항 추가, 프롬프트 로깅 시스템 구현, Phase 1 진행 중)
+**마지막 업데이트**: 2025-11-22 (타입 힌팅 전면 적용 완료)

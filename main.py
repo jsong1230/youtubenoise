@@ -4,6 +4,7 @@
 """
 import argparse
 import sys
+import json
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -172,6 +173,9 @@ def main():
   # 시니어용 종합 두뇌훈련 영상 생성
   python main.py --mode brain_training --preset mixed_brain_training_senior
   
+  # AI Explainer 스크립트 생성
+  python main.py --mode ai_explainer --preset "ChatGPT로 코딩하기: 실전 팁"
+  
   # YouTube 채널에서 영상 목록 동기화
   python main.py --sync-youtube
   
@@ -186,9 +190,16 @@ def main():
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["longform_bgm", "spot_difference", "brain_training"],
+        choices=["longform_bgm", "spot_difference", "brain_training", "ai_explainer", "auto"],
         default="longform_bgm",
-        help="실행 모드 (기본값: longform_bgm)"
+        help="실행 모드 (기본값: longform_bgm, auto: 스케줄에 따라 자동 실행)"
+    )
+    
+    parser.add_argument(
+        "--language",
+        type=str,
+        choices=["ko", "en"],
+        help="언어 선택 (ko: 한국어, en: 영어)"
     )
     
     parser.add_argument(
@@ -259,6 +270,27 @@ def main():
         print(report)
         return
     
+    # auto 모드: 스케줄에 따라 자동 실행
+    if args.mode == "auto":
+        from scripts.scheduler import get_today_schedule, run_scheduled_content
+        
+        logger.info("=" * 60)
+        logger.info("자동 모드: 오늘의 스케줄에 따라 실행")
+        logger.info("=" * 60)
+        
+        schedule = get_today_schedule()
+        if not schedule:
+            logger.warning("오늘의 스케줄이 없습니다.")
+            return
+        
+        # 언어 옵션이 있으면 스케줄에 적용
+        if args.language:
+            schedule["language"] = args.language
+        
+        result = run_scheduled_content(schedule)
+        logger.info(f"자동 실행 완료: {result.get('status')}")
+        return
+    
     # 필수 인자 확인
     if args.mode == "longform_bgm":
         if not args.preset:
@@ -284,6 +316,60 @@ def main():
         from scripts.generate_brain_training import generate_brain_training_video
         output_path = generate_brain_training_video(args.preset)
         logger.info(f"두뇌훈련 영상 생성 완료: {output_path}")
+    elif args.mode == "ai_explainer":
+        if not args.preset:
+            parser.error("--preset이 필요합니다. AI Explainer 주제를 지정해주세요.")
+        
+        # AI Explainer 파이프라인 실행
+        from scripts.generate_ai_explainers import generate_ai_explainer_script
+        from scripts.make_ai_explainer_video import make_ai_explainer_video
+        from pathlib import Path
+        
+        logger.info("=" * 60)
+        logger.info("AI Explainer 영상 생성 파이프라인 시작")
+        logger.info(f"주제: {args.preset}")
+        logger.info("=" * 60)
+        
+        # 1. 스크립트 생성
+        logger.info("\n[1/3] 스크립트 생성 중...")
+        script_data = generate_ai_explainer_script(args.preset)
+        script_file_path = Path(script_data.get("script_file_path"))
+        logger.info(f"스크립트 생성 완료: {script_file_path}")
+        
+        # 2. 영상 제작
+        logger.info("\n[2/3] 영상 제작 중...")
+        video_path = make_ai_explainer_video(
+            script_path=script_file_path,
+            output_path=None,
+            bgm_path=None,
+            use_broll=True
+        )
+        logger.info(f"영상 제작 완료: {video_path}")
+        
+        # 3. 메타데이터 생성 (선택사항)
+        logger.info("\n[3/3] 메타데이터 생성 중...")
+        from scripts.generate_title_description import generate_metadata_for_ai_explainer
+        metadata = generate_metadata_for_ai_explainer(
+            topic_name=args.preset,
+            topic_data=script_data.get("metadata", {}),
+            script_data=script_data
+        )
+        
+        # 메타데이터 저장
+        metadata_dir = video_path.parent
+        metadata_path = metadata_dir / f"{video_path.stem}_metadata.json"
+        with open(metadata_path, 'w', encoding='utf-8') as f:
+            json.dump({
+                "video_path": str(video_path),
+                "script_path": str(script_file_path),
+                "metadata": metadata,
+                "created_at": datetime.now().isoformat()
+            }, f, ensure_ascii=False, indent=2)
+        
+        logger.info(f"메타데이터 저장 완료: {metadata_path}")
+        logger.info(f"\nAI Explainer 영상 생성 완료!")
+        logger.info(f"영상: {video_path}")
+        logger.info(f"제목: {metadata['title']}")
     else:
         parser.error(f"지원하지 않는 모드: {args.mode}")
 

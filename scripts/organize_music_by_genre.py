@@ -13,20 +13,17 @@ from typing import Dict, List, Optional
 import logging
 
 # 프로젝트 루트 설정
+import sys
 project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+from scripts.utils import setup_logging
+
 PUBLIC_DOMAIN_DIR = project_root / "audio" / "public_domain"
 CATALOG_PATH = PUBLIC_DOMAIN_DIR / "catalog.json"
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(project_root / "logs" / "app.log", encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 # 장르별 폴더 매핑
 GENRE_FOLDERS = {

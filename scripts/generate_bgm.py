@@ -10,7 +10,7 @@ import logging
 import yaml
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Any
 
 import numpy as np
 from pydub import AudioSegment
@@ -26,31 +26,15 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from config import LOG_FILE, BGM_PRESETS_FILE, OUTPUT_DIR, PROJECT_ROOT
+from scripts.utils import setup_logging, load_yaml_file
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 
-def load_bgm_presets() -> dict:
+def load_bgm_presets() -> Dict[str, Any]:
     """BGM 프리셋 설정 파일 로드"""
-    presets_path = BGM_PRESETS_FILE
-    try:
-        with open(presets_path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f)
-    except FileNotFoundError:
-        logger.error(f"BGM 프리셋 파일을 찾을 수 없습니다: {presets_path}")
-        raise
-    except Exception as e:
-        logger.error(f"BGM 프리셋 파일 로드 오류: {e}")
-        raise
+    return load_yaml_file(BGM_PRESETS_FILE)
 
 
 def midi_to_freq(midi_note: int) -> float:

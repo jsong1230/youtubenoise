@@ -16,23 +16,15 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 
 # 프로젝트 루트 설정
-# 프로젝트 루트 설정
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 load_dotenv(project_root / ".env")
 
 from config import LOG_FILE, OUTPUT_DIR, PROJECT_ROOT
+from scripts.utils import setup_logging
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding='utf-8'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 # YouTube API 스코프
 # 참고: 통계 읽기를 위해서는 youtube.readonly 스코프가 필요합니다.

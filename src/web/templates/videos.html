@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}영상 목록 - Brain & Calm Studio{% endblock %}
+
+{% block content %}
+<div class="videos-page">
+    <h2>영상 목록</h2>
+    
+    <div class="channel-info">
+        <h3>채널 정보</h3>
+        <ul>
+            <li>채널명: {{ channel_state.get('channel_name', 'N/A') }}</li>
+            <li>총 영상: {{ channel_state.get('total_videos', 0) }}개</li>
+            <li>마지막 동기화: {{ channel_state.get('last_sync', 'N/A') }}</li>
+        </ul>
+    </div>
+    
+    {% if channel_state.get('videos') %}
+    <div class="videos-list">
+        <h3>전체 영상 ({{ channel_state.get('videos')|length }}개)</h3>
+        <table class="videos-table">
+            <thead>
+                <tr>
+                    <th>썸네일</th>
+                    <th>제목</th>
+                    <th>조회수</th>
+                    <th>좋아요</th>
+                    <th>댓글</th>
+                    <th>업로드 날짜</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for video in channel_state.get('videos', []) %}
+                <tr>
+                    <td>
+                        {% if video.get('thumbnail') %}
+                        <img src="{{ video.thumbnail }}" alt="썸네일" class="thumbnail-img">
+                        {% else %}
+                        <span class="no-thumbnail">N/A</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="https://www.youtube.com/watch?v={{ video.video_id }}" target="_blank" class="video-title">
+                            {{ video.title }}
+                        </a>
+                    </td>
+                    <td>{{ "{:,}".format(video.get('views', 0)) }}</td>
+                    <td>{{ "{:,}".format(video.get('likes', 0)) }}</td>
+                    <td>{{ "{:,}".format(video.get('comments', 0)) }}</td>
+                    <td>{{ video.get('published_at', 'N/A')[:10] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="info-message">
+        영상 목록이 없습니다. 먼저 채널 상태를 동기화해주세요:
+        <code>python -m scripts.sync_channel_state</code>
+    </p>
+    {% endif %}
+</div>
+{% endblock %}
+

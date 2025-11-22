@@ -7,6 +7,9 @@ presets:
     name: "숫자 기억 훈련"
     description: "시니어용 숫자 기억력 훈련 (쉬운 난이도, 3~4자리)"
     difficulty: "easy"
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     modules:
       - type: "number_memory"
         weight: 1.0
@@ -157,6 +160,9 @@ presets:
     name: "종합 두뇌훈련"
     description: "시니어용 종합 인지 기능 훈련 (여러 모듈 혼합)"
     difficulty: "easy"
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
     modules:
       - type: "number_memory"
         weight: 0.25

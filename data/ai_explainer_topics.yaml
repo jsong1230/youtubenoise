@@ -1,0 +1,108 @@
+# AI Explainer 주제 목록
+# AI & Tech 설명 롱폼 영상용 주제 및 시리즈 정의
+
+topics:
+  # AI 자동화 시리즈
+  ai_automation_series:
+    name: "개발자를 위한 AI 자동화"
+    description: "AI를 활용한 개발 자동화 실전 가이드"
+    series_parts: 3
+    parts:
+      - part: 1
+        title: "GPT로 YouTube 자동화하기"
+        description: "GPT API를 활용한 YouTube 콘텐츠 자동 생성 파이프라인 구축"
+        keywords: ["GPT", "YouTube", "자동화", "API", "파이프라인"]
+        target_audience: "개발자"
+        duration_minutes: 20
+      - part: 2
+        title: "Claude로 비용 96% 절감하기"
+        description: "Claude Haiku와 무료 API를 활용한 AI 비용 최적화 전략"
+        keywords: ["Claude", "비용 절감", "API 최적화", "Haiku"]
+        target_audience: "개발자"
+        duration_minutes: 18
+      - part: 3
+        title: "AI 멀티 에이전트 시스템 구축"
+        description: "여러 AI 모델을 조합한 지능형 자동화 시스템 설계"
+        keywords: ["멀티 에이전트", "AI 시스템", "자동화", "아키텍처"]
+        target_audience: "개발자"
+        duration_minutes: 25
+
+  # AI 기초 시리즈
+  ai_basics_series:
+    name: "AI 입문자를 위한 기초 가이드"
+    description: "AI의 기본 개념부터 실전 활용까지"
+    series_parts: 5
+    parts:
+      - part: 1
+        title: "AI란 무엇인가? LLM 기초 개념"
+        description: "대규모 언어 모델(LLM)의 기본 원리와 작동 방식"
+        keywords: ["AI", "LLM", "기초", "입문", "개념"]
+        target_audience: "일반인"
+        duration_minutes: 15
+      - part: 2
+        title: "GPT vs Claude: 어떤 모델을 선택해야 할까?"
+        description: "주요 AI 모델들의 특징과 사용 사례 비교"
+        keywords: ["GPT", "Claude", "비교", "모델 선택"]
+        target_audience: "일반인"
+        duration_minutes: 18
+      - part: 3
+        title: "프롬프트 엔지니어링 기초"
+        description: "AI에게 더 나은 결과를 얻는 프롬프트 작성법"
+        keywords: ["프롬프트", "엔지니어링", "최적화", "기법"]
+        target_audience: "일반인"
+        duration_minutes: 20
+      - part: 4
+        title: "AI API 사용하기: 첫 번째 프로젝트"
+        description: "OpenAI API를 활용한 첫 번째 AI 애플리케이션 만들기"
+        keywords: ["API", "OpenAI", "프로젝트", "튜토리얼"]
+        target_audience: "초보 개발자"
+        duration_minutes: 22
+      - part: 5
+        title: "AI 비용 관리와 최적화"
+        description: "AI 사용 비용을 절감하는 실전 전략"
+        keywords: ["비용", "최적화", "절감", "전략"]
+        target_audience: "개발자"
+        duration_minutes: 18
+
+  # 단독 주제
+  standalone_topics:
+    - name: "ChatGPT로 코딩하기: 실전 팁"
+      description: "ChatGPT를 활용한 효율적인 코딩 워크플로우"
+      keywords: ["ChatGPT", "코딩", "개발", "팁", "워크플로우"]
+      target_audience: "개발자"
+      duration_minutes: 20
+      language: "ko"
+      region_targets: ["KR"]
+    
+    - name: "AI로 YouTube 채널 운영하기"
+      description: "AI를 활용한 YouTube 콘텐츠 제작 및 채널 운영 자동화"
+      keywords: ["AI", "YouTube", "자동화", "콘텐츠", "운영"]
+      target_audience: "크리에이터"
+      duration_minutes: 25
+      language: "ko"
+      region_targets: ["KR"]
+    
+    - name: "AI 이미지 생성 완벽 가이드"
+      description: "DALL-E, Midjourney, Stable Diffusion 비교 및 활용법"
+      keywords: ["이미지 생성", "DALL-E", "Midjourney", "Stable Diffusion"]
+      target_audience: "일반인"
+      duration_minutes: 22
+      language: "ko"
+      region_targets: ["KR"]
+
+# 기본 설정
+defaults:
+  script_structure:
+    hook_duration_seconds: 15  # 훅(시작 부분) 길이
+    section_transition_seconds: 2  # 섹션 전환 시간
+    outro_duration_seconds: 10  # 마무리 길이
+    broll_frequency: "every_30s"  # B-roll 삽입 빈도
+  video_settings:
+    width: 1920
+    height: 1080
+    fps: 30
+  narration:
+    voice: "ko-KR-Standard-A"  # Google TTS 또는 다른 TTS 서비스
+    speed: 1.0
+    pitch: 1.0
+
