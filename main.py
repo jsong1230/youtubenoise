@@ -350,8 +350,9 @@ def main():
             parser.error("--preset이 필요합니다. 두뇌훈련 프리셋을 지정해주세요.")
         
         # 중복 실행 방지: 실행 전 반드시 확인
+        import os
         from scripts.utils import check_running_process
-        if check_running_process("main.py", preset_name=args.preset, check_ffmpeg=True, logger=logger):
+        if check_running_process("main.py", preset_name=args.preset, exclude_pid=os.getpid(), check_ffmpeg=True, logger=logger):
             logger.error("❌ 동일한 작업이 이미 실행 중입니다. 중복 실행을 방지하기 위해 종료합니다.")
             sys.exit(1)
         

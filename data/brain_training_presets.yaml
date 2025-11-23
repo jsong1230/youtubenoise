@@ -1,12 +1,42 @@
 # 시니어용 종합 두뇌훈련 프리셋 설정
 # 치매 예방을 위한 다양한 인지 기능 훈련 모듈
 
+# 기본 설정 (모든 프리셋에 공통 적용)
+defaults:
+  video_width: 1920
+  video_height: 1080
+  fps: 30
+  bgm_path: null  # BGM 파일 경로 (선택사항)
+  enable_narration: false  # TTS 내레이션 사용 여부
+  enable_subtitles: true  # 자막 사용 여부
+  intro_duration: 5  # 인트로 길이 (초)
+  outro_duration: 5  # 아웃트로 길이 (초)
+  problem_intro_duration: 3  # 문제 소개 화면 길이 (초)
+  answer_display_duration: 5  # 정답 화면 길이 (초)
+  
+  # 기본 색상 스킴
+  default_color_scheme:
+    background: [245, 243, 240]  # 중립적인 베이지
+    text: [40, 40, 40]
+    highlight: [150, 120, 180]
+    correct: [80, 160, 80]
+    countdown: [200, 80, 60]
+  
+  # 기본 폰트 및 스타일
+  default_font_size: 84
+  default_image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+  default_transition_seconds: 2
+
 presets:
-  # 숫자 기억 훈련
+  # ============================================
+  # 단일 모듈 프리셋 (한글)
+  # ============================================
+  
   number_memory_senior:
     name: "숫자 기억 훈련"
     description: "시니어용 숫자 기억력 훈련 (쉬운 난이도, 3~4자리)"
     difficulty: "easy"
+    languages: ["ko"]
     modules:
       - type: "number_memory"
         weight: 1.0
@@ -18,49 +48,18 @@ presets:
         countdown_seconds: 10
     color_scheme:
       background: [245, 240, 235]  # 따뜻한 아이보리
-      text: [40, 40, 40]  # 진한 회색
+      text: [40, 40, 40]
       highlight: [100, 150, 200]  # 부드러운 파란색
-      correct: [80, 160, 80]  # 부드러운 초록
-      countdown: [200, 80, 60]  # 부드러운 빨강
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
     font_size: 96
     transition_seconds: 2
     
-  # 사라진 물건 찾기
-  missing_object_senior:
-    name: "사라진 물건 찾기"
-    description: "시니어용 관찰력 훈련 (그림에서 사라진 물건 찾기)"
-    difficulty: "easy"
-    modules:
-      - type: "missing_object"
-        weight: 1.0
-    num_problems: 15
-    problem_settings:
-      missing_object:
-        num_objects: 8
-        num_missing: 2
-        display_seconds: 10
-        countdown_seconds: 15
-    themes:
-      - "주방 풍경"
-      - "거실"
-      - "공원"
-      - "시장"
-      - "정원"
-    color_scheme:
-      background: [240, 245, 240]  # 부드러운 민트
-      text: [40, 40, 40]
-      highlight: [255, 200, 100]
-      correct: [80, 160, 80]
-      countdown: [200, 80, 60]
-    font_size: 84
-    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
-    transition_seconds: 2
-    
-  # 패턴 순서 맞추기
   pattern_sequence_senior:
     name: "패턴 순서 맞추기"
     description: "시니어용 패턴 인식 훈련 (색상, 도형 순서)"
     difficulty: "easy"
+    languages: ["ko"]
     modules:
       - type: "pattern_sequence"
         weight: 1.0
@@ -68,7 +67,7 @@ presets:
     problem_settings:
       pattern_sequence:
         sequence_length: 4
-        pattern_type: "shapes"  # shapes, colors, numbers
+        pattern_type: "letters"  # numbers, letters, colors, symbols (shapes만 제외)
         display_seconds: 8
         countdown_seconds: 12
     color_scheme:
@@ -80,11 +79,11 @@ presets:
     font_size: 84
     transition_seconds: 2
     
-  # 단어 연상 게임
   word_association_senior:
     name: "단어 연상 게임"
     description: "시니어용 언어 능력 훈련 (한글 단어 연상)"
     difficulty: "easy"
+    languages: ["ko"]
     modules:
       - type: "word_association"
         weight: 1.0
@@ -104,11 +103,11 @@ presets:
     font_size: 80
     transition_seconds: 2
     
-  # 시계 읽기
   clock_reading_senior:
     name: "시계 읽기 훈련"
     description: "시니어용 시간 인지 훈련 (아날로그 시계)"
     difficulty: "easy"
+    languages: ["ko"]
     modules:
       - type: "clock_reading"
         weight: 1.0
@@ -127,11 +126,11 @@ presets:
     font_size: 84
     transition_seconds: 2
     
-  # 한글 단어 퍼즐
   korean_word_puzzle_senior:
     name: "한글 단어 퍼즐"
     description: "시니어용 한글 능력 훈련 (초성 퀴즈, 단어 완성)"
     difficulty: "easy"
+    languages: ["ko"]
     modules:
       - type: "korean_word_puzzle"
         weight: 1.0
@@ -151,24 +150,28 @@ presets:
       countdown: [200, 80, 60]
     font_size: 88
     transition_seconds: 2
-    
-  # 종합 두뇌훈련 (여러 모듈 혼합)
+
+  # ============================================
+  # 종합 프리셋 (여러 모듈 혼합)
+  # ============================================
+  
   mixed_brain_training_senior:
     name: "종합 두뇌훈련"
     description: "시니어용 종합 인지 기능 훈련 (여러 모듈 혼합)"
     difficulty: "easy"
+    languages: ["ko"]
     modules:
       - type: "number_memory"
-        weight: 0.25
-      - type: "missing_object"
         weight: 0.20
       - type: "pattern_sequence"
-        weight: 0.15
+        weight: 0.20
       - type: "word_association"
         weight: 0.20
       - type: "clock_reading"
-        weight: 0.10
+        weight: 0.15
       - type: "korean_word_puzzle"
+        weight: 0.15
+      - type: "color_memory"
         weight: 0.10
     num_problems: 30
     problem_settings:
@@ -176,14 +179,9 @@ presets:
         digit_count: 4
         display_seconds: 5
         countdown_seconds: 10
-      missing_object:
-        num_objects: 8
-        num_missing: 2
-        display_seconds: 10
-        countdown_seconds: 15
       pattern_sequence:
         sequence_length: 4
-        pattern_type: "shapes"
+        pattern_type: "letters"  # numbers, letters, colors, symbols (shapes만 제외)
         display_seconds: 8
         countdown_seconds: 12
       word_association:
@@ -201,15 +199,30 @@ presets:
         num_hints: 2
         display_seconds: 10
         countdown_seconds: 15
-    themes:
-      - "주방 풍경"
-      - "거실"
-      - "공원"
-      - "시장"
-      - "정원"
-      - "자연"
+      color_memory:
+        num_colors: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 8
+        countdown_seconds: 15
+      direction_memory:
+        num_directions: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      category_classification:
+        num_items: 4
+        category_type: "food"
+        display_seconds: 10
+        countdown_seconds: 15
+      shape_matching:
+        num_shapes: 6
+        display_seconds: 8
+        countdown_seconds: 12
     color_scheme:
-      background: [245, 243, 240]  # 중립적인 베이지
+      background: [245, 243, 240]
       text: [40, 40, 40]
       highlight: [150, 120, 180]
       correct: [80, 160, 80]
@@ -218,19 +231,606 @@ presets:
     image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
     transition_seconds: 2
 
+  mixed_brain_training_english:
+    name: "Comprehensive Brain Training (English)"
+    description: "Senior-friendly comprehensive cognitive training (multiple modules, English)"
+    difficulty: "easy"
+    languages: ["en"]
+    modules:
+      - type: "number_memory"
+        weight: 0.15
+      - type: "pattern_sequence"
+        weight: 0.15
+      - type: "word_association"
+        weight: 0.15
+      - type: "clock_reading"
+        weight: 0.15
+      - type: "color_memory"
+        weight: 0.15
+      - type: "simple_calculation"
+        weight: 0.10
+      - type: "direction_memory"
+        weight: 0.10
+      - type: "category_classification"
+        weight: 0.05
+    num_problems: 15
+    problem_settings:
+      number_memory:
+        digit_count: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "letters"  # numbers, letters, colors, symbols (shapes만 제외)
+        display_seconds: 8
+        countdown_seconds: 12
+      word_association:
+        word_category: "daily"  # 영어 카테고리
+        num_choices: 3
+        display_seconds: 10
+        countdown_seconds: 15
+      clock_reading:
+        time_type: "hour_half"
+        display_seconds: 8
+        countdown_seconds: 12
+      color_memory:
+        num_colors: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 8
+        countdown_seconds: 15
+      direction_memory:
+        num_directions: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      category_classification:
+        num_items: 4
+        category_type: "food"
+        display_seconds: 10
+        countdown_seconds: 15
+      shape_matching:
+        num_shapes: 6
+        display_seconds: 8
+        countdown_seconds: 12
+    color_scheme:
+      background: [245, 243, 240]
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+
+  # ============================================
+  # 15분 영상 프리셋
+  # ============================================
+  
+  brain_training_15min:
+    name: "종합 두뇌훈련 15분"
+    description: "시니어용 종합 인지 기능 훈련 (10개 모듈 모두 활용, 약 15분 영상)"
+    difficulty: "easy"
+    languages: ["ko"]
+    modules:
+      - type: "number_memory"
+        weight: 0.12
+      - type: "pattern_sequence"
+        weight: 0.12
+      - type: "word_association"
+        weight: 0.12
+      - type: "clock_reading"
+        weight: 0.10
+      - type: "korean_word_puzzle"
+        weight: 0.10
+      - type: "color_memory"
+        weight: 0.12
+      - type: "simple_calculation"
+        weight: 0.10
+      - type: "direction_memory"
+        weight: 0.10
+      - type: "category_classification"
+        weight: 0.06
+      - type: "shape_matching"
+        weight: 0.06
+    num_problems: 15
+    problem_settings:
+      number_memory:
+        digit_count: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "letters"  # numbers, letters, colors, symbols (shapes만 제외)
+        display_seconds: 8
+        countdown_seconds: 12
+      word_association:
+        word_category: "일상"
+        num_choices: 3
+        display_seconds: 10
+        countdown_seconds: 15
+      clock_reading:
+        time_type: "hour_half"
+        display_seconds: 8
+        countdown_seconds: 12
+      korean_word_puzzle:
+        puzzle_type: "initial_sound"
+        word_length: 3
+        num_hints: 2
+        display_seconds: 10
+        countdown_seconds: 15
+      color_memory:
+        num_colors: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 8
+        countdown_seconds: 15
+      direction_memory:
+        num_directions: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      category_classification:
+        num_items: 4
+        category_type: "food"
+        display_seconds: 10
+        countdown_seconds: 15
+      shape_matching:
+        num_shapes: 6
+        display_seconds: 8
+        countdown_seconds: 12
+    color_scheme:
+      background: [245, 243, 240]
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+
+  brain_training_15min_english:
+    name: "Comprehensive Brain Training 15min (English)"
+    description: "Senior-friendly comprehensive cognitive training (9 modules, ~15 minutes, English)"
+    difficulty: "easy"
+    languages: ["en"]
+    modules:
+      - type: "number_memory"
+        weight: 0.13
+      - type: "pattern_sequence"
+        weight: 0.13
+      - type: "word_association"
+        weight: 0.13
+      - type: "clock_reading"
+        weight: 0.12
+      - type: "color_memory"
+        weight: 0.13
+      - type: "simple_calculation"
+        weight: 0.12
+      - type: "direction_memory"
+        weight: 0.12
+      - type: "category_classification"
+        weight: 0.06
+      - type: "shape_matching"
+        weight: 0.06
+    num_problems: 15
+
+  # ============================================
+  # 프로덕션용 프리셋 (30-45분)
+  # ============================================
+  
+  brain_training_30min_korean:
+    name: "종합 두뇌훈련 30분 (한글)"
+    description: "시니어용 종합 인지 기능 훈련 (10개 모듈 모두 활용, 약 30-45분 영상)"
+    difficulty: "easy"
+    languages: ["ko"]
+    modules:
+      - type: "number_memory"
+        weight: 0.12
+      - type: "pattern_sequence"
+        weight: 0.12
+      - type: "word_association"
+        weight: 0.12
+      - type: "clock_reading"
+        weight: 0.10
+      - type: "korean_word_puzzle"
+        weight: 0.10
+      - type: "color_memory"
+        weight: 0.12
+      - type: "simple_calculation"
+        weight: 0.10
+      - type: "direction_memory"
+        weight: 0.10
+      - type: "category_classification"
+        weight: 0.06
+      - type: "shape_matching"
+        weight: 0.06
+    num_problems: 45  # 카운트다운 줄인 대신 문제 개수 증가 (30-45분 목표)
+    problem_settings:
+      number_memory:
+        digit_count: 4
+        display_seconds: 15
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "letters"  # numbers, letters, colors, symbols (shapes만 제외)
+        display_seconds: 18
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      word_association:
+        word_category: "일상"
+        num_choices: 3
+        display_seconds: 20
+        countdown_seconds: 25  # 카운트다운 줄임 (40 -> 25초)
+      clock_reading:
+        time_type: "hour_half"
+        display_seconds: 18
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      korean_word_puzzle:
+        puzzle_type: "initial_sound"
+        word_length: 3
+        num_hints: 2
+        display_seconds: 20
+        countdown_seconds: 25  # 카운트다운 줄임 (40 -> 25초)
+      color_memory:
+        num_colors: 4
+        display_seconds: 15
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 18
+        countdown_seconds: 25  # 카운트다운 줄임 (40 -> 25초)
+      direction_memory:
+        num_directions: 4
+        display_seconds: 15
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      category_classification:
+        num_items: 4
+        category_type: "food"
+        display_seconds: 20
+        countdown_seconds: 25  # 카운트다운 줄임 (40 -> 25초)
+      shape_matching:
+        num_shapes: 6
+        display_seconds: 18
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+    color_scheme:
+      background: [245, 243, 240]
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+    problem_intro_duration: 5  # 문제 소개 화면 표시 시간 (초) - 30분 목표
+    answer_display_duration: 12  # 정답 화면 표시 시간 (초) - 30분 목표
+
+  brain_training_30min_english:
+    name: "Comprehensive Brain Training 30min (English)"
+    description: "Senior-friendly comprehensive cognitive training (9 modules, ~30-45 minutes, English)"
+    difficulty: "easy"
+    languages: ["en"]
+    modules:
+      - type: "number_memory"
+        weight: 0.13
+      - type: "pattern_sequence"
+        weight: 0.13
+      - type: "word_association"
+        weight: 0.13
+      - type: "clock_reading"
+        weight: 0.12
+      - type: "color_memory"
+        weight: 0.13
+      - type: "simple_calculation"
+        weight: 0.12
+      - type: "direction_memory"
+        weight: 0.12
+      - type: "category_classification"
+        weight: 0.06
+      - type: "shape_matching"
+        weight: 0.06
+    num_problems: 45  # 카운트다운 줄인 대신 문제 개수 증가 (30-45분 목표)
+    problem_settings:
+      number_memory:
+        digit_count: 4
+        display_seconds: 15
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "letters"  # numbers, letters, colors, symbols (shapes만 제외)
+        display_seconds: 18
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      word_association:
+        word_category: "daily"
+        num_choices: 3
+        display_seconds: 20
+        countdown_seconds: 25  # 카운트다운 줄임 (40 -> 25초)
+      clock_reading:
+        time_type: "hour_half"
+        display_seconds: 18
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      color_memory:
+        num_colors: 4
+        display_seconds: 15
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 18
+        countdown_seconds: 25  # 카운트다운 줄임 (40 -> 25초)
+      direction_memory:
+        num_directions: 4
+        display_seconds: 15
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+      category_classification:
+        num_items: 4
+        category_type: "food"
+        display_seconds: 20
+        countdown_seconds: 25  # 카운트다운 줄임 (40 -> 25초)
+      shape_matching:
+        num_shapes: 6
+        display_seconds: 18
+        countdown_seconds: 20  # 카운트다운 줄임 (35 -> 20초)
+    color_scheme:
+      background: [245, 243, 240]
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+    problem_intro_duration: 5  # 문제 소개 화면 표시 시간 (초) - 30분 목표
+    answer_display_duration: 12  # 정답 화면 표시 시간 (초) - 30분 목표
+
+  # ============================================
+  # 테스트 프리셋
+  # ============================================
+  
+  test_all_modules_korean:
+    name: "전체 모듈 테스트 (한글)"
+    description: "10개 모듈 각각 1개씩 포함한 테스트 영상 (한글)"
+    difficulty: "easy"
+    languages: ["ko"]
+    modules:
+      - type: "number_memory"
+        weight: 0.1
+      - type: "pattern_sequence"
+        weight: 0.1
+      - type: "word_association"
+        weight: 0.1
+      - type: "clock_reading"
+        weight: 0.1
+      - type: "korean_word_puzzle"
+        weight: 0.1
+      - type: "color_memory"
+        weight: 0.1
+      - type: "simple_calculation"
+        weight: 0.1
+      - type: "direction_memory"
+        weight: 0.1
+      - type: "category_classification"
+        weight: 0.1
+      - type: "shape_matching"
+        weight: 0.1
+    num_problems: 10
+    problem_settings:
+      number_memory:
+        digit_count: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "letters"
+        display_seconds: 8
+        countdown_seconds: 12
+      word_association:
+        word_category: "일상"
+        num_choices: 3
+        display_seconds: 10
+        countdown_seconds: 15
+      clock_reading:
+        time_type: "hour_half"
+        display_seconds: 8
+        countdown_seconds: 12
+      korean_word_puzzle:
+        puzzle_type: "initial_sound"
+        word_length: 3
+        num_hints: 2
+        display_seconds: 10
+        countdown_seconds: 15
+      color_memory:
+        num_colors: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 8
+        countdown_seconds: 15
+      direction_memory:
+        num_directions: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      category_classification:
+        num_items: 4
+        category_type: "food"
+        display_seconds: 10
+        countdown_seconds: 15
+      shape_matching:
+        num_shapes: 6
+        display_seconds: 8
+        countdown_seconds: 12
+    color_scheme:
+      background: [245, 243, 240]
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+
+  test_all_modules_english:
+    name: "All Modules Test (English)"
+    description: "Test video with 9 modules (1 problem each, English)"
+    difficulty: "easy"
+    languages: ["en"]
+    modules:
+      - type: "number_memory"
+        weight: 0.111
+      - type: "pattern_sequence"
+        weight: 0.111
+      - type: "word_association"
+        weight: 0.111
+      - type: "clock_reading"
+        weight: 0.111
+      - type: "color_memory"
+        weight: 0.111
+      - type: "simple_calculation"
+        weight: 0.111
+      - type: "direction_memory"
+        weight: 0.111
+      - type: "category_classification"
+        weight: 0.111
+      - type: "shape_matching"
+        weight: 0.112
+    num_problems: 9  # 모듈 수와 동일하므로 각 모듈 1개씩 선택됨
+    problem_settings:
+      number_memory:
+        digit_count: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "letters"
+        display_seconds: 8
+        countdown_seconds: 12
+      word_association:
+        word_category: "daily"
+        num_choices: 3
+        display_seconds: 10
+        countdown_seconds: 15
+      clock_reading:
+        time_type: "hour_half"
+        display_seconds: 8
+        countdown_seconds: 12
+      color_memory:
+        num_colors: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 8
+        countdown_seconds: 15
+      direction_memory:
+        num_directions: 4
+        display_seconds: 5
+        countdown_seconds: 10
+      category_classification:
+        num_items: 4
+        category_type: "food"
+        display_seconds: 10
+        countdown_seconds: 15
+      shape_matching:
+        num_shapes: 6
+        display_seconds: 8
+        countdown_seconds: 12
+    color_scheme:
+      background: [245, 243, 240]
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+
+  test_korean_1min:
+    name: "한글 테스트 1분"
+    description: "한글 버전 빠른 테스트 영상 (약 1분)"
+    difficulty: "easy"
+    languages: ["ko"]
+    modules:
+      - type: "simple_calculation"
+        weight: 0.5
+      - type: "pattern_sequence"
+        weight: 0.5
+    num_problems: 2
+    problem_settings:
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 8
+        countdown_seconds: 15
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "letters"  # numbers, letters, colors, symbols (shapes만 제외)
+        display_seconds: 8
+        countdown_seconds: 12
+    color_scheme:
+      background: [245, 243, 240]
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+
+  test_font_consistency:
+    name: "Font Consistency Test (English)"
+    description: "Test preset for font consistency and language issues"
+    difficulty: "easy"
+    languages: ["en"]
+    modules:
+      - type: "simple_calculation"
+        weight: 0.33
+      - type: "pattern_sequence"
+        weight: 0.33
+      - type: "category_classification"
+        weight: 0.34
+    num_problems: 3
+    problem_settings:
+      simple_calculation:
+        operation_type: "addition"
+        max_number: 50
+        display_seconds: 8
+        countdown_seconds: 15
+      pattern_sequence:
+        sequence_length: 4
+        pattern_type: "letters"
+        display_seconds: 8
+        countdown_seconds: 12
+      category_classification:
+        num_items: 4
+        category_type: "food"
+        display_seconds: 10
+        countdown_seconds: 15
+    color_scheme:
+      background: [245, 243, 240]
+      text: [40, 40, 40]
+      highlight: [150, 120, 180]
+      correct: [80, 160, 80]
+      countdown: [200, 80, 60]
+    font_size: 84
+    image_style: "warm, clear, simple illustration, senior-friendly, high contrast"
+    transition_seconds: 2
+
+# ============================================
 # 모듈별 설정
+# ============================================
 modules:
   number_memory:
     name: "숫자 기억"
     description: "화면에 나타나는 숫자를 기억하는 훈련"
     instruction_template: "화면에 나오는 {digit_count}자리 숫자를 기억해보세요."
     answer_template: "정답은 {answer}입니다."
-    
-  missing_object:
-    name: "사라진 물건 찾기"
-    description: "두 그림을 비교하여 사라진 물건을 찾는 훈련"
-    instruction_template: "두 그림을 비교하여 사라진 물건 {num_missing}개를 찾아보세요."
-    answer_template: "사라진 물건은 {answer_list}입니다."
     
   pattern_sequence:
     name: "패턴 순서"
@@ -255,17 +855,3 @@ modules:
     description: "초성이나 힌트를 보고 단어를 맞추는 훈련"
     instruction_template: "힌트를 보고 단어를 맞춰보세요."
     answer_template: "정답은 '{answer}'입니다."
-
-# 기본 설정
-defaults:
-  video_width: 1920
-  video_height: 1080
-  fps: 30
-  bgm_path: null  # BGM 파일 경로 (선택사항)
-  enable_narration: false  # TTS 내레이션 사용 여부
-  enable_subtitles: true  # 자막 사용 여부
-  intro_duration: 5  # 인트로 길이 (초)
-  outro_duration: 5  # 아웃트로 길이 (초)
-  problem_intro_duration: 3  # 문제 소개 화면 길이 (초)
-  answer_display_duration: 5  # 정답 화면 길이 (초)
-

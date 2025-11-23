@@ -28,9 +28,9 @@ logger = setup_logging()
 
 def load_brain_training_presets() -> dict:
     """두뇌훈련 프리셋 설정 파일 로드"""
-    # config 디렉토리에서 프리셋 파일 로드
-    presets_path = PROJECT_ROOT / "config" / "brain_training_presets.yaml"
-    return load_yaml_file(presets_path)
+    # data 디렉토리에서 프리셋 파일 로드
+    from config import BRAIN_TRAINING_PRESETS_FILE
+    return load_yaml_file(BRAIN_TRAINING_PRESETS_FILE)
 
 
 def select_problems_by_weight(modules: List[Dict], num_problems: int) -> List[str]:
@@ -44,6 +44,13 @@ def select_problems_by_weight(modules: List[Dict], num_problems: int) -> List[st
     Returns:
         선택된 모듈 타입 리스트
     """
+    # 특별 케이스: 문제 수가 모듈 수와 같으면 각 모듈을 정확히 1개씩 선택
+    if num_problems == len(modules):
+        selected = [m['type'] for m in modules]
+        random.shuffle(selected)
+        return selected
+    
+    # 일반 케이스: 가중치 기반 선택
     selected = []
     
     # 가중치 기반 문제 수 계산
@@ -148,33 +155,20 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
                 logger.warning(f"missing_object 모듈은 비활성화되어 있습니다. 건너뜁니다.")
                 continue
             
-            # 테마가 필요한 모듈 처리 (현재는 missing_object만 해당하므로 주석 처리)
-            # if module_type == "missing_object" and themes:
-            #     theme = random.choice(themes)
-            #     # languages 파라미터 지원 확인
-            #     import inspect
-            #     sig = inspect.signature(generator)
-            #     if 'languages' in sig.parameters:
-            #         problem_data = generator(settings, theme, languages=languages, problem_index=i-1)
-            #     elif 'languages' in sig.parameters and 'problem_index' not in sig.parameters:
-            #         problem_data = generator(settings, theme, languages=languages)
-            #     else:
-            #         problem_data = generator(settings, theme)
-            # else:
-                # 문제 인덱스와 언어를 전달하여 다양성 및 다국어 지원 확보
-                import inspect
-                sig = inspect.signature(generator)
-                params = sig.parameters
-                kwargs = {}
-                if 'languages' in params:
-                    kwargs['languages'] = languages
-                if 'problem_index' in params:
-                    kwargs['problem_index'] = i-1
-                
-                if kwargs:
-                    problem_data = generator(settings, **kwargs)
-                else:
-                    problem_data = generator(settings)
+            # 문제 인덱스와 언어를 전달하여 다양성 및 다국어 지원 확보
+            import inspect
+            sig = inspect.signature(generator)
+            params = sig.parameters
+            kwargs = {}
+            if 'languages' in params:
+                kwargs['languages'] = languages
+            if 'problem_index' in params:
+                kwargs['problem_index'] = i-1
+            
+            if kwargs:
+                problem_data = generator(settings, **kwargs)
+            else:
+                problem_data = generator(settings)
             
             if not problem_data:
                 logger.warning(f"문제 {i} 생성 실패, 건너뜁니다.")
@@ -182,6 +176,11 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
             
             # 문제 번호 추가
             problem_data['problem_number'] = i
+            
+            # display_seconds와 countdown_seconds를 problem_data에 추가
+            problem_data['display_seconds'] = settings.get('display_seconds', 10)
+            problem_data['countdown_seconds'] = settings.get('countdown_seconds', 15)
+            
             all_problems.append(problem_data)
             
             # 클립 생성
@@ -191,13 +190,54 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
             
             logger.info(f"  - 문제 {i} 완료 ({len(clips)}개 클립)")
         
-        # 영상 합성
-        logger.info(f"\n전체 영상 합성 중... ({len(all_clips)}개 클립)")
+        # BGM 선택 (public_domain 폴더에서 랜덤 선택)
         bgm_path = None
         if defaults.get('bgm_path'):
             bgm_path = PROJECT_ROOT / defaults['bgm_path']
+        elif preset.get('bgm_path'):
+            bgm_path = PROJECT_ROOT / preset['bgm_path']
+        else:
+            # public_domain 폴더에서 랜덤하게 선택 (하위 디렉토리 포함)
+            public_domain_dir = PROJECT_ROOT / "audio" / "public_domain"
+            if public_domain_dir.exists():
+                # 하위 디렉토리까지 재귀적으로 검색
+                audio_files = list(public_domain_dir.rglob("*.mp3")) + \
+                             list(public_domain_dir.rglob("*.wav")) + \
+                             list(public_domain_dir.rglob("*.m4a")) + \
+                             list(public_domain_dir.rglob("*.flac"))
+                if audio_files:
+                    bgm_path = random.choice(audio_files)
+                    logger.info(f"BGM 랜덤 선택: {bgm_path.relative_to(PROJECT_ROOT)}")
+                else:
+                    logger.info("public_domain 폴더에 오디오 파일이 없습니다. BGM 없이 진행합니다.")
+            else:
+                logger.info("public_domain 폴더가 없습니다. BGM 없이 진행합니다.")
+        
+        # 영상 합성
+        logger.info(f"\n전체 영상 합성 중... ({len(all_clips)}개 클립)")
+        if bgm_path and bgm_path.exists():
+            logger.info(f"BGM 사용: {bgm_path}")
+        else:
+            logger.info("BGM 없이 영상 생성합니다.")
         
         combine_clips(all_clips, output_path, bgm_path)
+        
+        # 영상 길이 계산 (ffprobe 사용)
+        video_duration_minutes = None
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                 "-of", "default=noprint_wrappers=1:nokey=1", str(output_path)],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            duration_seconds = float(result.stdout.strip())
+            video_duration_minutes = duration_seconds / 60
+            logger.info(f"영상 길이: {video_duration_minutes:.1f}분 ({duration_seconds:.0f}초)")
+        except Exception as e:
+            logger.warning(f"영상 길이 계산 실패: {e}")
         
         # 메타데이터 생성 및 저장
         logger.info("메타데이터 생성 중...")
@@ -207,7 +247,13 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
             format_chapters_for_youtube
         )
         
-        metadata = generate_video_metadata(preset_name, len(all_problems), dict(module_counts), languages)
+        metadata = generate_video_metadata(
+            preset_name, 
+            len(all_problems), 
+            dict(module_counts), 
+            languages,
+            video_duration_minutes=video_duration_minutes
+        )
         chapters = generate_chapters(all_problems)
         
         metadata_dir = output_path.parent
@@ -244,9 +290,34 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
         with open(tags_path, 'w', encoding='utf-8') as f:
             f.write(", ".join(metadata['tags']))
         
+        # 썸네일 생성
+        logger.info("썸네일 생성 중...")
+        try:
+            from scripts.generate_brain_training_thumbnail import generate_thumbnail_with_dalle
+            
+            primary_language = languages[0] if languages else "ko"
+            thumbnail_path = generate_thumbnail_with_dalle(
+                title=metadata['title'],
+                language=primary_language,
+                output_path=metadata_dir / f"{output_path.stem}_thumbnail.jpg"
+            )
+            
+            if thumbnail_path:
+                # 메타데이터에 썸네일 경로 추가
+                full_metadata['thumbnail_path'] = str(thumbnail_path)
+                with open(metadata_path, 'w', encoding='utf-8') as f:
+                    json.dump(full_metadata, f, ensure_ascii=False, indent=2)
+                logger.info(f"썸네일 생성 완료: {thumbnail_path}")
+            else:
+                logger.warning("썸네일 생성 실패 (영상은 정상 생성됨)")
+        except Exception as e:
+            logger.warning(f"썸네일 생성 중 오류 발생 (영상은 정상 생성됨): {e}")
+        
         logger.info(f"\n영상 생성 완료: {output_path}")
         logger.info(f"제목: {metadata['title']}")
         logger.info(f"메타데이터: {metadata_path}")
+        if thumbnail_path:
+            logger.info(f"썸네일: {thumbnail_path}")
         
         return output_path
         

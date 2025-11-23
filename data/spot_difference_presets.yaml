@@ -8,6 +8,7 @@ presets:
     num_differences: 3
     countdown_seconds: 15
     num_problems: 15
+    layout_type: "side_by_side"  # "side_by_side" 또는 "top_bottom"
     themes:
       - "집안 풍경"
       - "음식"
@@ -30,6 +31,7 @@ presets:
     num_differences: 5
     countdown_seconds: 10
     num_problems: 20
+    layout_type: "side_by_side"  # "side_by_side" 또는 "top_bottom"
     themes:
       - "집안 풍경"
       - "음식"
@@ -44,6 +46,25 @@ presets:
       highlight: [255, 200, 100]
       countdown: [200, 50, 50]
     font_size: 64
+    image_style: "warm, clear, high contrast, senior-friendly illustration"
+    
+  test_layout:
+    name: "레이아웃 테스트용"
+    description: "레이아웃 개선 테스트용 (2개 문제, 5초 카운트다운)"
+    difficulty: "easy"
+    num_differences: 3
+    countdown_seconds: 5
+    num_problems: 2
+    layout_type: "side_by_side"
+    themes:
+      - "집안 풍경"
+      - "음식"
+    color_scheme:
+      background: [240, 240, 235]
+      text: [50, 50, 50]
+      highlight: [255, 200, 100]
+      countdown: [200, 50, 50]
+    font_size: 72
     image_style: "warm, clear, high contrast, senior-friendly illustration"
 
 # 기본 설정

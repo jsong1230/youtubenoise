@@ -29,7 +29,8 @@ logger = setup_logging()
 
 def generate_video_metadata(preset_name: str, num_problems: int, 
                            module_counts: Dict[str, int],
-                           languages: List[str] = None) -> Dict:
+                           languages: List[str] = None,
+                           video_duration_minutes: float = None) -> Dict:
     """
     영상 메타데이터 생성 (제목, 설명, 태그) - 다국어 지원
     
@@ -52,47 +53,60 @@ def generate_video_metadata(preset_name: str, num_problems: int,
         
         # 다국어 메타데이터 생성
         if is_bilingual:
+            duration_text = ""
+            if video_duration_minutes:
+                duration_min = int(video_duration_minutes)
+                duration_text = f"\nVideo duration: approximately {duration_min} minutes"
+            
             prompt = f"""Create bilingual YouTube video metadata for a senior (60-80 years old) dementia prevention brain training video.
 
 Preset: {preset_name}
 Total problems: {num_problems}
-Module composition: {module_info}
+Module composition: {module_info}{duration_text}
 Primary Language: Korean
 Secondary Language: English
 
 Return JSON with:
 {{
-  "title": "Korean Title | English Title (max 100 characters total)",
-  "description": "Section 1 (Korean description, 2-3 paragraphs)...\n\n---\n\nSection 2 (English description, 2-3 paragraphs)...\n\n---\n\nSection 3 (Mixed section with key info in both languages)...",
+  "title": "Korean Title | English Title (max 100 characters total, include video duration like '42분' or '42min')",
+  "description": "Section 1 (Korean description, 2-3 paragraphs, include exact video duration)...\n\n---\n\nSection 2 (English description, 2-3 paragraphs, include exact video duration)...\n\n---\n\nSection 3 (Mixed section with key info in both languages)...",
   "tags": ["tag1", "tag2", "태그1", "태그2", ...] (mix both languages, 15-20 tags)
 }}
 
 Title format: "한국어 제목 | English Title"
+Title and description MUST include the exact video duration (e.g., "42분", "42 minutes").
 Description should include:
 - Purpose of the video
 - What viewers will learn
 - Module composition
+- Exact video duration
 - Benefits for seniors
 - Hashtags at the end in both languages
 
 Tags should mix Korean and English terms for SEO.
 """
         else:
+            duration_text = ""
+            if video_duration_minutes:
+                duration_min = int(video_duration_minutes)
+                duration_text = f"\n영상 길이: 약 {duration_min}분"
+            
             prompt = f"""
 시니어(60~80대)를 위한 치매 예방 두뇌훈련 영상의 YouTube 메타데이터를 생성해주세요.
 
 프리셋: {preset_name}
 총 문제 수: {num_problems}
-모듈 구성: {module_info}
+모듈 구성: {module_info}{duration_text}
 
 다음 형식의 JSON으로 응답해주세요:
 {{
-  "title": "YouTube 제목 (60자 이내, 시니어 친화적)",
-  "description": "YouTube 설명 (상세하게, 줄바꿈 포함)",
+  "title": "YouTube 제목 (60자 이내, 시니어 친화적, 영상 길이 포함 예: '42분 두뇌훈련')",
+  "description": "YouTube 설명 (상세하게, 줄바꿈 포함, 영상 길이 명시)",
   "tags": ["태그1", "태그2", ...]
 }}
 
 제목은 검색 최적화(SEO)를 고려하되 시니어가 이해하기 쉽게 작성해주세요.
+제목과 설명에 정확한 영상 길이(예: 42분)를 반드시 포함해주세요.
 설명에는 영상의 목적, 구성, 효과 등을 포함해주세요.
 """
         

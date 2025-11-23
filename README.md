@@ -171,8 +171,12 @@ python main.py --mode spot_difference --preset senior_normal
 ```bash
 python main.py --mode brain_training --preset number_memory_senior
 python main.py --mode brain_training --preset mixed_brain_training_senior
+python main.py --mode brain_training --preset brain_training_30min_korean  # 30-45분 영상
+python main.py --mode brain_training --preset brain_training_30min_english  # 30-45분 영상 (영어)
 ```
 - GPT가 문제와 자막을 생성하고, Python이 카드/카운트다운을 렌더링합니다.
+- BGM 자동 포함: `audio/public_domain/` 폴더의 오디오 파일을 랜덤 선택하여 영상 길이에 맞춰 자동 반복 재생합니다.
+- 영상 길이: 프리셋의 `num_problems`와 `problem_settings`에 따라 자동 계산되며, 메타데이터에 정확한 길이가 포함됩니다.
 
 ### 4. AI Explainer (AI & Tech 설명 영상)
 ```bash
