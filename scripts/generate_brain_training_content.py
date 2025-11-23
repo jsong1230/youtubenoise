@@ -582,14 +582,620 @@ def generate_korean_word_puzzle_problem(settings: Dict, problem_index: int = 0) 
         return None
 
 
+def generate_color_memory_problem(settings: Dict, languages: List[str] = None, problem_index: int = 0) -> Dict:
+    """
+    색상 기억 문제 생성
+    
+    Args:
+        settings: 문제 설정 (num_colors, display_seconds 등)
+        languages: 지원 언어 리스트
+        problem_index: 문제 인덱스
+    
+    Returns:
+        문제 데이터 딕셔너리
+    """
+    try:
+        num_colors = settings.get('num_colors', 4)
+        languages = languages or ["ko"]
+        
+        # 색상 리스트 (RGB 값)
+        color_list = [
+            ("빨강", "Red", (255, 0, 0)),
+            ("파랑", "Blue", (0, 0, 255)),
+            ("초록", "Green", (0, 128, 0)),
+            ("노랑", "Yellow", (255, 255, 0)),
+            ("주황", "Orange", (255, 165, 0)),
+            ("보라", "Purple", (128, 0, 128)),
+            ("분홍", "Pink", (255, 192, 203)),
+            ("갈색", "Brown", (165, 42, 42)),
+        ]
+        
+        # 문제 인덱스에 따라 다양한 색상 조합 생성
+        random.seed(problem_index)
+        selected_colors = random.sample(color_list, num_colors)
+        random.seed()  # 시드 초기화
+        
+        # 다국어 텍스트 생성
+        if len(languages) >= 2 and "ko" in languages and "en" in languages:
+            try:
+                prompt = f"""Create bilingual text for a color memory problem.
+
+Number of colors: {num_colors}
+Colors to remember: {', '.join([c[0] for c in selected_colors])}
+
+Return JSON with:
+{{
+  "problem_text_ko": "화면에 나타나는 {num_colors}개의 색상을 순서대로 기억해보세요.",
+  "problem_text_en": "Remember the {num_colors} colors shown on screen in order.",
+  "explanation_ko": "색상 순서는 {', '.join([c[0] for c in selected_colors])}입니다.",
+  "explanation_en": "The color order is {', '.join([c[1] for c in selected_colors])}."
+}}"""
+                
+                response = openai.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a bilingual content creator for senior brain training."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.3
+                )
+                
+                text_data = json.loads(response.choices[0].message.content)
+                problem_text_ko = text_data.get("problem_text_ko", f"화면에 나타나는 {num_colors}개의 색상을 순서대로 기억해보세요.")
+                problem_text_en = text_data.get("problem_text_en", f"Remember the {num_colors} colors shown on screen in order.")
+                explanation_ko = text_data.get("explanation_ko", f"색상 순서는 {', '.join([c[0] for c in selected_colors])}입니다.")
+                explanation_en = text_data.get("explanation_en", f"The color order is {', '.join([c[1] for c in selected_colors])}.")
+            except Exception as e:
+                logger.warning(f"다국어 텍스트 생성 실패, 기본값 사용: {e}")
+                problem_text_ko = f"화면에 나타나는 {num_colors}개의 색상을 순서대로 기억해보세요."
+                problem_text_en = f"Remember the {num_colors} colors shown on screen in order."
+                explanation_ko = f"색상 순서는 {', '.join([c[0] for c in selected_colors])}입니다."
+                explanation_en = f"The color order is {', '.join([c[1] for c in selected_colors])}."
+        else:
+            if languages and languages[0] == "en":
+                problem_text_ko = f"Remember the {num_colors} colors shown on screen in order."
+                problem_text_en = f"Remember the {num_colors} colors shown on screen in order."
+                explanation_ko = f"The color order is {', '.join([c[1] for c in selected_colors])}."
+                explanation_en = f"The color order is {', '.join([c[1] for c in selected_colors])}."
+            else:
+                problem_text_ko = f"화면에 나타나는 {num_colors}개의 색상을 순서대로 기억해보세요."
+                problem_text_en = f"Remember the {num_colors} colors shown on screen in order."
+                explanation_ko = f"색상 순서는 {', '.join([c[0] for c in selected_colors])}입니다."
+                explanation_en = f"The color order is {', '.join([c[1] for c in selected_colors])}."
+        
+        return {
+            "module": "color_memory",
+            "display_seconds": settings.get('display_seconds', 5),
+            "countdown_seconds": settings.get('countdown_seconds', 10),
+            "problem_text": problem_text_ko,
+            "problem_text_ko": problem_text_ko,
+            "problem_text_en": problem_text_en,
+            "problem_data": {
+                "colors": [{"name_ko": c[0], "name_en": c[1], "rgb": c[2]} for c in selected_colors]
+            },
+            "answer_data": {
+                "correct_answer": [c[0] for c in selected_colors] if (languages and languages[0] != "en") else [c[1] for c in selected_colors],
+                "explanation": explanation_ko if (languages and languages[0] != "en") else explanation_en,
+                "explanation_ko": explanation_ko,
+                "explanation_en": explanation_en
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"색상 기억 문제 생성 실패: {e}", exc_info=True)
+        return None
+
+
+def generate_simple_calculation_problem(settings: Dict, languages: List[str] = None, problem_index: int = 0) -> Dict:
+    """
+    간단한 계산 문제 생성
+    
+    Args:
+        settings: 문제 설정 (operation_type, max_number 등)
+        languages: 지원 언어 리스트
+        problem_index: 문제 인덱스
+    
+    Returns:
+        문제 데이터 딕셔너리
+    """
+    try:
+        operation_type = settings.get('operation_type', 'addition')  # addition, subtraction
+        max_number = settings.get('max_number', 50)
+        languages = languages or ["ko"]
+        
+        # 문제 인덱스에 따라 다양한 문제 생성
+        random.seed(problem_index)
+        
+        if operation_type == 'addition':
+            # 덧셈 문제
+            num1 = random.randint(10, max_number // 2)
+            num2 = random.randint(10, max_number - num1)
+            answer = num1 + num2
+            operation_symbol = "+"
+            operation_text_ko = "더하기"
+            operation_text_en = "plus"
+        else:
+            # 뺄셈 문제
+            num1 = random.randint(20, max_number)
+            num2 = random.randint(5, num1 - 10)
+            answer = num1 - num2
+            operation_symbol = "-"
+            operation_text_ko = "빼기"
+            operation_text_en = "minus"
+        
+        random.seed()  # 시드 초기화
+        
+        # 다국어 텍스트 생성
+        if len(languages) >= 2 and "ko" in languages and "en" in languages:
+            try:
+                prompt = f"""Create bilingual text for a simple calculation problem.
+
+Problem: {num1} {operation_symbol} {num2} = ?
+Answer: {answer}
+
+Return JSON with:
+{{
+  "problem_text_ko": "{num1} {operation_symbol} {num2} = ?",
+  "problem_text_en": "{num1} {operation_symbol} {num2} = ?",
+  "explanation_ko": "정답은 {answer}입니다.",
+  "explanation_en": "The answer is {answer}."
+}}"""
+                
+                response = openai.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a bilingual content creator for senior brain training."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.3
+                )
+                
+                text_data = json.loads(response.choices[0].message.content)
+                problem_text_ko = text_data.get("problem_text_ko", f"{num1} {operation_symbol} {num2} = ?")
+                problem_text_en = text_data.get("problem_text_en", f"{num1} {operation_symbol} {num2} = ?")
+                explanation_ko = text_data.get("explanation_ko", f"정답은 {answer}입니다.")
+                explanation_en = text_data.get("explanation_en", f"The answer is {answer}.")
+            except Exception as e:
+                logger.warning(f"다국어 텍스트 생성 실패, 기본값 사용: {e}")
+                problem_text_ko = f"{num1} {operation_symbol} {num2} = ?"
+                problem_text_en = f"{num1} {operation_symbol} {num2} = ?"
+                explanation_ko = f"정답은 {answer}입니다."
+                explanation_en = f"The answer is {answer}."
+        else:
+            if languages and languages[0] == "en":
+                problem_text_ko = f"{num1} {operation_symbol} {num2} = ?"
+                problem_text_en = f"{num1} {operation_symbol} {num2} = ?"
+                explanation_ko = f"The answer is {answer}."
+                explanation_en = f"The answer is {answer}."
+            else:
+                problem_text_ko = f"{num1} {operation_symbol} {num2} = ?"
+                problem_text_en = f"{num1} {operation_symbol} {num2} = ?"
+                explanation_ko = f"정답은 {answer}입니다."
+                explanation_en = f"The answer is {answer}."
+        
+        return {
+            "module": "simple_calculation",
+            "display_seconds": settings.get('display_seconds', 8),
+            "countdown_seconds": settings.get('countdown_seconds', 15),
+            "problem_text": problem_text_ko,
+            "problem_text_ko": problem_text_ko,
+            "problem_text_en": problem_text_en,
+            "problem_data": {
+                "num1": num1,
+                "num2": num2,
+                "operation": operation_symbol,
+                "answer": answer
+            },
+            "answer_data": {
+                "correct_answer": str(answer),
+                "explanation": explanation_ko if (languages and languages[0] != "en") else explanation_en,
+                "explanation_ko": explanation_ko,
+                "explanation_en": explanation_en
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"간단한 계산 문제 생성 실패: {e}", exc_info=True)
+        return None
+
+
+def generate_direction_memory_problem(settings: Dict, languages: List[str] = None, problem_index: int = 0) -> Dict:
+    """
+    방향 기억 문제 생성
+    
+    Args:
+        settings: 문제 설정 (num_directions, display_seconds 등)
+        languages: 지원 언어 리스트
+        problem_index: 문제 인덱스
+    
+    Returns:
+        문제 데이터 딕셔너리
+    """
+    try:
+        num_directions = settings.get('num_directions', 4)
+        languages = languages or ["ko"]
+        
+        # 방향 리스트
+        directions = [
+            ("위", "Up", "↑"),
+            ("아래", "Down", "↓"),
+            ("왼쪽", "Left", "←"),
+            ("오른쪽", "Right", "→"),
+        ]
+        
+        # 문제 인덱스에 따라 다양한 방향 조합 생성
+        random.seed(problem_index)
+        selected_directions = [random.choice(directions) for _ in range(num_directions)]
+        random.seed()  # 시드 초기화
+        
+        # 다국어 텍스트 생성
+        if len(languages) >= 2 and "ko" in languages and "en" in languages:
+            try:
+                prompt = f"""Create bilingual text for a direction memory problem.
+
+Number of directions: {num_directions}
+Directions to remember: {', '.join([d[0] for d in selected_directions])}
+
+Return JSON with:
+{{
+  "problem_text_ko": "화면에 나타나는 {num_directions}개의 화살표 방향을 순서대로 기억해보세요.",
+  "problem_text_en": "Remember the {num_directions} arrow directions shown on screen in order.",
+  "explanation_ko": "방향 순서는 {', '.join([d[0] for d in selected_directions])}입니다.",
+  "explanation_en": "The direction order is {', '.join([d[1] for d in selected_directions])}."
+}}"""
+                
+                response = openai.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a bilingual content creator for senior brain training."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.3
+                )
+                
+                text_data = json.loads(response.choices[0].message.content)
+                problem_text_ko = text_data.get("problem_text_ko", f"화면에 나타나는 {num_directions}개의 화살표 방향을 순서대로 기억해보세요.")
+                problem_text_en = text_data.get("problem_text_en", f"Remember the {num_directions} arrow directions shown on screen in order.")
+                explanation_ko = text_data.get("explanation_ko", f"방향 순서는 {', '.join([d[0] for d in selected_directions])}입니다.")
+                explanation_en = text_data.get("explanation_en", f"The direction order is {', '.join([d[1] for d in selected_directions])}.")
+            except Exception as e:
+                logger.warning(f"다국어 텍스트 생성 실패, 기본값 사용: {e}")
+                problem_text_ko = f"화면에 나타나는 {num_directions}개의 화살표 방향을 순서대로 기억해보세요."
+                problem_text_en = f"Remember the {num_directions} arrow directions shown on screen in order."
+                explanation_ko = f"방향 순서는 {', '.join([d[0] for d in selected_directions])}입니다."
+                explanation_en = f"The direction order is {', '.join([d[1] for d in selected_directions])}."
+        else:
+            if languages and languages[0] == "en":
+                problem_text_ko = f"Remember the {num_directions} arrow directions shown on screen in order."
+                problem_text_en = f"Remember the {num_directions} arrow directions shown on screen in order."
+                explanation_ko = f"The direction order is {', '.join([d[1] for d in selected_directions])}."
+                explanation_en = f"The direction order is {', '.join([d[1] for d in selected_directions])}."
+            else:
+                problem_text_ko = f"화면에 나타나는 {num_directions}개의 화살표 방향을 순서대로 기억해보세요."
+                problem_text_en = f"Remember the {num_directions} arrow directions shown on screen in order."
+                explanation_ko = f"방향 순서는 {', '.join([d[0] for d in selected_directions])}입니다."
+                explanation_en = f"The direction order is {', '.join([d[1] for d in selected_directions])}."
+        
+        return {
+            "module": "direction_memory",
+            "display_seconds": settings.get('display_seconds', 5),
+            "countdown_seconds": settings.get('countdown_seconds', 10),
+            "problem_text": problem_text_ko,
+            "problem_text_ko": problem_text_ko,
+            "problem_text_en": problem_text_en,
+            "problem_data": {
+                "directions": [{"name_ko": d[0], "name_en": d[1], "symbol": d[2]} for d in selected_directions]
+            },
+            "answer_data": {
+                "correct_answer": [d[0] for d in selected_directions] if (languages and languages[0] != "en") else [d[1] for d in selected_directions],
+                "explanation": explanation_ko if (languages and languages[0] != "en") else explanation_en,
+                "explanation_ko": explanation_ko,
+                "explanation_en": explanation_en
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"방향 기억 문제 생성 실패: {e}", exc_info=True)
+        return None
+
+
+def generate_category_classification_problem(settings: Dict, languages: List[str] = None, problem_index: int = 0) -> Dict:
+    """
+    카테고리 분류 문제 생성
+    
+    Args:
+        settings: 문제 설정 (num_items, category_type 등)
+        languages: 지원 언어 리스트
+        problem_index: 문제 인덱스
+    
+    Returns:
+        문제 데이터 딕셔너리
+    """
+    try:
+        num_items = settings.get('num_items', 4)
+        category_type = settings.get('category_type', 'random')  # random, food, animal, object 등
+        languages = languages or ["ko"]
+        
+        # GPT로 카테고리 분류 문제 생성
+        prompt = f"""
+시니어를 위한 카테고리 분류 문제를 만들어주세요.
+
+항목 개수: {num_items}개
+카테고리 유형: {category_type}
+
+다음 형식의 JSON으로 응답해주세요:
+{{
+  "category": "카테고리 이름 (예: 과일, 동물, 교통수단 등)",
+  "items": ["항목1", "항목2", "항목3", "항목4"],
+  "wrong_item": "카테고리에 속하지 않는 항목",
+  "wrong_item_index": 0
+}}
+
+{num_items}개 항목 중 하나는 카테고리에 속하지 않아야 합니다.
+시니어가 쉽게 이해할 수 있는 일상적인 카테고리와 항목으로 선택해주세요.
+문제 인덱스: {problem_index} (다양한 문제를 생성해주세요)
+"""
+        
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "당신은 시니어용 두뇌훈련 콘텐츠 제작 전문가입니다."},
+                {"role": "user", "content": prompt}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.8 + (problem_index % 3) * 0.1  # 다양성을 위해 temperature 조정
+        )
+        
+        content_data = json.loads(response.choices[0].message.content)
+        
+        # 다국어 텍스트 생성
+        if len(languages) >= 2 and "ko" in languages and "en" in languages:
+            try:
+                prompt_text = f"""Create bilingual text for a category classification problem.
+
+Category: {content_data['category']}
+Items: {', '.join(content_data['items'])}
+Wrong item (does not belong to category): {content_data['wrong_item']}
+
+Return JSON with:
+{{
+  "problem_text_ko": "다음 항목 중 {content_data['category']}이(가) 아닌 것은?",
+  "problem_text_en": "Which of the following is NOT a {content_data['category']}?",
+  "explanation_ko": "정답은 '{content_data['wrong_item']}'입니다. 이것은 {content_data['category']}이(가) 아닙니다.",
+  "explanation_en": "The answer is '{content_data['wrong_item']}'. This is not a {content_data['category']}."
+}}"""
+                
+                response_text = openai.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a bilingual content creator for senior brain training."},
+                        {"role": "user", "content": prompt_text}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.3
+                )
+                
+                text_data = json.loads(response_text.choices[0].message.content)
+                problem_text_ko = text_data.get("problem_text_ko", f"다음 항목 중 {content_data['category']}이(가) 아닌 것은?")
+                problem_text_en = text_data.get("problem_text_en", f"Which of the following is NOT a {content_data['category']}?")
+                explanation_ko = text_data.get("explanation_ko", f"정답은 '{content_data['wrong_item']}'입니다.")
+                explanation_en = text_data.get("explanation_en", f"The answer is '{content_data['wrong_item']}'.")
+            except Exception as e:
+                logger.warning(f"다국어 텍스트 생성 실패, 기본값 사용: {e}")
+                problem_text_ko = f"다음 항목 중 {content_data['category']}이(가) 아닌 것은?"
+                problem_text_en = f"Which of the following is NOT a {content_data['category']}?"
+                explanation_ko = f"정답은 '{content_data['wrong_item']}'입니다."
+                explanation_en = f"The answer is '{content_data['wrong_item']}'."
+        else:
+            if languages and languages[0] == "en":
+                problem_text_ko = f"Which of the following is NOT a {content_data['category']}?"
+                problem_text_en = f"Which of the following is NOT a {content_data['category']}?"
+                explanation_ko = f"The answer is '{content_data['wrong_item']}'."
+                explanation_en = f"The answer is '{content_data['wrong_item']}'."
+            else:
+                problem_text_ko = f"다음 항목 중 {content_data['category']}이(가) 아닌 것은?"
+                problem_text_en = f"Which of the following is NOT a {content_data['category']}?"
+                explanation_ko = f"정답은 '{content_data['wrong_item']}'입니다."
+                explanation_en = f"The answer is '{content_data['wrong_item']}'."
+        
+        return {
+            "module": "category_classification",
+            "display_seconds": settings.get('display_seconds', 10),
+            "countdown_seconds": settings.get('countdown_seconds', 15),
+            "problem_text": problem_text_ko,
+            "problem_text_ko": problem_text_ko,
+            "problem_text_en": problem_text_en,
+            "problem_data": {
+                "category": content_data['category'],
+                "items": content_data['items'],
+                "wrong_item": content_data['wrong_item'],
+                "wrong_item_index": content_data.get('wrong_item_index', 0)
+            },
+            "answer_data": {
+                "correct_answer": content_data['wrong_item'],
+                "explanation": explanation_ko if (languages and languages[0] != "en") else explanation_en,
+                "explanation_ko": explanation_ko,
+                "explanation_en": explanation_en
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"카테고리 분류 문제 생성 실패: {e}", exc_info=True)
+        return None
+
+
+def generate_shape_matching_problem(settings: Dict, languages: List[str] = None, problem_index: int = 0) -> Dict:
+    """
+    도형 매칭 문제 생성
+    
+    Args:
+        settings: 문제 설정 (num_shapes, shape_types 등)
+        languages: 지원 언어 리스트
+        problem_index: 문제 인덱스
+    
+    Returns:
+        문제 데이터 딕셔너리
+    """
+    try:
+        num_shapes = settings.get('num_shapes', 4)
+        languages = languages or ["ko"]
+        
+        # 도형 타입 및 색상
+        shape_types = ["circle", "square", "triangle", "rectangle", "star", "diamond"]
+        colors = [
+            ("빨강", "Red", (255, 0, 0)),
+            ("파랑", "Blue", (0, 0, 255)),
+            ("초록", "Green", (0, 128, 0)),
+            ("노랑", "Yellow", (255, 255, 0)),
+            ("주황", "Orange", (255, 165, 0)),
+            ("보라", "Purple", (128, 0, 128)),
+        ]
+        
+        # 문제 인덱스에 따라 다양한 조합 생성
+        random.seed(problem_index)
+        
+        # 타겟 도형 선택
+        target_shape = random.choice(shape_types)
+        target_color = random.choice(colors)
+        
+        # 선택지 생성 (하나만 정답, 나머지는 다른 도형 또는 색상)
+        choices = []
+        correct_index = random.randint(0, num_shapes - 1)
+        
+        for i in range(num_shapes):
+            if i == correct_index:
+                # 정답: 같은 도형, 같은 색상
+                choices.append({
+                    "shape": target_shape,
+                    "color": target_color,
+                    "is_correct": True
+                })
+            else:
+                # 오답: 다른 도형 또는 다른 색상
+                if random.random() < 0.5:
+                    # 다른 도형, 같은 색상
+                    other_shape = random.choice([s for s in shape_types if s != target_shape])
+                    choices.append({
+                        "shape": other_shape,
+                        "color": target_color,
+                        "is_correct": False
+                    })
+                else:
+                    # 같은 도형, 다른 색상
+                    other_color = random.choice([c for c in colors if c != target_color])
+                    choices.append({
+                        "shape": target_shape,
+                        "color": other_color,
+                        "is_correct": False
+                    })
+        
+        random.shuffle(choices)  # 선택지 섞기
+        correct_index = next(i for i, c in enumerate(choices) if c['is_correct'])
+        
+        random.seed()  # 시드 초기화
+        
+        # 다국어 텍스트 생성
+        if len(languages) >= 2 and "ko" in languages and "en" in languages:
+            try:
+                prompt = f"""Create bilingual text for a shape matching problem.
+
+Target: {target_color[0]} {target_shape}
+Number of choices: {num_shapes}
+
+Return JSON with:
+{{
+  "problem_text_ko": "다음 중 {target_color[0]} {target_shape}와(과) 같은 것은?",
+  "problem_text_en": "Which of the following matches the {target_color[1].lower()} {target_shape}?",
+  "explanation_ko": "정답은 {correct_index + 1}번입니다.",
+  "explanation_en": "The answer is choice {correct_index + 1}."
+}}"""
+                
+                response = openai.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a bilingual content creator for senior brain training."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.3
+                )
+                
+                text_data = json.loads(response.choices[0].message.content)
+                problem_text_ko = text_data.get("problem_text_ko", f"다음 중 {target_color[0]} {target_shape}와(과) 같은 것은?")
+                problem_text_en = text_data.get("problem_text_en", f"Which of the following matches the {target_color[1].lower()} {target_shape}?")
+                explanation_ko = text_data.get("explanation_ko", f"정답은 {correct_index + 1}번입니다.")
+                explanation_en = text_data.get("explanation_en", f"The answer is choice {correct_index + 1}.")
+            except Exception as e:
+                logger.warning(f"다국어 텍스트 생성 실패, 기본값 사용: {e}")
+                problem_text_ko = f"다음 중 {target_color[0]} {target_shape}와(과) 같은 것은?"
+                problem_text_en = f"Which of the following matches the {target_color[1].lower()} {target_shape}?"
+                explanation_ko = f"정답은 {correct_index + 1}번입니다."
+                explanation_en = f"The answer is choice {correct_index + 1}."
+        else:
+            if languages and languages[0] == "en":
+                problem_text_ko = f"Which of the following matches the {target_color[1].lower()} {target_shape}?"
+                problem_text_en = f"Which of the following matches the {target_color[1].lower()} {target_shape}?"
+                explanation_ko = f"The answer is choice {correct_index + 1}."
+                explanation_en = f"The answer is choice {correct_index + 1}."
+            else:
+                problem_text_ko = f"다음 중 {target_color[0]} {target_shape}와(과) 같은 것은?"
+                problem_text_en = f"Which of the following matches the {target_color[1].lower()} {target_shape}?"
+                explanation_ko = f"정답은 {correct_index + 1}번입니다."
+                explanation_en = f"The answer is choice {correct_index + 1}."
+        
+        # 도형 이름 한글 변환
+        shape_names_ko = {
+            "circle": "원",
+            "square": "사각형",
+            "triangle": "삼각형",
+            "rectangle": "직사각형",
+            "star": "별",
+            "diamond": "다이아몬드"
+        }
+        
+        return {
+            "module": "shape_matching",
+            "display_seconds": settings.get('display_seconds', 8),
+            "countdown_seconds": settings.get('countdown_seconds', 12),
+            "problem_text": problem_text_ko,
+            "problem_text_ko": problem_text_ko,
+            "problem_text_en": problem_text_en,
+            "problem_data": {
+                "target_shape": target_shape,
+                "target_shape_ko": shape_names_ko.get(target_shape, target_shape),
+                "target_color": {"name_ko": target_color[0], "name_en": target_color[1], "rgb": target_color[2]},
+                "choices": choices,
+                "correct_index": correct_index
+            },
+            "answer_data": {
+                "correct_answer": str(correct_index + 1),
+                "explanation": explanation_ko if (languages and languages[0] != "en") else explanation_en,
+                "explanation_ko": explanation_ko,
+                "explanation_en": explanation_en
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"도형 매칭 문제 생성 실패: {e}", exc_info=True)
+        return None
+
+
 # 모듈별 생성 함수 매핑
 MODULE_GENERATORS = {
     "number_memory": generate_number_memory_problem,
-    "missing_object": generate_missing_object_problem,
+    # "missing_object": generate_missing_object_problem,  # 비활성화됨 - 틀린그림 찾기는 구현이 어려워 사용하지 않음
     "pattern_sequence": generate_pattern_sequence_problem,
     "word_association": generate_word_association_problem,
     "clock_reading": generate_clock_reading_problem,
-    "korean_word_puzzle": generate_korean_word_puzzle_problem
+    "korean_word_puzzle": generate_korean_word_puzzle_problem,
+    "color_memory": generate_color_memory_problem,
+    "simple_calculation": generate_simple_calculation_problem,
+    "direction_memory": generate_direction_memory_problem,
+    "category_classification": generate_category_classification_problem,
+    "shape_matching": generate_shape_matching_problem
 }
 
 

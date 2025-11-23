@@ -1,0 +1,10 @@
+테마: 아늑한 거실
+장면 설명: 아늑한 거실의 모습입니다. 벽에는 따뜻한 색상의 페인트가 칠해져 있고, 소파는 부드러운 파란색 패브릭으로 되어 있습니다. 소파 옆에는 작은 나무 테이블이 있고, 그 위에는 책과 커피 잔이 놓여 있습니다. 거실의 한쪽 구석에는 조그마한 화초가 있는 화분이 있으며, 창문으로는 따뜻한 햇빛이 들어오고 있습니다. 바닥은 부드러운 카펫으로 덮여 있는데, 카펫 위에는 작은 원형 테이블이 있습니다.
+
+차이점:
+1. 소파의 색상 - 소파의 색상이 파란색에서 초록색으로 변경됨
+2. 테이블 위의 커피 잔 - 커피 잔이 사라짐
+
+원본 이미지: /Users/jsong/dev/youtubenoise/output/test_images/test_base_image.png
+수정본 이미지: /Users/jsong/dev/youtubenoise/output/test_images/test_modified_image.png
+비교 이미지: /Users/jsong/dev/youtubenoise/output/test_images/test_comparison.png

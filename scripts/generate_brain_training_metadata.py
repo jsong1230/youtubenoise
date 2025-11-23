@@ -164,7 +164,12 @@ def generate_chapters(problems: List[Dict]) -> List[Dict]:
                 "pattern_sequence": "패턴 순서",
                 "word_association": "단어 연상",
                 "clock_reading": "시계 읽기",
-                "korean_word_puzzle": "한글 퍼즐"
+                "korean_word_puzzle": "한글 퍼즐",
+                "color_memory": "색상 기억",
+                "simple_calculation": "간단한 계산",
+                "direction_memory": "방향 기억",
+                "category_classification": "카테고리 분류",
+                "shape_matching": "도형 매칭"
             }
             
             title = f"문제 {i}: {module_names.get(module, module)}"

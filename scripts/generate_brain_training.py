@@ -104,6 +104,21 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
         
         # 문제 모듈 선택
         selected_modules = select_problems_by_weight(modules, num_problems)
+        
+        # missing_object 모듈 필터링 (비활성화됨)
+        selected_modules = [m for m in selected_modules if m != "missing_object"]
+        
+        # 필터링 후 문제 수가 부족하면 다시 선택
+        if len(selected_modules) < num_problems:
+            logger.warning(f"missing_object 모듈 제거 후 문제 수 부족 ({len(selected_modules)}/{num_problems}), 다시 선택합니다.")
+            # missing_object를 제외한 모듈로 다시 선택
+            filtered_modules = [m for m in modules if m['type'] != "missing_object"]
+            if filtered_modules:
+                selected_modules = select_problems_by_weight(filtered_modules, num_problems)
+            else:
+                logger.error("사용 가능한 모듈이 없습니다.")
+                raise ValueError("사용 가능한 모듈이 없습니다.")
+        
         module_counts = Counter(selected_modules)
         
         logger.info(f"총 {num_problems}개의 문제 생성 중...")
@@ -128,19 +143,24 @@ def generate_brain_training_video(preset_name: str, output_path: Optional[Path] 
                 logger.warning(f"지원하지 않는 모듈: {module_type}")
                 continue
             
-            # 테마가 필요한 모듈 처리
-            if module_type == "missing_object" and themes:
-                theme = random.choice(themes)
-                # languages 파라미터 지원 확인
-                import inspect
-                sig = inspect.signature(generator)
-                if 'languages' in sig.parameters:
-                    problem_data = generator(settings, theme, languages=languages, problem_index=i-1)
-                elif 'languages' in sig.parameters and 'problem_index' not in sig.parameters:
-                    problem_data = generator(settings, theme, languages=languages)
-                else:
-                    problem_data = generator(settings, theme)
-            else:
+            # missing_object 모듈은 비활성화됨
+            if module_type == "missing_object":
+                logger.warning(f"missing_object 모듈은 비활성화되어 있습니다. 건너뜁니다.")
+                continue
+            
+            # 테마가 필요한 모듈 처리 (현재는 missing_object만 해당하므로 주석 처리)
+            # if module_type == "missing_object" and themes:
+            #     theme = random.choice(themes)
+            #     # languages 파라미터 지원 확인
+            #     import inspect
+            #     sig = inspect.signature(generator)
+            #     if 'languages' in sig.parameters:
+            #         problem_data = generator(settings, theme, languages=languages, problem_index=i-1)
+            #     elif 'languages' in sig.parameters and 'problem_index' not in sig.parameters:
+            #         problem_data = generator(settings, theme, languages=languages)
+            #     else:
+            #         problem_data = generator(settings, theme)
+            # else:
                 # 문제 인덱스와 언어를 전달하여 다양성 및 다국어 지원 확보
                 import inspect
                 sig = inspect.signature(generator)

@@ -20,11 +20,11 @@ modules:
     description: 초성이나 힌트를 보고 단어를 맞추는 훈련
     instruction_template: 힌트를 보고 단어를 맞춰보세요.
     name: 한글 퍼즐
-  missing_object:
-    answer_template: 사라진 물건은 {answer_list}입니다.
-    description: 두 그림을 비교하여 사라진 물건을 찾는 훈련
-    instruction_template: 두 그림을 비교하여 사라진 물건 {num_missing}개를 찾아보세요.
-    name: 사라진 물건 찾기
+  # missing_object:  # 비활성화됨 - 틀린그림 찾기는 구현이 어려워 사용하지 않음
+  #   answer_template: 사라진 물건은 {answer_list}입니다.
+  #   description: 두 그림을 비교하여 사라진 물건을 찾는 훈련
+  #   instruction_template: 두 그림을 비교하여 사라진 물건 {num_missing}개를 찾아보세요.
+  #   name: 사라진 물건 찾기
   number_memory:
     answer_template: 정답은 {answer}입니다.
     description: 화면에 나타나는 숫자를 기억하는 훈련
@@ -40,6 +40,31 @@ modules:
     description: 제시된 단어와 관련된 단어를 찾는 훈련
     instruction_template: '''{keyword}''와 관련된 단어를 골라보세요.'
     name: 단어 연상
+  color_memory:
+    answer_template: 색상 순서는 {answer_list}입니다.
+    description: 화면에 나타나는 색상을 순서대로 기억하는 훈련
+    instruction_template: 화면에 나타나는 {num_colors}개의 색상을 순서대로 기억해보세요.
+    name: 색상 기억
+  simple_calculation:
+    answer_template: 정답은 {answer}입니다.
+    description: 간단한 덧셈/뺄셈 계산 문제
+    instruction_template: 다음 계산을 해보세요.
+    name: 간단한 계산
+  direction_memory:
+    answer_template: 방향 순서는 {answer_list}입니다.
+    description: 화면에 나타나는 화살표 방향을 순서대로 기억하는 훈련
+    instruction_template: 화면에 나타나는 {num_directions}개의 화살표 방향을 순서대로 기억해보세요.
+    name: 방향 기억
+  category_classification:
+    answer_template: 정답은 '{answer}'입니다.
+    description: 여러 항목 중 카테고리에 속하지 않는 것을 찾는 훈련
+    instruction_template: 다음 항목 중 {category}이(가) 아닌 것은?
+    name: 카테고리 분류
+  shape_matching:
+    answer_template: 정답은 {answer}번입니다.
+    description: 주어진 도형과 같은 도형을 찾는 훈련
+    instruction_template: 다음 중 {target_color} {target_shape}와(과) 같은 것은?
+    name: 도형 매칭
 presets:
   clock_reading_senior:
     color_scheme:
@@ -115,50 +140,50 @@ presets:
         puzzle_type: initial_sound
         word_length: 3
     transition_seconds: 2
-  missing_object_senior:
-    color_scheme:
-      background:
-      - 240
-      - 245
-      - 240
-      correct:
-      - 80
-      - 160
-      - 80
-      countdown:
-      - 200
-      - 80
-      - 60
-      highlight:
-      - 255
-      - 200
-      - 100
-      text:
-      - 40
-      - 40
-      - 40
-    description: 시니어용 관찰력 훈련 (그림에서 사라진 물건 찾기)
-    difficulty: easy
-    font_size: 84
-    image_style: warm, clear, simple illustration, senior-friendly, high contrast
-    modules:
-    - type: missing_object
-      weight: 1.0
-    name: 사라진 물건 찾기
-    num_problems: 15
-    problem_settings:
-      missing_object:
-        countdown_seconds: 15
-        display_seconds: 10
-        num_missing: 2
-        num_objects: 8
-    themes:
-    - 주방 풍경
-    - 거실
-    - 공원
-    - 시장
-    - 정원
-    transition_seconds: 2
+  # missing_object_senior:  # 비활성화됨 - 틀린그림 찾기는 구현이 어려워 사용하지 않음
+  #   color_scheme:
+  #     background:
+  #     - 240
+  #     - 245
+  #     - 240
+  #     correct:
+  #     - 80
+  #     - 160
+  #     - 80
+  #     countdown:
+  #     - 200
+  #     - 80
+  #     - 60
+  #     highlight:
+  #     - 255
+  #     - 200
+  #     - 100
+  #     text:
+  #     - 40
+  #     - 40
+  #     - 40
+  #   description: 시니어용 관찰력 훈련 (그림에서 사라진 물건 찾기)
+  #   difficulty: easy
+  #   font_size: 84
+  #   image_style: warm, clear, simple illustration, senior-friendly, high contrast
+  #   modules:
+  #   - type: missing_object
+  #     weight: 1.0
+  #   name: 사라진 물건 찾기
+  #   num_problems: 15
+  #   problem_settings:
+  #     missing_object:
+  #       countdown_seconds: 15
+  #       display_seconds: 10
+  #       num_missing: 2
+  #       num_objects: 8
+  #   themes:
+  #   - 주방 풍경
+  #   - 거실
+  #   - 공원
+  #   - 시장
+  #   - 정원
+  #   transition_seconds: 2
   mixed_brain_training_senior:
     color_scheme:
       background:
@@ -189,16 +214,26 @@ presets:
     - ko
     modules:
     - type: number_memory
-      weight: 0.25
-    - type: missing_object
-      weight: 0.2
-    - type: pattern_sequence
       weight: 0.15
+    # - type: missing_object  # 비활성화됨 - 틀린그림 찾기는 구현이 어려워 사용하지 않음
+    #   weight: 0.2
+    - type: pattern_sequence
+      weight: 0.1
     - type: word_association
-      weight: 0.2
+      weight: 0.15
     - type: clock_reading
       weight: 0.1
     - type: korean_word_puzzle
+      weight: 0.1
+    - type: color_memory
+      weight: 0.15
+    - type: simple_calculation
+      weight: 0.15
+    - type: direction_memory
+      weight: 0.1
+    - type: category_classification
+      weight: 0.1
+    - type: shape_matching
       weight: 0.1
     name: 종합 두뇌훈련
     num_problems: 10
@@ -213,11 +248,11 @@ presets:
         num_hints: 2
         puzzle_type: initial_sound
         word_length: 3
-      missing_object:
-        countdown_seconds: 15
-        display_seconds: 10
-        num_missing: 2
-        num_objects: 8
+      # missing_object:  # 비활성화됨
+      #   countdown_seconds: 15
+      #   display_seconds: 10
+      #   num_missing: 2
+      #   num_objects: 8
       number_memory:
         countdown_seconds: 10
         digit_count: 4
@@ -232,6 +267,28 @@ presets:
         display_seconds: 10
         num_choices: 3
         word_category: 일상
+      color_memory:
+        countdown_seconds: 10
+        display_seconds: 5
+        num_colors: 4
+      simple_calculation:
+        countdown_seconds: 15
+        display_seconds: 8
+        max_number: 50
+        operation_type: addition
+      direction_memory:
+        countdown_seconds: 10
+        display_seconds: 5
+        num_directions: 4
+      category_classification:
+        countdown_seconds: 15
+        display_seconds: 10
+        num_items: 4
+        category_type: random
+      shape_matching:
+        countdown_seconds: 12
+        display_seconds: 8
+        num_shapes: 4
     region_targets:
     - KR
     - NA

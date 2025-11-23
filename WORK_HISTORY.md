@@ -9,7 +9,45 @@
 
 ### ✅ 최근 완료된 작업
 
-#### 1. 두뇌훈련 영상 다국어 지원 및 로직 개선 (2025-11-23)
+#### 1. 두뇌훈련 모듈 확장 (2025-11-23)
+- **틀린그림 찾기 기능 비활성화**
+  - DALL-E로 같은 장면의 두 이미지를 생성하는 것이 어려워 기능 비활성화
+  - `missing_object` 모듈 및 `missing_object_senior` 프리셋 주석 처리
+  - `mixed_brain_training_senior`에서 `missing_object` 모듈 제거 및 가중치 재분배
+
+- **두뇌훈련 모듈 5개 추가 (총 10개 모듈)**
+  - **1순위 모듈 (3개)**
+    - `color_memory` (색상 기억): 4개 색상 박스를 순서대로 기억하는 훈련
+    - `simple_calculation` (간단한 계산): 덧셈/뺄셈 문제
+    - `direction_memory` (방향 기억): 4개 화살표 방향을 순서대로 기억하는 훈련
+  - **2순위 모듈 (2개)**
+    - `category_classification` (카테고리 분류): 여러 항목 중 카테고리에 속하지 않는 것 찾기
+    - `shape_matching` (도형 매칭): 주어진 도형과 같은 도형 찾기 (원, 사각형, 삼각형, 직사각형, 별, 다이아몬드)
+  
+- **구현 내용**
+  - `scripts/generate_brain_training_content.py`: 5개 모듈의 문제 생성 함수 추가
+  - `scripts/make_brain_training_video.py`: 이미지 생성 함수 및 비디오 클립 생성 로직 추가
+  - `config/brain_training_presets.yaml`: 모듈 정의 추가 및 `mixed_brain_training_senior` 프리셋에 가중치 추가
+  - `scripts/generate_brain_training_metadata.py`: 모듈 이름 추가
+  - `docs/BRAIN_TRAINING_MODULE_IDEAS.md`: 모듈 아이디어 문서 생성
+
+- **현재 사용 가능한 모듈 (총 10개)**
+  1. number_memory (숫자 기억)
+  2. pattern_sequence (패턴 순서)
+  3. word_association (단어 연상)
+  4. clock_reading (시계 읽기)
+  5. korean_word_puzzle (한글 퍼즐)
+  6. color_memory (색상 기억) ⭐ 새로 추가
+  7. simple_calculation (간단한 계산) ⭐ 새로 추가
+  8. direction_memory (방향 기억) ⭐ 새로 추가
+  9. category_classification (카테고리 분류) ⭐ 새로 추가
+  10. shape_matching (도형 매칭) ⭐ 새로 추가
+
+- **15분 영상 구성 가능**
+  - 10개 모듈 × 평균 1.5분 = 15분 이상 영상 생성 가능
+  - 각 모듈별 가중치 조정으로 골고루 분배
+
+#### 2. 두뇌훈련 영상 다국어 지원 및 로직 개선 (2025-11-23)
 - **틀린그림 찾기 로직 개선**
   - 기존: 원본 이미지에서 물건을 가리는 방식 (비교 불가능)
   - 변경: DALL-E로 원본 이미지 생성 후, 같은 장면에서 특정 물건이 없는 새 이미지를 별도로 생성
@@ -363,7 +401,7 @@ python -c "from scripts.utils import setup_logging; print('OK')"
 
 ---
 
-**마지막 업데이트**: 2025-11-23  
+**마지막 업데이트**: 2025-11-23 (두뇌훈련 모듈 5개 추가 완료)  
 **작성자**: AI Assistant (Cursor)  
 **목적**: 다른 머신/IDE에서 작업 이어가기
 

@@ -522,6 +522,359 @@ def create_clock_image(hour: int, minute: int, color_scheme: Dict,
         raise
 
 
+def create_color_display_image(colors: List[Dict], color_scheme: Dict, font_size: int, output_path: Path):
+    """
+    색상 표시 이미지 생성
+    
+    Args:
+        colors: 색상 리스트 (각각 {"name_ko": str, "name_en": str, "rgb": tuple})
+        color_scheme: 색상 스킴
+        font_size: 폰트 크기
+        output_path: 출력 경로
+    """
+    try:
+        img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
+        draw = ImageDraw.Draw(img)
+        
+        num_colors = len(colors)
+        box_size = 200
+        spacing = 50
+        total_width = (box_size + spacing) * num_colors - spacing
+        start_x = (1920 - total_width) // 2
+        y = 1080 // 2 - box_size // 2
+        
+        for i, color_info in enumerate(colors):
+            x = start_x + i * (box_size + spacing)
+            rgb = color_info['rgb']
+            
+            # 색상 박스 그리기
+            draw.rectangle([x, y, x + box_size, y + box_size], fill=rgb, outline=(0, 0, 0), width=5)
+        
+        img.save(output_path, "PNG", optimize=True)
+        logger.debug(f"색상 이미지 생성 완료: {output_path}")
+        
+    except Exception as e:
+        logger.error(f"색상 이미지 생성 실패: {e}", exc_info=True)
+        raise
+
+
+def create_direction_display_image(directions: List[Dict], color_scheme: Dict, font_size: int, output_path: Path):
+    """
+    방향 표시 이미지 생성
+    
+    Args:
+        directions: 방향 리스트 (각각 {"name_ko": str, "name_en": str, "symbol": str})
+        color_scheme: 색상 스킴
+        font_size: 폰트 크기
+        output_path: 출력 경로
+    """
+    try:
+        img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
+        draw = ImageDraw.Draw(img)
+        
+        try:
+            font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size * 2)
+        except:
+            font = ImageFont.load_default()
+        
+        num_directions = len(directions)
+        arrow_size = 150
+        spacing = 80
+        total_width = (arrow_size + spacing) * num_directions - spacing
+        start_x = (1920 - total_width) // 2
+        y = 1080 // 2 - arrow_size // 2
+        
+        for i, direction_info in enumerate(directions):
+            x = start_x + i * (arrow_size + spacing)
+            symbol = direction_info['symbol']
+            
+            # 화살표 텍스트 그리기
+            text = symbol
+            bbox = draw.textbbox((0, 0), text, font=font)
+            text_width = bbox[2] - bbox[0]
+            text_height = bbox[3] - bbox[1]
+            
+            text_x = x + (arrow_size - text_width) // 2
+            text_y = y + (arrow_size - text_height) // 2
+            
+            # 그림자
+            shadow_offset = 5
+            draw.text((text_x + shadow_offset, text_y + shadow_offset), text,
+                     fill=(150, 150, 150), font=font)
+            
+            # 메인 텍스트
+            draw.text((text_x, text_y), text,
+                     fill=tuple(color_scheme.get('text', [40, 40, 40])), font=font)
+        
+        img.save(output_path, "PNG", optimize=True)
+        logger.debug(f"방향 이미지 생성 완료: {output_path}")
+        
+    except Exception as e:
+        logger.error(f"방향 이미지 생성 실패: {e}", exc_info=True)
+        raise
+
+
+def create_calculation_display_image(num1: int, num2: int, operation: str, color_scheme: Dict, font_size: int, output_path: Path):
+    """
+    계산 문제 표시 이미지 생성
+    
+    Args:
+        num1: 첫 번째 숫자
+        num2: 두 번째 숫자
+        operation: 연산 기호 (+, -)
+        color_scheme: 색상 스킴
+        font_size: 폰트 크기
+        output_path: 출력 경로
+    """
+    try:
+        img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
+        draw = ImageDraw.Draw(img)
+        
+        try:
+            font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size * 2)
+        except:
+            font = ImageFont.load_default()
+        
+        # 계산식 텍스트
+        text = f"{num1} {operation} {num2} = ?"
+        bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        
+        x = (1920 - text_width) // 2
+        y = (1080 - text_height) // 2
+        
+        # 그림자
+        shadow_offset = 8
+        draw.text((x + shadow_offset, y + shadow_offset), text,
+                 fill=(150, 150, 150), font=font)
+        
+        # 메인 텍스트
+        draw.text((x, y), text,
+                 fill=tuple(color_scheme.get('text', [40, 40, 40])), font=font)
+        
+        img.save(output_path, "PNG", optimize=True)
+        logger.debug(f"계산 이미지 생성 완료: {output_path}")
+        
+    except Exception as e:
+        logger.error(f"계산 이미지 생성 실패: {e}", exc_info=True)
+        raise
+
+
+def create_category_display_image(category: str, items: List[str], color_scheme: Dict, font_size: int, output_path: Path, languages: List[str] = None):
+    """
+    카테고리 분류 문제 표시 이미지 생성
+    
+    Args:
+        category: 카테고리 이름
+        items: 항목 리스트
+        color_scheme: 색상 스킴
+        font_size: 폰트 크기
+        output_path: 출력 경로
+        languages: 언어 리스트
+    """
+    try:
+        img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
+        draw = ImageDraw.Draw(img)
+        
+        try:
+            font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size)
+            item_font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size - 10)
+        except:
+            font = ImageFont.load_default()
+            item_font = font
+        
+        # 카테고리 텍스트
+        category_text = f"카테고리: {category}" if (not languages or languages[0] != "en") else f"Category: {category}"
+        bbox = draw.textbbox((0, 0), category_text, font=font)
+        category_width = bbox[2] - bbox[0]
+        category_x = (1920 - category_width) // 2
+        category_y = 200
+        
+        draw.text((category_x, category_y), category_text,
+                 fill=tuple(color_scheme.get('text', [40, 40, 40])), font=font)
+        
+        # 항목 리스트 표시
+        items_text = "\n".join([f"{i+1}. {item}" for i, item in enumerate(items)])
+        bbox = draw.textbbox((0, 0), items_text, font=item_font)
+        items_width = bbox[2] - bbox[0]
+        items_height = bbox[3] - bbox[1]
+        items_x = (1920 - items_width) // 2
+        items_y = category_y + 150
+        
+        draw.text((items_x, items_y), items_text,
+                 fill=tuple(color_scheme.get('text', [40, 40, 40])), font=item_font)
+        
+        img.save(output_path, "PNG", optimize=True)
+        logger.debug(f"카테고리 이미지 생성 완료: {output_path}")
+        
+    except Exception as e:
+        logger.error(f"카테고리 이미지 생성 실패: {e}", exc_info=True)
+        raise
+
+
+def create_shape_matching_image(target_shape: str, target_color: Dict, choices: List[Dict], 
+                                color_scheme: Dict, font_size: int, output_path: Path):
+    """
+    도형 매칭 문제 표시 이미지 생성
+    
+    Args:
+        target_shape: 타겟 도형 타입
+        target_color: 타겟 색상 {"name_ko": str, "name_en": str, "rgb": tuple}
+        choices: 선택지 리스트 (각각 {"shape": str, "color": Dict, "is_correct": bool})
+        color_scheme: 색상 스킴
+        font_size: 폰트 크기
+        output_path: 출력 경로
+    """
+    try:
+        img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
+        draw = ImageDraw.Draw(img)
+        
+        try:
+            font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size)
+        except:
+            font = ImageFont.load_default()
+        
+        # 도형 이름 한글 변환
+        shape_names_ko = {
+            "circle": "원",
+            "square": "사각형",
+            "triangle": "삼각형",
+            "rectangle": "직사각형",
+            "star": "별",
+            "diamond": "다이아몬드"
+        }
+        
+        # 타겟 도형 표시 (상단 중앙)
+        target_size = 150
+        target_x = 1920 // 2 - target_size // 2
+        target_y = 200
+        
+        target_rgb = target_color['rgb']
+        
+        # 타겟 도형 그리기
+        if target_shape == "circle":
+            draw.ellipse([target_x, target_y, target_x + target_size, target_y + target_size],
+                        fill=target_rgb, outline=(0, 0, 0), width=5)
+        elif target_shape == "square":
+            draw.rectangle([target_x, target_y, target_x + target_size, target_y + target_size],
+                          fill=target_rgb, outline=(0, 0, 0), width=5)
+        elif target_shape == "triangle":
+            points = [
+                (target_x + target_size // 2, target_y),
+                (target_x, target_y + target_size),
+                (target_x + target_size, target_y + target_size)
+            ]
+            draw.polygon(points, fill=target_rgb, outline=(0, 0, 0))
+        elif target_shape == "rectangle":
+            rect_width = target_size * 1.5
+            rect_height = target_size
+            draw.rectangle([target_x, target_y, target_x + rect_width, target_y + rect_height],
+                          fill=target_rgb, outline=(0, 0, 0), width=5)
+        elif target_shape == "star":
+            # 별 그리기 (간단한 5각형)
+            center_x = target_x + target_size // 2
+            center_y = target_y + target_size // 2
+            radius = target_size // 2
+            points = []
+            for i in range(5):
+                angle = math.radians(i * 144 - 90)
+                x = center_x + radius * math.cos(angle)
+                y = center_y + radius * math.sin(angle)
+                points.append((x, y))
+            draw.polygon(points, fill=target_rgb, outline=(0, 0, 0))
+        elif target_shape == "diamond":
+            center_x = target_x + target_size // 2
+            center_y = target_y + target_size // 2
+            points = [
+                (center_x, target_y),
+                (target_x + target_size, center_y),
+                (center_x, target_y + target_size),
+                (target_x, center_y)
+            ]
+            draw.polygon(points, fill=target_rgb, outline=(0, 0, 0))
+        
+        # 타겟 설명 텍스트
+        target_text = f"{target_color['name_ko']} {shape_names_ko.get(target_shape, target_shape)}"
+        bbox = draw.textbbox((0, 0), target_text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_x = (1920 - text_width) // 2
+        text_y = target_y + target_size + 30
+        draw.text((text_x, text_y), target_text,
+                 fill=tuple(color_scheme.get('text', [40, 40, 40])), font=font)
+        
+        # 선택지 도형들 (하단에 배치)
+        num_choices = len(choices)
+        choice_size = 120
+        spacing = 60
+        total_width = (choice_size + spacing) * num_choices - spacing
+        start_x = (1920 - total_width) // 2
+        choice_y = 600
+        
+        for i, choice in enumerate(choices):
+            x = start_x + i * (choice_size + spacing)
+            shape = choice['shape']
+            color_rgb = choice['color']['rgb']
+            
+            # 도형 그리기
+            if shape == "circle":
+                draw.ellipse([x, choice_y, x + choice_size, choice_y + choice_size],
+                            fill=color_rgb, outline=(0, 0, 0), width=3)
+            elif shape == "square":
+                draw.rectangle([x, choice_y, x + choice_size, choice_y + choice_size],
+                              fill=color_rgb, outline=(0, 0, 0), width=3)
+            elif shape == "triangle":
+                points = [
+                    (x + choice_size // 2, choice_y),
+                    (x, choice_y + choice_size),
+                    (x + choice_size, choice_y + choice_size)
+                ]
+                draw.polygon(points, fill=color_rgb, outline=(0, 0, 0))
+            elif shape == "rectangle":
+                rect_width = choice_size * 1.3
+                rect_height = choice_size
+                draw.rectangle([x, choice_y, x + rect_width, choice_y + rect_height],
+                              fill=color_rgb, outline=(0, 0, 0), width=3)
+            elif shape == "star":
+                center_x = x + choice_size // 2
+                center_y = choice_y + choice_size // 2
+                radius = choice_size // 2
+                points = []
+                for j in range(5):
+                    angle = math.radians(j * 144 - 90)
+                    px = center_x + radius * math.cos(angle)
+                    py = center_y + radius * math.sin(angle)
+                    points.append((px, py))
+                draw.polygon(points, fill=color_rgb, outline=(0, 0, 0))
+            elif shape == "diamond":
+                center_x = x + choice_size // 2
+                center_y = choice_y + choice_size // 2
+                points = [
+                    (center_x, choice_y),
+                    (x + choice_size, center_y),
+                    (center_x, choice_y + choice_size),
+                    (x, center_y)
+                ]
+                draw.polygon(points, fill=color_rgb, outline=(0, 0, 0))
+            
+            # 번호 표시
+            num_text = str(i + 1)
+            bbox = draw.textbbox((0, 0), num_text, font=font)
+            num_width = bbox[2] - bbox[0]
+            num_height = bbox[3] - bbox[1]
+            num_x = x + (choice_size - num_width) // 2
+            num_y = choice_y + choice_size + 20
+            draw.text((num_x, num_y), num_text,
+                     fill=tuple(color_scheme.get('text', [40, 40, 40])), font=font)
+        
+        img.save(output_path, "PNG", optimize=True)
+        logger.debug(f"도형 매칭 이미지 생성 완료: {output_path}")
+        
+    except Exception as e:
+        logger.error(f"도형 매칭 이미지 생성 실패: {e}", exc_info=True)
+        raise
+
+
 def wrap_text(text: str, font: ImageFont.ImageFont, max_width: int) -> List[str]:
     """
     텍스트를 주어진 너비에 맞게 줄바꿈
@@ -868,6 +1221,57 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
             puzzle_clip = output_dir / f"problem_{problem_num}_puzzle.mp4"
             create_image_clip(puzzle_path, problem_data['display_seconds'], puzzle_clip)
             clips.append(puzzle_clip)
+            
+        elif module == "color_memory":
+            # 색상 표시 이미지 생성
+            colors = problem_data['problem_data'].get('colors', [])
+            color_path = output_dir / f"problem_{problem_num}_color.png"
+            create_color_display_image(colors, color_scheme, font_size, color_path)
+            color_clip = output_dir / f"problem_{problem_num}_color.mp4"
+            create_image_clip(color_path, problem_data['display_seconds'], color_clip)
+            clips.append(color_clip)
+            
+        elif module == "simple_calculation":
+            # 계산 문제 표시 이미지 생성
+            num1 = problem_data['problem_data'].get('num1', 0)
+            num2 = problem_data['problem_data'].get('num2', 0)
+            operation = problem_data['problem_data'].get('operation', '+')
+            calc_path = output_dir / f"problem_{problem_num}_calc.png"
+            create_calculation_display_image(num1, num2, operation, color_scheme, font_size, calc_path)
+            calc_clip = output_dir / f"problem_{problem_num}_calc.mp4"
+            create_image_clip(calc_path, problem_data['display_seconds'], calc_clip)
+            clips.append(calc_clip)
+            
+        elif module == "direction_memory":
+            # 방향 표시 이미지 생성
+            directions = problem_data['problem_data'].get('directions', [])
+            direction_path = output_dir / f"problem_{problem_num}_direction.png"
+            create_direction_display_image(directions, color_scheme, font_size, direction_path)
+            direction_clip = output_dir / f"problem_{problem_num}_direction.mp4"
+            create_image_clip(direction_path, problem_data['display_seconds'], direction_clip)
+            clips.append(direction_clip)
+            
+        elif module == "category_classification":
+            # 카테고리 분류 문제 표시
+            category = problem_data['problem_data'].get('category', '')
+            items = problem_data['problem_data'].get('items', [])
+            preset_languages = preset.get('languages', ['ko'])
+            category_path = output_dir / f"problem_{problem_num}_category.png"
+            create_category_display_image(category, items, color_scheme, font_size, category_path, preset_languages)
+            category_clip = output_dir / f"problem_{problem_num}_category.mp4"
+            create_image_clip(category_path, problem_data['display_seconds'], category_clip)
+            clips.append(category_clip)
+            
+        elif module == "shape_matching":
+            # 도형 매칭 문제 표시
+            target_shape = problem_data['problem_data'].get('target_shape', 'circle')
+            target_color = problem_data['problem_data'].get('target_color', {})
+            choices = problem_data['problem_data'].get('choices', [])
+            shape_path = output_dir / f"problem_{problem_num}_shape.png"
+            create_shape_matching_image(target_shape, target_color, choices, color_scheme, font_size, shape_path)
+            shape_clip = output_dir / f"problem_{problem_num}_shape.mp4"
+            create_image_clip(shape_path, problem_data['display_seconds'], shape_clip)
+            clips.append(shape_clip)
         
         # 3. 카운트다운 클립들
         countdown_seconds = problem_data.get('countdown_seconds', 10)
