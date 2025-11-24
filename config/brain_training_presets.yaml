@@ -1,12 +1,12 @@
 defaults:
-  answer_display_duration: 5
+  answer_display_duration: 15  # 30분 목표: 정답 화면 시간 증가 (5초 → 15초)
   bgm_path: null
   enable_narration: false
   enable_subtitles: true
   fps: 30
-  intro_duration: 5
-  outro_duration: 5
-  problem_intro_duration: 3
+  intro_duration: 10  # 30분 목표: 인트로 시간 증가 (5초 → 10초)
+  outro_duration: 10  # 30분 목표: 아웃트로 시간 증가 (5초 → 10초)
+  problem_intro_duration: 8  # 30분 목표: 문제 소개 시간 증가 (3초 → 8초)
   video_height: 1080
   video_width: 1920
 modules:
@@ -211,7 +211,7 @@ presets:
     font_size: 84
     image_style: warm, clear, simple illustration, senior-friendly, high contrast
     languages:
-    - ko
+    - en
     modules:
     - type: number_memory
       weight: 0.15
@@ -236,15 +236,16 @@ presets:
     - type: shape_matching
       weight: 0.1
     name: 종합 두뇌훈련
-    num_problems: 10
+    target_duration_minutes: 30  # 목표 영상 길이: 30분 (문제 수 자동 계산)
+    num_problems: 15  # target_duration_minutes가 설정되면 무시됨
     problem_settings:
       clock_reading:
-        countdown_seconds: 12
-        display_seconds: 8
+        countdown_seconds: 15  # 적당한 길이 유지
+        display_seconds: 15  # 문제 표시 시간 증가
         time_type: hour_half
       korean_word_puzzle:
-        countdown_seconds: 15
-        display_seconds: 10
+        countdown_seconds: 18  # 적당한 길이 유지
+        display_seconds: 15  # 문제 표시 시간 증가
         num_hints: 2
         puzzle_type: initial_sound
         word_length: 3
@@ -254,40 +255,40 @@ presets:
       #   num_missing: 2
       #   num_objects: 8
       number_memory:
-        countdown_seconds: 10
+        countdown_seconds: 12  # 적당한 길이 유지
         digit_count: 4
-        display_seconds: 5
+        display_seconds: 12  # 문제 표시 시간 증가
       pattern_sequence:
-        countdown_seconds: 12
-        display_seconds: 8
+        countdown_seconds: 15  # 적당한 길이 유지
+        display_seconds: 15  # 문제 표시 시간 증가
         pattern_type: shapes
         sequence_length: 4
       word_association:
-        countdown_seconds: 15
-        display_seconds: 10
+        countdown_seconds: 18  # 적당한 길이 유지
+        display_seconds: 15  # 문제 표시 시간 증가
         num_choices: 3
         word_category: 일상
       color_memory:
-        countdown_seconds: 10
-        display_seconds: 5
+        countdown_seconds: 12  # 적당한 길이 유지
+        display_seconds: 12  # 문제 표시 시간 증가
         num_colors: 4
       simple_calculation:
-        countdown_seconds: 15
-        display_seconds: 8
+        countdown_seconds: 15  # 적당한 길이 유지
+        display_seconds: 15  # 문제 표시 시간 증가
         max_number: 50
         operation_type: addition
       direction_memory:
-        countdown_seconds: 10
-        display_seconds: 5
+        countdown_seconds: 12  # 적당한 길이 유지
+        display_seconds: 12  # 문제 표시 시간 증가
         num_directions: 4
       category_classification:
-        countdown_seconds: 15
-        display_seconds: 10
+        countdown_seconds: 18  # 적당한 길이 유지
+        display_seconds: 15  # 문제 표시 시간 증가
         num_items: 4
         category_type: random
       shape_matching:
-        countdown_seconds: 12
-        display_seconds: 8
+        countdown_seconds: 15  # 적당한 길이 유지
+        display_seconds: 15  # 문제 표시 시간 증가
         num_shapes: 4
     region_targets:
     - KR

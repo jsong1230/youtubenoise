@@ -58,7 +58,8 @@ def download_image(url: str, output_path: Path) -> bool:
 
 def create_text_image(text: str, color_scheme: Dict, font_size: int, 
                       output_path: Path, subtitle: str = None, 
-                      text_en: str = None, subtitle_en: str = None):
+                      text_en: str = None, subtitle_en: str = None,
+                      languages: List[str] = None):
     """
     텍스트 이미지 생성 (문제 설명, 힌트 등) - 다국어 지원
     
@@ -70,7 +71,12 @@ def create_text_image(text: str, color_scheme: Dict, font_size: int,
         subtitle: 부제목 (한글, 선택사항)
         text_en: 메인 텍스트 (영어, 선택사항)
         subtitle_en: 부제목 (영어, 선택사항)
+        languages: 지원 언어 리스트 (기본값: ['ko'])
     """
+    languages = languages or ['ko']
+    use_language = languages[0] if languages else 'ko'
+    is_english_only = use_language == 'en'
+    
     try:
         img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
         draw = ImageDraw.Draw(img)
@@ -80,13 +86,22 @@ def create_text_image(text: str, color_scheme: Dict, font_size: int,
             font_ko = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size)
             subtitle_font_ko = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size // 2)
             # 영어 폰트
-            font_en = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size - 10)
-            subtitle_font_en = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", (font_size - 10) // 2)
-        except:
+            font_en = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size)
+            subtitle_font_en = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size // 2)
+        except Exception as e:
+            logger.warning(f"폰트 로딩 실패: {e}, 기본 폰트 사용")
             font_ko = ImageFont.load_default()
             subtitle_font_ko = font_ko
             font_en = font_ko
             subtitle_font_en = font_ko
+        
+        # 언어에 따라 사용할 폰트 선택
+        if is_english_only:
+            font = font_en
+            subtitle_font = subtitle_font_en
+        else:
+            font = font_ko
+            subtitle_font = subtitle_font_ko
         
         # 다국어 텍스트가 있는 경우
         if text_en:
@@ -130,25 +145,37 @@ def create_text_image(text: str, color_scheme: Dict, font_size: int,
                          fill=tuple(color_scheme.get('text', [40, 40, 40])), 
                          font=subtitle_font_en)
         else:
-            # 단일 언어 (기존 로직)
-            bbox = draw.textbbox((0, 0), text, font=font_ko)
-            text_width = bbox[2] - bbox[0]
-            text_height = bbox[3] - bbox[1]
+            # 단일 언어 (줄바꿈 처리) - 언어에 따라 적절한 폰트 사용
+            max_width = 1800  # 화면 양쪽 여백 고려
+            text_lines = wrap_text(text, font, max_width)
+            line_height = int(font_size * 1.5)
             
-            x = (1920 - text_width) // 2
-            y = (1080 - text_height) // 2 if not subtitle else (1080 - text_height) // 2 - 50
+            # 전체 텍스트 높이 계산
+            total_text_height = len(text_lines) * line_height
+            if subtitle:
+                subtitle_bbox = draw.textbbox((0, 0), subtitle, font=subtitle_font)
+                total_text_height += (subtitle_bbox[3] - subtitle_bbox[1]) + 40
             
-            draw.text((x, y), text, fill=tuple(color_scheme.get('text', [40, 40, 40])), font=font_ko)
+            # 화면 중앙에 배치
+            y_start = (1080 - total_text_height) // 2
+            
+            # 텍스트 줄별로 그리기
+            for i, line in enumerate(text_lines):
+                bbox = draw.textbbox((0, 0), line, font=font)
+                line_width = bbox[2] - bbox[0]
+                x = (1920 - line_width) // 2
+                y = y_start + i * line_height
+                draw.text((x, y), line, fill=tuple(color_scheme.get('text', [40, 40, 40])), font=font)
             
             # 부제목
             if subtitle:
-                bbox = draw.textbbox((0, 0), subtitle, font=subtitle_font_ko)
+                bbox = draw.textbbox((0, 0), subtitle, font=subtitle_font)
                 sub_width = bbox[2] - bbox[0]
                 sub_x = (1920 - sub_width) // 2
-                sub_y = y + text_height + 40
+                sub_y = y_start + len(text_lines) * line_height + 40
                 draw.text((sub_x, sub_y), subtitle, 
                          fill=tuple(color_scheme.get('text', [40, 40, 40])), 
-                         font=subtitle_font_ko)
+                         font=subtitle_font)
         
         img.save(output_path, "PNG", optimize=True)
         logger.debug(f"텍스트 이미지 생성 완료: {output_path}")
@@ -522,7 +549,8 @@ def create_clock_image(hour: int, minute: int, color_scheme: Dict,
         raise
 
 
-def create_color_display_image(colors: List[Dict], color_scheme: Dict, font_size: int, output_path: Path):
+def create_color_display_image(colors: List[Dict], color_scheme: Dict, font_size: int, output_path: Path,
+                                languages: List[str] = None):
     """
     색상 표시 이미지 생성
     
@@ -531,6 +559,7 @@ def create_color_display_image(colors: List[Dict], color_scheme: Dict, font_size
         color_scheme: 색상 스킴
         font_size: 폰트 크기
         output_path: 출력 경로
+        languages: 지원 언어 리스트 (기본값: ['ko'])
     """
     try:
         img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
@@ -614,9 +643,9 @@ def create_direction_display_image(directions: List[Dict], color_scheme: Dict, f
         raise
 
 
-def create_calculation_display_image(num1: int, num2: int, operation: str, color_scheme: Dict, font_size: int, output_path: Path):
+def create_calculation_display_image(num1: int, num2: int, operation: str, color_scheme: Dict, font_size: int, output_path: Path, languages: List[str] = None):
     """
-    계산 문제 표시 이미지 생성
+    계산 문제 표시 이미지 생성 (언어에 따라 적절한 폰트 사용, 큰 폰트 사이즈)
     
     Args:
         num1: 첫 번째 숫자
@@ -625,18 +654,50 @@ def create_calculation_display_image(num1: int, num2: int, operation: str, color
         color_scheme: 색상 스킴
         font_size: 폰트 크기
         output_path: 출력 경로
+        languages: 지원 언어 리스트 (기본값: ['ko'])
     """
+    languages = languages or ['ko']
+    use_language = languages[0] if languages else 'ko'
+    is_english_only = use_language == 'en'
+    
     try:
         img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
         draw = ImageDraw.Draw(img)
         
-        try:
-            font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size * 2)
-        except:
-            font = ImageFont.load_default()
+        # 계산 문제는 항상 절대 고정 폰트 크기 사용 (300px)
+        # font_size에 전혀 의존하지 않고 완전히 고정된 값 사용
+        CALC_FONT_SIZE = 300  # 절대 고정값
         
-        # 계산식 텍스트
-        text = f"{num1} {operation} {num2} = ?"
+        try:
+            # 언어에 따라 적절한 폰트 사용
+            if is_english_only:
+                font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", CALC_FONT_SIZE)
+            else:
+                font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", CALC_FONT_SIZE)
+        except Exception as e1:
+            try:
+                # 폴백: 반대 폰트 시도
+                if is_english_only:
+                    font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", CALC_FONT_SIZE)
+                else:
+                    font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", CALC_FONT_SIZE)
+            except Exception as e2:
+                # 기본 폰트는 크기 조정 불가하므로 에러 발생
+                logger.error(f"계산 문제 폰트 로딩 실패: {e1}, {e2}")
+                logger.error(f"기본 폰트는 크기 조정이 불가능하므로 계산 문제 표시에 적합하지 않습니다.")
+                # 최소한 큰 기본 폰트 시도 (하지만 크기 조정은 안 됨)
+                font = ImageFont.load_default()
+                logger.warning(f"기본 폰트 사용 중 (크기: {CALC_FONT_SIZE}px 요청했으나 조정 불가)")
+        
+        # 계산식 텍스트 (한글 연산 기호 사용)
+        if operation == '+':
+            op_symbol = '+'
+        elif operation == '-':
+            op_symbol = '-'
+        else:
+            op_symbol = operation
+        
+        text = f"{num1} {op_symbol} {num2} = ?"
         bbox = draw.textbbox((0, 0), text, font=font)
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
@@ -645,7 +706,7 @@ def create_calculation_display_image(num1: int, num2: int, operation: str, color
         y = (1080 - text_height) // 2
         
         # 그림자
-        shadow_offset = 8
+        shadow_offset = 10
         draw.text((x + shadow_offset, y + shadow_offset), text,
                  fill=(150, 150, 150), font=font)
         
@@ -673,19 +734,29 @@ def create_category_display_image(category: str, items: List[str], color_scheme:
         output_path: 출력 경로
         languages: 언어 리스트
     """
+    languages = languages or ['ko']
+    use_language = languages[0] if languages else 'ko'
+    is_english_only = use_language == 'en'
+    
     try:
         img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
         draw = ImageDraw.Draw(img)
         
         try:
-            font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size)
-            item_font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size - 10)
-        except:
+            # 언어에 따라 적절한 폰트 선택
+            if is_english_only:
+                font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size)
+                item_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size - 10)
+            else:
+                font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size)
+                item_font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", font_size - 10)
+        except Exception as e:
+            logger.warning(f"폰트 로딩 실패: {e}, 기본 폰트 사용")
             font = ImageFont.load_default()
             item_font = font
         
         # 카테고리 텍스트
-        category_text = f"카테고리: {category}" if (not languages or languages[0] != "en") else f"Category: {category}"
+        category_text = f"카테고리: {category}" if not is_english_only else f"Category: {category}"
         bbox = draw.textbbox((0, 0), category_text, font=font)
         category_width = bbox[2] - bbox[0]
         category_x = (1920 - category_width) // 2
@@ -714,7 +785,8 @@ def create_category_display_image(category: str, items: List[str], color_scheme:
 
 
 def create_shape_matching_image(target_shape: str, target_color: Dict, choices: List[Dict], 
-                                color_scheme: Dict, font_size: int, output_path: Path):
+                                color_scheme: Dict, font_size: int, output_path: Path,
+                                languages: List[str] = None):
     """
     도형 매칭 문제 표시 이미지 생성
     
@@ -725,6 +797,7 @@ def create_shape_matching_image(target_shape: str, target_color: Dict, choices: 
         color_scheme: 색상 스킴
         font_size: 폰트 크기
         output_path: 출력 경로
+        languages: 지원 언어 리스트 (기본값: ['ko'])
     """
     try:
         img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
@@ -735,7 +808,11 @@ def create_shape_matching_image(target_shape: str, target_color: Dict, choices: 
         except:
             font = ImageFont.load_default()
         
-        # 도형 이름 한글 변환
+        # 언어 설정 확인
+        languages = languages or ['ko']
+        use_language = languages[0] if languages else 'ko'
+        
+        # 도형 이름 (언어에 따라)
         shape_names_ko = {
             "circle": "원",
             "square": "사각형",
@@ -743,6 +820,14 @@ def create_shape_matching_image(target_shape: str, target_color: Dict, choices: 
             "rectangle": "직사각형",
             "star": "별",
             "diamond": "다이아몬드"
+        }
+        shape_names_en = {
+            "circle": "circle",
+            "square": "square",
+            "triangle": "triangle",
+            "rectangle": "rectangle",
+            "star": "star",
+            "diamond": "diamond"
         }
         
         # 타겟 도형 표시 (상단 중앙)
@@ -794,8 +879,15 @@ def create_shape_matching_image(target_shape: str, target_color: Dict, choices: 
             ]
             draw.polygon(points, fill=target_rgb, outline=(0, 0, 0))
         
-        # 타겟 설명 텍스트
-        target_text = f"{target_color['name_ko']} {shape_names_ko.get(target_shape, target_shape)}"
+        # 타겟 설명 텍스트 (언어에 따라)
+        if use_language == 'en':
+            color_name = target_color.get('name_en', target_color.get('name_ko', ''))
+            shape_name = shape_names_en.get(target_shape, target_shape)
+        else:
+            color_name = target_color.get('name_ko', target_color.get('name_en', ''))
+            shape_name = shape_names_ko.get(target_shape, target_shape)
+        
+        target_text = f"{color_name} {shape_name}"
         bbox = draw.textbbox((0, 0), target_text, font=font)
         text_width = bbox[2] - bbox[0]
         text_x = (1920 - text_width) // 2
@@ -877,7 +969,7 @@ def create_shape_matching_image(target_shape: str, target_color: Dict, choices: 
 
 def wrap_text(text: str, font: ImageFont.ImageFont, max_width: int) -> List[str]:
     """
-    텍스트를 주어진 너비에 맞게 줄바꿈
+    텍스트를 주어진 너비에 맞게 줄바꿈 (한글 지원)
     
     Args:
         text: 원본 텍스트
@@ -887,31 +979,56 @@ def wrap_text(text: str, font: ImageFont.ImageFont, max_width: int) -> List[str]
     Returns:
         줄바꿈된 텍스트 리스트
     """
-    words = text.split()
+    if not text:
+        return [""]
+    
+    # 한글/영문 혼합 텍스트 처리
+    import re
+    # 공백으로 분리하되, 한글은 문자 단위로도 처리 가능하도록
+    words = re.findall(r'\S+|\s+', text)  # 단어와 공백 모두 추출
     lines = []
-    current_line = []
+    current_line = ""
+    
+    temp_img = Image.new('RGB', (1, 1))
+    temp_draw = ImageDraw.Draw(temp_img)
     
     for word in words:
-        test_line = ' '.join(current_line + [word])
-        bbox = ImageDraw.Draw(Image.new('RGB', (1, 1))).textbbox((0, 0), test_line, font=font)
+        test_line = current_line + word
+        bbox = temp_draw.textbbox((0, 0), test_line, font=font)
         line_width = bbox[2] - bbox[0]
         
         if line_width <= max_width:
-            current_line.append(word)
+            current_line = test_line
         else:
-            if current_line:
-                lines.append(' '.join(current_line))
-            current_line = [word]
+            if current_line.strip():
+                lines.append(current_line.strip())
+            # 단어가 너무 길면 문자 단위로 분할 (한글 처리)
+            if len(word) > 1:
+                char_line = ""
+                for char in word:
+                    test_char_line = char_line + char
+                    bbox = temp_draw.textbbox((0, 0), test_char_line, font=font)
+                    char_width = bbox[2] - bbox[0]
+                    if char_width <= max_width:
+                        char_line = test_char_line
+                    else:
+                        if char_line:
+                            lines.append(char_line)
+                        char_line = char
+                current_line = char_line
+            else:
+                current_line = word
     
-    if current_line:
-        lines.append(' '.join(current_line))
+    if current_line.strip():
+        lines.append(current_line.strip())
     
     return lines if lines else [text]
 
 
 def create_answer_image(answer_text: str, explanation: str, color_scheme: Dict,
                        font_size: int, output_path: Path,
-                       answer_en: str = None, explanation_en: str = None):
+                       answer_en: str = None, explanation_en: str = None,
+                       languages: List[str] = None):
     """
     정답 화면 이미지 생성 (긴 텍스트 자동 줄바꿈, 다국어 지원)
     
@@ -923,7 +1040,11 @@ def create_answer_image(answer_text: str, explanation: str, color_scheme: Dict,
         output_path: 출력 경로
         answer_en: 정답 텍스트 (영어, 선택사항)
         explanation_en: 설명 (영어, 선택사항)
+        languages: 지원 언어 리스트 (기본값: ['ko'])
     """
+    languages = languages or ['ko']
+    use_language = languages[0] if languages else 'ko'
+    is_english_only = use_language == 'en'
     try:
         img = Image.new('RGB', (1920, 1080), tuple(color_scheme.get('background', [245, 240, 235])))
         draw = ImageDraw.Draw(img)
@@ -941,91 +1062,92 @@ def create_answer_image(answer_text: str, explanation: str, color_scheme: Dict,
             title_font_ko = answer_font_ko = exp_font_ko = ImageFont.load_default()
             title_font_en = answer_font_en = exp_font_en = ImageFont.load_default()
         
-        y_pos = 100
-        
-        # "정답" 제목 (한글)
-        title_ko = "정답"
-        bbox = draw.textbbox((0, 0), title_ko, font=title_font_ko)
-        title_width = bbox[2] - bbox[0]
-        draw.text(((1920 - title_width) // 2, y_pos), title_ko, 
-                 fill=tuple(color_scheme.get('correct', [80, 160, 80])), 
-                 font=title_font_ko)
-        
-        # "Answer" 제목 (영어, 다국어인 경우)
-        if answer_en:
-            title_en = "Answer"
-            bbox_en = draw.textbbox((0, 0), title_en, font=title_font_en)
-            title_width_en = bbox_en[2] - bbox_en[0]
-            draw.text(((1920 - title_width_en) // 2, y_pos + 50), title_en, 
-                     fill=tuple(color_scheme.get('correct', [80, 160, 80])), 
-                     font=title_font_en)
-            y_pos += 120
+        # 언어에 따라 사용할 텍스트 선택
+        if is_english_only:
+            # 영어 전용: 영어 텍스트만 사용 (한글 텍스트는 절대 사용하지 않음)
+            if answer_en:
+                final_answer_text = answer_en
+            elif answer_text and not any('\uac00' <= char <= '\ud7a3' for char in str(answer_text)):
+                # 한글이 포함되지 않은 경우에만 사용
+                final_answer_text = answer_text
+            else:
+                final_answer_text = "Answer"
+            
+            if explanation_en:
+                final_explanation = explanation_en
+            elif explanation and not any('\uac00' <= char <= '\ud7a3' for char in str(explanation)):
+                # 한글이 포함되지 않은 경우에만 사용
+                final_explanation = explanation
+            else:
+                final_explanation = ""
+            
+            title_text = "Answer"
+            title_font = title_font_en
+            answer_font = answer_font_en
+            exp_font = exp_font_en
         else:
-            y_pos += 100
+            # 한글 전용 또는 다국어: 한글 텍스트 사용
+            final_answer_text = answer_text
+            final_explanation = explanation
+            title_text = "정답"
+            title_font = title_font_ko
+            answer_font = answer_font_ko
+            exp_font = exp_font_ko
         
-        # 정답 텍스트 (한글, 줄바꿈 처리)
+        # 정답 텍스트 줄바꿈 처리
         answer_max_width = 1800
-        answer_lines_ko = wrap_text(str(answer_text), answer_font_ko, answer_max_width)
-        answer_line_height = int(font_size * 2.5)
+        answer_lines = wrap_text(str(final_answer_text), answer_font, answer_max_width)
+        answer_line_height = int(font_size * 2.5) if not is_english_only else int((font_size - 10) * 2.2)
         
-        for line in answer_lines_ko:
-            bbox = draw.textbbox((0, 0), line, font=answer_font_ko)
+        # 정답 텍스트 총 높이 계산
+        answer_text_height = len(answer_lines) * answer_line_height
+        
+        # 제목 높이
+        title_bbox = draw.textbbox((0, 0), title_text, font=title_font)
+        title_height = title_bbox[3] - title_bbox[1]
+        
+        # 정답 텍스트를 화면 중앙에 배치
+        # 전체 높이: 제목 + 여백 + 정답 텍스트
+        spacing = 50
+        total_content_height = title_height + spacing + answer_text_height
+        content_y_start = (1080 - total_content_height) // 2
+        
+        # 제목 표시
+        title_bbox = draw.textbbox((0, 0), title_text, font=title_font)
+        title_width = title_bbox[2] - title_bbox[0]
+        title_y = content_y_start
+        draw.text(((1920 - title_width) // 2, title_y), title_text, 
+                 fill=tuple(color_scheme.get('correct', [80, 160, 80])), 
+                 font=title_font)
+        
+        # 정답 텍스트 (화면 중앙에 배치)
+        y_pos = content_y_start + title_height + spacing
+        for line in answer_lines:
+            bbox = draw.textbbox((0, 0), line, font=answer_font)
             line_width = bbox[2] - bbox[0]
             draw.text(((1920 - line_width) // 2, y_pos), line, 
                      fill=tuple(color_scheme.get('highlight', [100, 150, 200])), 
-                     font=answer_font_ko)
+                     font=answer_font)
             y_pos += answer_line_height
-        
-        # 정답 텍스트 (영어, 다국어인 경우)
-        if answer_en:
-            y_pos += 20
-            answer_lines_en = wrap_text(str(answer_en), answer_font_en, answer_max_width)
-            answer_line_height_en = int((font_size - 10) * 2.2)
-            
-            for line in answer_lines_en:
-                bbox = draw.textbbox((0, 0), line, font=answer_font_en)
-                line_width = bbox[2] - bbox[0]
-                draw.text(((1920 - line_width) // 2, y_pos), line, 
-                         fill=tuple(color_scheme.get('highlight', [100, 150, 200])), 
-                         font=answer_font_en)
-                y_pos += answer_line_height_en
         
         y_pos += 50
         
-        # 설명 (한글, 줄바꿈 처리)
+        # 설명 (줄바꿈 처리)
         exp_max_width = 1800
-        exp_lines_ko = wrap_text(str(explanation), exp_font_ko, exp_max_width)
-        exp_line_height = int(font_size * 1.5)
+        exp_lines = wrap_text(str(final_explanation), exp_font, exp_max_width)
+        exp_line_height = int(font_size * 1.5) if not is_english_only else int((font_size - 10) * 1.3)
         
-        for line in exp_lines_ko:
-            bbox = draw.textbbox((0, 0), line, font=exp_font_ko)
+        for line in exp_lines:
+            bbox = draw.textbbox((0, 0), line, font=exp_font)
             line_width = bbox[2] - bbox[0]
             draw.text(((1920 - line_width) // 2, y_pos), line, 
                      fill=tuple(color_scheme.get('text', [40, 40, 40])), 
-                     font=exp_font_ko)
+                     font=exp_font)
             y_pos += exp_line_height
             
             # 화면을 벗어나지 않도록 제한
             if y_pos > 900:
                 break
-        
-        # 설명 (영어, 다국어인 경우)
-        if explanation_en:
-            y_pos += 20
-            exp_lines_en = wrap_text(str(explanation_en), exp_font_en, exp_max_width)
-            exp_line_height_en = int((font_size - 10) * 1.3)
-            
-            for line in exp_lines_en:
-                bbox = draw.textbbox((0, 0), line, font=exp_font_en)
-                line_width = bbox[2] - bbox[0]
-                draw.text(((1920 - line_width) // 2, y_pos), line, 
-                         fill=tuple(color_scheme.get('text', [40, 40, 40])), 
-                         font=exp_font_en)
-                y_pos += exp_line_height_en
-                
-                # 화면을 벗어나지 않도록 제한
-                if y_pos > 1000:
-                    break
         
         img.save(output_path, "PNG", optimize=True)
         logger.debug(f"정답 이미지 생성 완료: {output_path}")
@@ -1109,7 +1231,8 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
             color_scheme,
             font_size,
             intro_path,
-            text_en=problem_text_en
+            text_en=problem_text_en,
+            languages=preset_languages
         )
         intro_clip = output_dir / f"problem_{problem_num}_intro.mp4"
         create_image_clip(intro_path, 3, intro_clip)
@@ -1158,8 +1281,16 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
             pattern = problem_data['problem_data'].get('pattern', [])
             choices = problem_data['problem_data'].get('choices', [])
             
-            pattern_text = " → ".join(str(p) for p in pattern) + " → ?"
-            choices_text = " / ".join(str(c) for c in choices)
+            # 언어에 따라 화살표 기호 변경 (영어 버전에서는 일반 화살표 사용)
+            use_language = preset_languages[0] if preset_languages else 'ko'
+            arrow_symbol = " -> " if use_language == "en" else " → "
+            separator = " / " if use_language == "en" else " / "
+            
+            pattern_text = arrow_symbol.join(str(p) for p in pattern) + arrow_symbol + "?"
+            choices_text = separator.join(str(c) for c in choices)
+            
+            # 언어에 따라 선택지 라벨 변경
+            choices_label = "Choices:" if (preset_languages and preset_languages[0] == "en") else "선택지:"
             
             pattern_path = output_dir / f"problem_{problem_num}_pattern.png"
             create_text_image(
@@ -1167,7 +1298,8 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
                 color_scheme,
                 font_size,
                 pattern_path,
-                subtitle=f"선택지: {choices_text}"
+                subtitle=f"{choices_label} {choices_text}",
+                languages=preset_languages
             )
             pattern_clip = output_dir / f"problem_{problem_num}_pattern.mp4"
             create_image_clip(pattern_path, problem_data['display_seconds'], pattern_clip)
@@ -1180,13 +1312,20 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
             
             choices_text = "\n".join([f"{i+1}. {c}" for i, c in enumerate(choices)])
             
+            # 언어에 따라 질문 텍스트 변경
+            if preset_languages and preset_languages[0] == "en":
+                question_text = f"Which word is related to '{keyword}'?"
+            else:
+                question_text = f"'{keyword}'와 관련된 단어는?"
+            
             word_path = output_dir / f"problem_{problem_num}_word.png"
             create_text_image(
-                f"'{keyword}'와 관련된 단어는?",
+                question_text,
                 color_scheme,
                 font_size,
                 word_path,
-                subtitle=choices_text
+                subtitle=choices_text,
+                languages=preset_languages
             )
             word_clip = output_dir / f"problem_{problem_num}_word.mp4"
             create_image_clip(word_path, problem_data['display_seconds'], word_clip)
@@ -1210,13 +1349,20 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
             
             hints_text = "\n".join([f"• {h}" for h in hints])
             
+            # 언어에 따라 초성 라벨 변경
+            if preset_languages and preset_languages[0] == "en":
+                initial_label = "Initial sounds:"
+            else:
+                initial_label = "초성:"
+            
             puzzle_path = output_dir / f"problem_{problem_num}_puzzle.png"
             create_text_image(
-                f"초성: {initial_sounds}",
+                f"{initial_label} {initial_sounds}",
                 color_scheme,
                 font_size,
                 puzzle_path,
-                subtitle=hints_text
+                subtitle=hints_text,
+                languages=preset_languages
             )
             puzzle_clip = output_dir / f"problem_{problem_num}_puzzle.mp4"
             create_image_clip(puzzle_path, problem_data['display_seconds'], puzzle_clip)
@@ -1237,7 +1383,7 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
             num2 = problem_data['problem_data'].get('num2', 0)
             operation = problem_data['problem_data'].get('operation', '+')
             calc_path = output_dir / f"problem_{problem_num}_calc.png"
-            create_calculation_display_image(num1, num2, operation, color_scheme, font_size, calc_path)
+            create_calculation_display_image(num1, num2, operation, color_scheme, font_size, calc_path, languages=preset_languages)
             calc_clip = output_dir / f"problem_{problem_num}_calc.mp4"
             create_image_clip(calc_path, problem_data['display_seconds'], calc_clip)
             clips.append(calc_clip)
@@ -1268,7 +1414,9 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
             target_color = problem_data['problem_data'].get('target_color', {})
             choices = problem_data['problem_data'].get('choices', [])
             shape_path = output_dir / f"problem_{problem_num}_shape.png"
-            create_shape_matching_image(target_shape, target_color, choices, color_scheme, font_size, shape_path)
+            # 언어 정보 전달
+            preset_languages = preset.get('languages', ['ko'])
+            create_shape_matching_image(target_shape, target_color, choices, color_scheme, font_size, shape_path, languages=preset_languages)
             shape_clip = output_dir / f"problem_{problem_num}_shape.mp4"
             create_image_clip(shape_path, problem_data['display_seconds'], shape_clip)
             clips.append(shape_clip)
@@ -1290,11 +1438,18 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
         use_language = preset_languages[0] if preset_languages else 'ko'
         
         if use_language == 'en':
-            # 영어 전용
-            answer = str(problem_data['answer_data'].get('correct_answer_en') or problem_data['answer_data'].get('correct_answer', ''))
-            explanation = problem_data['answer_data'].get('explanation_en') or problem_data['answer_data'].get('explanation', '')
-            answer_en = None
-            explanation_en = None
+            # 영어 전용: 영어 텍스트만 사용
+            answer_en = str(problem_data['answer_data'].get('correct_answer_en') or problem_data['answer_data'].get('correct_answer', ''))
+            explanation_en = problem_data['answer_data'].get('explanation_en') or problem_data['answer_data'].get('explanation', '')
+            # 한글이 포함되어 있으면 제거
+            if any('\uac00' <= char <= '\ud7a3' for char in answer_en):
+                answer_en = str(problem_data['answer_data'].get('correct_answer', ''))
+                if any('\uac00' <= char <= '\ud7a3' for char in answer_en):
+                    answer_en = "Answer"
+            if any('\uac00' <= char <= '\ud7a3' for char in explanation_en):
+                explanation_en = ""
+            answer = answer_en
+            explanation = explanation_en
         else:
             # 한글 전용 (기본값)
             answer = str(problem_data['answer_data'].get('correct_answer', ''))
@@ -1309,7 +1464,8 @@ def create_problem_clip(problem_data: Dict, preset: Dict, output_dir: Path) -> L
             font_size,
             answer_path,
             answer_en=answer_en,
-            explanation_en=explanation_en
+            explanation_en=explanation_en,
+            languages=preset_languages
         )
         
         answer_clip = output_dir / f"problem_{problem_num}_answer.mp4"

@@ -394,72 +394,76 @@ def _select_public_domain_audio(
     public_domain_dir = PROJECT_ROOT / "audio" / "public_domain"
     public_domain_dir.mkdir(parents=True, exist_ok=True)
 
-    catalog = build_public_domain_catalog()
-    all_tracks = catalog.get("tracks", [])
-
-    include_categories: List[str] = []
-    exclude_categories: List[str] = []
     target_subdir = preset.get("public_domain_subdir")
-
-    category_config = preset.get("public_domain_categories")
-    if isinstance(category_config, dict):
-        include_categories = list(category_config.get("include") or [])
-        exclude_categories.extend(category_config.get("exclude") or [])
-    elif isinstance(category_config, (list, tuple, set)):
-        include_categories = list(category_config)
-    elif isinstance(category_config, str):
-        include_categories = [category_config]
-
-    preset_exclude = preset.get("public_domain_exclude_categories")
-    if isinstance(preset_exclude, (list, tuple, set)):
-        exclude_categories.extend(list(preset_exclude))
-    elif isinstance(preset_exclude, str):
-        exclude_categories.append(preset_exclude)
-
-    selected_metadata = all_tracks
-    if include_categories or exclude_categories:
-        selected_metadata = filter_tracks_by_category(
-            catalog,
-            include=include_categories or None,
-            exclude=exclude_categories or None,
-        )
-        if include_categories and not selected_metadata:
-            logger.warning(
-                f"필터와 일치하는 Public Domain 음악을 찾지 못했습니다 (필터: {include_categories}). 전체 라이브러리를 사용합니다."
-            )
-            selected_metadata = all_tracks
-
     music_files: List[Path] = []
     
-    # target_subdir이 지정된 경우, 해당 폴더의 모든 파일을 직접 사용
+    # target_subdir이 지정된 경우, 해당 폴더의 모든 파일만 직접 사용 (카탈로그 필터링 무시)
     if target_subdir:
         subdir_path = public_domain_dir / target_subdir
         if subdir_path.exists():
-            logger.info(f"Public Domain 폴더에서 직접 검색: {subdir_path}")
+            logger.info(f"Public Domain 폴더에서 직접 검색 (카탈로그 필터링 무시): {subdir_path}")
             for audio_file in subdir_path.glob("*.mp3"):
                 if audio_file.exists():
                     music_files.append(audio_file)
             for audio_file in subdir_path.glob("*.wav"):
                 if audio_file.exists():
                     music_files.append(audio_file)
-    
-    # 카탈로그에서 필터링된 트랙 사용 (target_subdir이 없거나 파일을 찾지 못한 경우)
-    if not music_files:
+            
+            if music_files:
+                logger.info(f"'{target_subdir}' 폴더에서 {len(music_files)}개 파일 발견")
+            else:
+                logger.warning(f"'{target_subdir}' 폴더에서 음악 파일을 찾을 수 없습니다.")
+                return None
+        else:
+            logger.warning(f"Public Domain 폴더를 찾을 수 없습니다: {subdir_path}")
+            return None
+    else:
+        # target_subdir이 없는 경우에만 카탈로그 필터링 사용
+        catalog = build_public_domain_catalog()
+        all_tracks = catalog.get("tracks", [])
+
+        include_categories: List[str] = []
+        exclude_categories: List[str] = []
+
+        category_config = preset.get("public_domain_categories")
+        if isinstance(category_config, dict):
+            include_categories = list(category_config.get("include") or [])
+            exclude_categories.extend(category_config.get("exclude") or [])
+        elif isinstance(category_config, (list, tuple, set)):
+            include_categories = list(category_config)
+        elif isinstance(category_config, str):
+            include_categories = [category_config]
+
+        preset_exclude = preset.get("public_domain_exclude_categories")
+        if isinstance(preset_exclude, (list, tuple, set)):
+            exclude_categories.extend(list(preset_exclude))
+        elif isinstance(preset_exclude, str):
+            exclude_categories.append(preset_exclude)
+
+        selected_metadata = all_tracks
+        if include_categories or exclude_categories:
+            selected_metadata = filter_tracks_by_category(
+                catalog,
+                include=include_categories or None,
+                exclude=exclude_categories or None,
+            )
+            if include_categories and not selected_metadata:
+                logger.warning(
+                    f"필터와 일치하는 Public Domain 음악을 찾지 못했습니다 (필터: {include_categories}). 전체 라이브러리를 사용합니다."
+                )
+                selected_metadata = all_tracks
+
+        # 카탈로그에서 필터링된 트랙 사용
         for track in selected_metadata:
             track_path = project_root / track["path"]
-            if target_subdir:
-                try:
-                    track_path.relative_to(public_domain_dir / target_subdir)
-                except ValueError:
-                    continue
             if track_path.exists():
                 music_files.append(track_path)
             else:
                 logger.debug(f"분류된 파일을 찾을 수 없습니다: {track['path']}")
 
-    if not music_files:
-        logger.warning(f"Public Domain 음악 파일을 찾을 수 없습니다 (폴더: {target_subdir})")
-        return None
+        if not music_files:
+            logger.warning(f"Public Domain 음악 파일을 찾을 수 없습니다 (카탈로그 필터링)")
+            return None
 
     logger.info(f"Public Domain 음악 파일 {len(music_files)}개 발견")
 

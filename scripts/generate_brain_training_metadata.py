@@ -44,11 +44,16 @@ def generate_video_metadata(preset_name: str, num_problems: int,
     """
     languages = languages or ["ko"]
     is_bilingual = len(languages) >= 2 and "ko" in languages and "en" in languages
+    is_english_only = languages and len(languages) == 1 and languages[0] == "en"
     
     try:
-        # 모듈 정보 텍스트 생성
-        module_info = ", ".join([f"{module}: {count}문제" 
-                                for module, count in module_counts.items()])
+        # 모듈 정보 텍스트 생성 (언어에 따라)
+        if is_english_only:
+            module_info = ", ".join([f"{module}: {count} problems" 
+                                    for module, count in module_counts.items()])
+        else:
+            module_info = ", ".join([f"{module}: {count}문제" 
+                                    for module, count in module_counts.items()])
         
         # 다국어 메타데이터 생성
         if is_bilingual:
@@ -77,7 +82,33 @@ Description should include:
 
 Tags should mix Korean and English terms for SEO.
 """
+        elif is_english_only:
+            # 영어 전용 메타데이터 생성
+            prompt = f"""Create YouTube video metadata for a senior (60-80 years old) dementia prevention brain training video.
+
+Preset: {preset_name}
+Total problems: {num_problems}
+Module composition: {module_info}
+
+Return JSON with:
+{{
+  "title": "YouTube Title (max 100 characters, senior-friendly)",
+  "description": "YouTube description (detailed, with line breaks)",
+  "tags": ["tag1", "tag2", ...] (15-20 tags in English)
+}}
+
+Title should be SEO-optimized but easy for seniors to understand.
+Description should include:
+- Purpose of the video
+- What viewers will learn
+- Module composition
+- Benefits for seniors
+- Hashtags at the end
+
+Tags should be in English only, optimized for SEO.
+"""
         else:
+            # 한글 전용 메타데이터 생성
             prompt = f"""
 시니어(60~80대)를 위한 치매 예방 두뇌훈련 영상의 YouTube 메타데이터를 생성해주세요.
 
@@ -96,7 +127,12 @@ Tags should mix Korean and English terms for SEO.
 설명에는 영상의 목적, 구성, 효과 등을 포함해주세요.
 """
         
-        system_prompt = "You are a bilingual YouTube content metadata expert for senior brain training videos." if is_bilingual else "당신은 시니어용 YouTube 콘텐츠 메타데이터 작성 전문가입니다."
+        if is_bilingual:
+            system_prompt = "You are a bilingual YouTube content metadata expert for senior brain training videos."
+        elif is_english_only:
+            system_prompt = "You are a YouTube content metadata expert for senior brain training videos. Create metadata in English only."
+        else:
+            system_prompt = "당신은 시니어용 YouTube 콘텐츠 메타데이터 작성 전문가입니다."
         
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
@@ -122,6 +158,12 @@ Tags should mix Korean and English terms for SEO.
                 "description": f"치매 예방을 위한 두뇌훈련 영상입니다.\n\nDementia prevention brain training video.\n\n총 {num_problems}개의 문제로 구성되어 있습니다.\nTotal {num_problems} problems included.",
                 "tags": ["시니어", "두뇌훈련", "치매예방", "senior", "brain training", "dementia prevention", "인지훈련", "cognitive training"]
             }
+        elif is_english_only:
+            return {
+                "title": f"Senior Brain Training - {preset_name} ({num_problems} Problems)",
+                "description": f"Dementia prevention brain training video for seniors.\n\nTotal {num_problems} problems included.",
+                "tags": ["senior", "brain training", "dementia prevention", "cognitive training", "memory", "elderly", "mental exercise"]
+            }
         else:
             return {
                 "title": f"시니어 두뇌훈련 - {preset_name} ({num_problems}문제)",
@@ -130,49 +172,73 @@ Tags should mix Korean and English terms for SEO.
             }
 
 
-def generate_chapters(problems: List[Dict]) -> List[Dict]:
+def generate_chapters(problems: List[Dict], languages: List[str] = None) -> List[Dict]:
     """
     챕터 마커 생성 (문제별 타임스탬프)
     
     Args:
         problems: 문제 리스트
+        languages: 지원 언어 리스트 (기본값: ['ko'])
     
     Returns:
         챕터 리스트 (timestamp, title)
     """
     try:
+        languages = languages or ["ko"]
+        is_english_only = languages and len(languages) == 1 and languages[0] == "en"
+        
         chapters = []
         current_time = 0
         
         # 인트로
+        intro_title = "Start" if is_english_only else "시작"
         chapters.append({
             "timestamp": "0:00",
-            "title": "시작"
+            "title": intro_title
         })
         current_time += 5  # 인트로 5초
         
         # 각 문제
+        module_names_ko = {
+            "number_memory": "숫자 기억",
+            "missing_object": "사라진 물건 찾기",
+            "pattern_sequence": "패턴 순서",
+            "word_association": "단어 연상",
+            "clock_reading": "시계 읽기",
+            "korean_word_puzzle": "한글 퍼즐",
+            "color_memory": "색상 기억",
+            "simple_calculation": "간단한 계산",
+            "direction_memory": "방향 기억",
+            "category_classification": "카테고리 분류",
+            "shape_matching": "도형 매칭"
+        }
+        
+        module_names_en = {
+            "number_memory": "Number Memory",
+            "missing_object": "Missing Object",
+            "pattern_sequence": "Pattern Sequence",
+            "word_association": "Word Association",
+            "clock_reading": "Clock Reading",
+            "korean_word_puzzle": "Korean Word Puzzle",
+            "color_memory": "Color Memory",
+            "simple_calculation": "Simple Calculation",
+            "direction_memory": "Direction Memory",
+            "category_classification": "Category Classification",
+            "shape_matching": "Shape Matching"
+        }
+        
+        module_names = module_names_en if is_english_only else module_names_ko
+        problem_prefix = "Problem" if is_english_only else "문제"
+        
         for i, problem in enumerate(problems, 1):
             minutes = current_time // 60
             seconds = current_time % 60
             timestamp = f"{minutes}:{seconds:02d}"
             
             module = problem.get('module', 'unknown')
-            module_names = {
-                "number_memory": "숫자 기억",
-                "missing_object": "사라진 물건 찾기",
-                "pattern_sequence": "패턴 순서",
-                "word_association": "단어 연상",
-                "clock_reading": "시계 읽기",
-                "korean_word_puzzle": "한글 퍼즐",
-                "color_memory": "색상 기억",
-                "simple_calculation": "간단한 계산",
-                "direction_memory": "방향 기억",
-                "category_classification": "카테고리 분류",
-                "shape_matching": "도형 매칭"
-            }
+            module_name = module_names.get(module, module)
             
-            title = f"문제 {i}: {module_names.get(module, module)}"
+            title = f"{problem_prefix} {i}: {module_name}"
             chapters.append({
                 "timestamp": timestamp,
                 "title": title
@@ -195,17 +261,22 @@ def generate_chapters(problems: List[Dict]) -> List[Dict]:
         return []
 
 
-def format_chapters_for_youtube(chapters: List[Dict]) -> str:
+def format_chapters_for_youtube(chapters: List[Dict], languages: List[str] = None) -> str:
     """
     YouTube 설명란에 넣을 챕터 텍스트 포맷
     
     Args:
         chapters: 챕터 리스트
+        languages: 지원 언어 리스트 (기본값: ['ko'])
     
     Returns:
         포맷된 챕터 텍스트
     """
-    lines = ["📚 목차 (Chapters)"]
+    languages = languages or ["ko"]
+    is_english_only = languages and len(languages) == 1 and languages[0] == "en"
+    
+    header = "📚 Chapters" if is_english_only else "📚 목차 (Chapters)"
+    lines = [header]
     for chapter in chapters:
         lines.append(f"{chapter['timestamp']} - {chapter['title']}")
     

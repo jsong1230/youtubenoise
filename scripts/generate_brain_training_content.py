@@ -243,15 +243,51 @@ def generate_pattern_sequence_problem(settings: Dict, problem_index: int = 0, la
         pattern_types = ['shapes', 'colors', 'numbers', 'letters', 'symbols']
         actual_pattern_type = pattern_types[problem_index % len(pattern_types)]
         
-        # GPT로 패턴 생성 (다양성을 위해 문제 인덱스와 랜덤 요소 추가)
-        prompt = f"""
+        # 언어 설정 확인
+        languages = languages or ["ko"]
+        is_english_only = languages and languages[0] == "en"
+        
+        # GPT로 패턴 생성 (언어에 따라 프롬프트 변경)
+        if is_english_only:
+            prompt = f"""
+Create a pattern sequence problem for seniors.
+
+Pattern type: {actual_pattern_type}
+Pattern length: {sequence_length}
+Problem number: {problem_index + 1}
+Problem index: {problem_index} (Use this value to generate a completely different pattern)
+
+**Important**: 
+- Create a unique pattern that matches problem index {problem_index}.
+- Use a completely different pattern rule from previous problems.
+- Use different pattern types and rules.
+(Examples: color sequence, shape size, number increase/decrease, alphabet sequence, etc.)
+
+Return JSON in the following format:
+{{
+  "pattern": ["Element1", "Element2", "Element3", "Element4"],
+  "next_element": "NextElement",
+  "choices": ["Choice1", "Choice2", "Choice3"],
+  "explanation": "Pattern explanation in English"
+}}
+
+Create a simple pattern rule that seniors can easily understand.
+Use English words, letters, numbers, or symbols only. Do not use Korean characters.
+"""
+            system_content = "You are a content creator for senior brain training. Create completely different patterns for each problem. Always use English only."
+        else:
+            prompt = f"""
 시니어를 위한 패턴 순서 맞추기 문제를 만들어주세요.
 
 패턴 타입: {actual_pattern_type}
 패턴 길이: {sequence_length}
 문제 번호: {problem_index + 1}
+문제 인덱스: {problem_index} (이 값을 활용하여 완전히 다른 패턴을 생성하세요)
 
-**중요**: 이전 문제와 완전히 다른 패턴을 만들어주세요. 패턴 규칙도 다르게 해주세요.
+**중요**: 
+- 문제 인덱스 {problem_index}에 맞는 고유한 패턴을 만들어주세요.
+- 이전 문제들과 완전히 다른 패턴 규칙을 사용하세요.
+- 패턴 타입도 다르게, 규칙도 다르게 해주세요.
 (예: 색상 순서, 도형 크기, 숫자 증가/감소, 알파벳 순서 등)
 
 다음 형식의 JSON으로 응답해주세요:
@@ -264,11 +300,12 @@ def generate_pattern_sequence_problem(settings: Dict, problem_index: int = 0, la
 
 패턴은 시니어가 쉽게 이해할 수 있는 단순한 규칙으로 만들어주세요.
 """
+            system_content = "당신은 시니어용 두뇌훈련 콘텐츠 제작 전문가입니다. 각 문제마다 완전히 다른 패턴을 만들어야 합니다."
         
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "당신은 시니어용 두뇌훈련 콘텐츠 제작 전문가입니다. 각 문제마다 완전히 다른 패턴을 만들어야 합니다."},
+                {"role": "system", "content": system_content},
                 {"role": "user", "content": prompt}
             ],
             response_format={"type": "json_object"},
@@ -277,12 +314,50 @@ def generate_pattern_sequence_problem(settings: Dict, problem_index: int = 0, la
         
         pattern_data = json.loads(response.choices[0].message.content)
         
+        # 패턴 검증: 명백히 잘못된 패턴은 재생성
+        pattern = pattern_data.get('pattern', [])
+        next_element = pattern_data.get('next_element', '')
+        choices = pattern_data.get('choices', [])
+        
+        # 기본 검증: 필수 필드 존재 확인
+        if not pattern or not next_element or not choices:
+            logger.warning(f"패턴 데이터 필수 필드 누락, 재생성 시도")
+            # 간단한 재시도 (최대 1회)
+            try:
+                retry_response = openai.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "당신은 시니어용 두뇌훈련 콘텐츠 제작 전문가입니다. 논리적이고 명확한 패턴을 만들어야 합니다."},
+                        {"role": "user", "content": prompt + "\n\n**중요**: 반드시 논리적이고 명확한 패턴 규칙을 만들어주세요. 예를 들어, 색상 순서라면 빨강-주황-노랑-초록-파랑-남색-보라 같은 명확한 순서를 사용하세요."}
+                    ],
+                    response_format={"type": "json_object"},
+                    temperature=0.7
+                )
+                pattern_data = json.loads(retry_response.choices[0].message.content)
+                pattern = pattern_data.get('pattern', [])
+                next_element = pattern_data.get('next_element', '')
+                choices = pattern_data.get('choices', [])
+            except Exception as e:
+                logger.error(f"패턴 재생성 실패: {e}")
+        
+        # 패턴 설명 검증: 설명이 너무 모호하거나 논리적이지 않은 경우 경고
+        explanation = pattern_data.get('explanation', '')
+        if explanation and len(explanation) < 20:
+            logger.warning(f"패턴 설명이 너무 짧거나 모호합니다: {explanation}")
+        
         # 다국어 텍스트 생성
         languages = languages or ["ko"]
+        is_english_only = languages and languages[0] == "en"
         problem_text_ko = "패턴의 규칙을 찾아 다음에 올 것을 골라보세요."
         problem_text_en = "Find the pattern rule and choose what comes next."
-        explanation_ko = pattern_data.get('explanation', '')
-        explanation_en = ''
+        
+        # 언어에 따라 설명 텍스트 선택
+        if is_english_only:
+            explanation_ko = ''
+            explanation_en = pattern_data.get('explanation', '')
+        else:
+            explanation_ko = pattern_data.get('explanation', '')
+            explanation_en = ''
         
         if len(languages) >= 2 and "ko" in languages and "en" in languages:
             try:
@@ -331,7 +406,7 @@ Return JSON with:
             },
             "answer_data": {
                 "correct_answer": pattern_data['next_element'],
-                "explanation": explanation_ko,
+                "explanation": explanation_en if is_english_only else explanation_ko,
                 "explanation_ko": explanation_ko,
                 "explanation_en": explanation_en
             }
@@ -342,12 +417,14 @@ Return JSON with:
         return None
 
 
-def generate_word_association_problem(settings: Dict, problem_index: int = 0) -> Dict:
+def generate_word_association_problem(settings: Dict, languages: List[str] = None, problem_index: int = 0) -> Dict:
     """
     단어 연상 게임 문제 생성
     
     Args:
         settings: 문제 설정
+        languages: 지원 언어 리스트
+        problem_index: 문제 인덱스
     
     Returns:
         문제 데이터 딕셔너리
@@ -355,16 +432,49 @@ def generate_word_association_problem(settings: Dict, problem_index: int = 0) ->
     try:
         category = settings.get('word_category', '일상')
         num_choices = settings.get('num_choices', 3)
+        languages = languages or ["ko"]
+        is_english_only = languages and languages[0] == "en"
         
-        # GPT로 단어 연상 문제 생성
-        prompt = f"""
+        # GPT로 단어 연상 문제 생성 (언어에 따라 프롬프트 변경)
+        if is_english_only:
+            prompt = f"""
+Create a word association problem for seniors.
+
+Category: {category}
+Number of choices: {num_choices}
+Problem number: {problem_index + 1}
+Problem index: {problem_index} (Use this value to generate a completely different keyword)
+
+**Important**: 
+- Choose a unique keyword that matches problem index {problem_index}.
+- Use completely different keywords and words from previous problems.
+- Use different keywords even within the same category.
+
+Return JSON in the following format:
+{{
+  "keyword": "Keyword (English word only)",
+  "correct_answer": "Correct answer (English word only)",
+  "choices": ["Choice1", "Choice2", "Choice3"],
+  "explanation": "Explanation in English"
+}}
+
+Use familiar English words that seniors can easily associate with.
+Do not use Korean characters. Use English words only.
+"""
+            system_content = "You are a content creator for senior brain training. Use completely different keywords and words for each problem. Always use English words only."
+        else:
+            prompt = f"""
 시니어를 위한 단어 연상 게임 문제를 만들어주세요.
 
 카테고리: {category}
 선택지 개수: {num_choices}
 문제 번호: {problem_index + 1}
+문제 인덱스: {problem_index} (이 값을 활용하여 완전히 다른 키워드를 생성하세요)
 
-**중요**: 이전 문제와 완전히 다른 키워드와 단어를 사용해주세요.
+**중요**: 
+- 문제 인덱스 {problem_index}에 맞는 고유한 키워드를 선택하세요.
+- 이전 문제들과 완전히 다른 키워드와 단어를 사용해주세요.
+- 같은 카테고리라도 다른 키워드를 사용하세요.
 
 다음 형식의 JSON으로 응답해주세요:
 {{
@@ -376,11 +486,12 @@ def generate_word_association_problem(settings: Dict, problem_index: int = 0) ->
 
 시니어가 쉽게 연상할 수 있는 친숙한 단어들로 구성해주세요.
 """
+            system_content = "당신은 시니어용 두뇌훈련 콘텐츠 제작 전문가입니다. 각 문제마다 완전히 다른 키워드와 단어를 사용해야 합니다."
         
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "당신은 시니어용 두뇌훈련 콘텐츠 제작 전문가입니다. 각 문제마다 완전히 다른 키워드와 단어를 사용해야 합니다."},
+                {"role": "system", "content": system_content},
                 {"role": "user", "content": prompt}
             ],
             response_format={"type": "json_object"},
@@ -389,18 +500,34 @@ def generate_word_association_problem(settings: Dict, problem_index: int = 0) ->
         
         word_data = json.loads(response.choices[0].message.content)
         
+        # 다국어 텍스트 생성
+        if is_english_only:
+            problem_text_ko = f"Which word is related to '{word_data['keyword']}'?"
+            problem_text_en = f"Which word is related to '{word_data['keyword']}'?"
+            explanation_ko = word_data.get('explanation', '')
+            explanation_en = word_data.get('explanation', '')
+        else:
+            problem_text_ko = f"'{word_data['keyword']}'와 관련된 단어를 골라보세요."
+            problem_text_en = f"Which word is related to '{word_data['keyword']}'?"
+            explanation_ko = word_data.get('explanation', '')
+            explanation_en = ''
+        
         return {
             "module": "word_association",
             "display_seconds": settings.get('display_seconds', 10),
             "countdown_seconds": settings.get('countdown_seconds', 15),
-            "problem_text": f"'{word_data['keyword']}'와 관련된 단어를 골라보세요.",
+            "problem_text": problem_text_ko,
+            "problem_text_ko": problem_text_ko,
+            "problem_text_en": problem_text_en,
             "problem_data": {
                 "keyword": word_data['keyword'],
                 "choices": word_data['choices']
             },
             "answer_data": {
                 "correct_answer": word_data['correct_answer'],
-                "explanation": word_data['explanation']
+                "explanation": explanation_ko if not is_english_only else explanation_en,
+                "explanation_ko": explanation_ko,
+                "explanation_en": explanation_en
             }
         }
         
@@ -516,16 +643,22 @@ Return JSON with:
         return None
 
 
-def generate_korean_word_puzzle_problem(settings: Dict, problem_index: int = 0) -> Dict:
+def generate_korean_word_puzzle_problem(settings: Dict, languages: List[str] = None, problem_index: int = 0) -> Dict:
     """
-    한글 단어 퍼즐 문제 생성
+    한글 단어 퍼즐 문제 생성 (한글 전용 모듈)
     
     Args:
         settings: 문제 설정
+        languages: 지원 언어 리스트 (영어일 경우 None 반환)
+        problem_index: 문제 인덱스
     
     Returns:
-        문제 데이터 딕셔너리
+        문제 데이터 딕셔너리 (영어일 경우 None)
     """
+    # 영어 버전에서는 이 모듈을 사용하지 않음
+    if languages and languages[0] == "en":
+        return None
+    
     try:
         puzzle_type = settings.get('puzzle_type', 'initial_sound')
         word_length = settings.get('word_length', 3)
@@ -538,6 +671,13 @@ def generate_korean_word_puzzle_problem(settings: Dict, problem_index: int = 0) 
 퍼즐 타입: {puzzle_type}
 단어 길이: {word_length}글자
 힌트 개수: {num_hints}개
+문제 번호: {problem_index + 1}
+문제 인덱스: {problem_index} (이 값을 활용하여 완전히 다른 단어를 생성하세요)
+
+**중요**: 
+- 문제 인덱스 {problem_index}에 맞는 고유한 단어를 선택하세요.
+- 이전 문제들과 완전히 다른 단어를 사용해주세요.
+- 같은 카테고리라도 다른 단어를 사용하세요.
 
 다음 형식의 JSON으로 응답해주세요:
 {{
@@ -567,6 +707,7 @@ def generate_korean_word_puzzle_problem(settings: Dict, problem_index: int = 0) 
             "display_seconds": settings.get('display_seconds', 10),
             "countdown_seconds": settings.get('countdown_seconds', 15),
             "problem_text": "힌트를 보고 단어를 맞춰보세요.",
+            "problem_text_ko": "힌트를 보고 단어를 맞춰보세요.",
             "problem_data": {
                 "initial_sounds": puzzle_data['initial_sounds'],
                 "hints": puzzle_data['hints']
@@ -704,21 +845,31 @@ def generate_simple_calculation_problem(settings: Dict, languages: List[str] = N
         max_number = settings.get('max_number', 50)
         languages = languages or ["ko"]
         
-        # 문제 인덱스에 따라 다양한 문제 생성
-        random.seed(problem_index)
+        # 문제 인덱스에 따라 다양한 문제 생성 (더 다양한 조합)
+        random.seed(problem_index * 7 + 13)  # 더 다양한 시드 조합
         
-        if operation_type == 'addition':
-            # 덧셈 문제
-            num1 = random.randint(10, max_number // 2)
+        # 문제 인덱스에 따라 덧셈/뺄셈 번갈아가며
+        use_addition = (problem_index % 2 == 0) if operation_type == 'addition' else False
+        use_subtraction = (problem_index % 2 == 1) if operation_type == 'subtraction' else False
+        
+        # 혼합 모드: 문제 인덱스에 따라 덧셈/뺄셈 선택
+        if operation_type not in ['addition', 'subtraction']:
+            use_addition = (problem_index % 2 == 0)
+        
+        if use_addition or (operation_type == 'addition' and not use_subtraction):
+            # 덧셈 문제 - 더 다양한 범위
+            base_num = 10 + (problem_index % 20)  # 10-29 범위
+            num1 = base_num + random.randint(0, max_number // 3)
             num2 = random.randint(10, max_number - num1)
             answer = num1 + num2
             operation_symbol = "+"
             operation_text_ko = "더하기"
             operation_text_en = "plus"
         else:
-            # 뺄셈 문제
-            num1 = random.randint(20, max_number)
-            num2 = random.randint(5, num1 - 10)
+            # 뺄셈 문제 - 더 다양한 범위
+            base_num = 20 + (problem_index % 30)  # 20-49 범위
+            num1 = base_num + random.randint(0, max_number // 2)
+            num2 = random.randint(5, min(num1 - 5, max_number // 2))
             answer = num1 - num2
             operation_symbol = "-"
             operation_text_ko = "빼기"
@@ -918,9 +1069,31 @@ def generate_category_classification_problem(settings: Dict, languages: List[str
         num_items = settings.get('num_items', 4)
         category_type = settings.get('category_type', 'random')  # random, food, animal, object 등
         languages = languages or ["ko"]
+        is_english_only = languages and languages[0] == "en"
         
-        # GPT로 카테고리 분류 문제 생성
-        prompt = f"""
+        # GPT로 카테고리 분류 문제 생성 (언어에 따라 프롬프트 변경)
+        if is_english_only:
+            prompt = f"""
+Create a category classification problem for seniors.
+
+Number of items: {num_items}
+Category type: {category_type}
+
+Return JSON in the following format:
+{{
+  "category": "Category name (e.g., Fruit, Animal, Vehicle, etc.)",
+  "items": ["Item1", "Item2", "Item3", "Item4"],
+  "wrong_item": "Item that does not belong to the category",
+  "wrong_item_index": 0
+}}
+
+One of the {num_items} items should not belong to the category.
+Choose everyday categories and items that seniors can easily understand.
+Problem index: {problem_index} (Generate a completely different problem)
+"""
+            system_content = "You are a content creator for senior brain training. Always respond in English."
+        else:
+            prompt = f"""
 시니어를 위한 카테고리 분류 문제를 만들어주세요.
 
 항목 개수: {num_items}개
@@ -938,11 +1111,12 @@ def generate_category_classification_problem(settings: Dict, languages: List[str
 시니어가 쉽게 이해할 수 있는 일상적인 카테고리와 항목으로 선택해주세요.
 문제 인덱스: {problem_index} (다양한 문제를 생성해주세요)
 """
+            system_content = "당신은 시니어용 두뇌훈련 콘텐츠 제작 전문가입니다."
         
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "당신은 시니어용 두뇌훈련 콘텐츠 제작 전문가입니다."},
+                {"role": "system", "content": system_content},
                 {"role": "user", "content": prompt}
             ],
             response_format={"type": "json_object"},
@@ -1070,7 +1244,7 @@ def generate_shape_matching_problem(settings: Dict, languages: List[str] = None,
                 # 정답: 같은 도형, 같은 색상
                 choices.append({
                     "shape": target_shape,
-                    "color": target_color,
+                    "color": {"name_ko": target_color[0], "name_en": target_color[1], "rgb": target_color[2]},
                     "is_correct": True
                 })
             else:
@@ -1080,7 +1254,7 @@ def generate_shape_matching_problem(settings: Dict, languages: List[str] = None,
                     other_shape = random.choice([s for s in shape_types if s != target_shape])
                     choices.append({
                         "shape": other_shape,
-                        "color": target_color,
+                        "color": {"name_ko": target_color[0], "name_en": target_color[1], "rgb": target_color[2]},
                         "is_correct": False
                     })
                 else:
@@ -1088,7 +1262,7 @@ def generate_shape_matching_problem(settings: Dict, languages: List[str] = None,
                     other_color = random.choice([c for c in colors if c != target_color])
                     choices.append({
                         "shape": target_shape,
-                        "color": other_color,
+                        "color": {"name_ko": other_color[0], "name_en": other_color[1], "rgb": other_color[2]},
                         "is_correct": False
                     })
         
@@ -1097,26 +1271,41 @@ def generate_shape_matching_problem(settings: Dict, languages: List[str] = None,
         
         random.seed()  # 시드 초기화
         
+        # 도형 이름 한글 변환 (먼저 정의)
+        shape_names_ko = {
+            "circle": "원",
+            "square": "사각형",
+            "triangle": "삼각형",
+            "rectangle": "직사각형",
+            "star": "별",
+            "diamond": "다이아몬드"
+        }
+        
+        # 한글 도형 이름 사용
+        target_shape_ko = shape_names_ko.get(target_shape, target_shape)
+        
         # 다국어 텍스트 생성
         if len(languages) >= 2 and "ko" in languages and "en" in languages:
             try:
                 prompt = f"""Create bilingual text for a shape matching problem.
 
-Target: {target_color[0]} {target_shape}
+Target: {target_color[0]} {target_shape_ko} (Korean) / {target_color[1].lower()} {target_shape} (English)
 Number of choices: {num_shapes}
 
 Return JSON with:
 {{
-  "problem_text_ko": "다음 중 {target_color[0]} {target_shape}와(과) 같은 것은?",
+  "problem_text_ko": "다음 중 {target_color[0]} {target_shape_ko}와(과) 같은 것은?",
   "problem_text_en": "Which of the following matches the {target_color[1].lower()} {target_shape}?",
   "explanation_ko": "정답은 {correct_index + 1}번입니다.",
   "explanation_en": "The answer is choice {correct_index + 1}."
-}}"""
+}}
+
+**중요**: problem_text_ko에는 반드시 한글 도형 이름({target_shape_ko})을 사용하세요. 영어 단어를 사용하지 마세요."""
                 
                 response = openai.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[
-                        {"role": "system", "content": "You are a bilingual content creator for senior brain training."},
+                        {"role": "system", "content": "You are a bilingual content creator for senior brain training. Always use Korean shape names in Korean text."},
                         {"role": "user", "content": prompt}
                     ],
                     response_format={"type": "json_object"},
@@ -1124,13 +1313,17 @@ Return JSON with:
                 )
                 
                 text_data = json.loads(response.choices[0].message.content)
-                problem_text_ko = text_data.get("problem_text_ko", f"다음 중 {target_color[0]} {target_shape}와(과) 같은 것은?")
+                problem_text_ko = text_data.get("problem_text_ko", f"다음 중 {target_color[0]} {target_shape_ko}와(과) 같은 것은?")
                 problem_text_en = text_data.get("problem_text_en", f"Which of the following matches the {target_color[1].lower()} {target_shape}?")
                 explanation_ko = text_data.get("explanation_ko", f"정답은 {correct_index + 1}번입니다.")
                 explanation_en = text_data.get("explanation_en", f"The answer is choice {correct_index + 1}.")
+                
+                # 한글 텍스트에 영어가 섞여있는지 검증 및 수정
+                if target_shape in problem_text_ko:
+                    problem_text_ko = problem_text_ko.replace(target_shape, target_shape_ko)
             except Exception as e:
                 logger.warning(f"다국어 텍스트 생성 실패, 기본값 사용: {e}")
-                problem_text_ko = f"다음 중 {target_color[0]} {target_shape}와(과) 같은 것은?"
+                problem_text_ko = f"다음 중 {target_color[0]} {target_shape_ko}와(과) 같은 것은?"
                 problem_text_en = f"Which of the following matches the {target_color[1].lower()} {target_shape}?"
                 explanation_ko = f"정답은 {correct_index + 1}번입니다."
                 explanation_en = f"The answer is choice {correct_index + 1}."
@@ -1141,20 +1334,10 @@ Return JSON with:
                 explanation_ko = f"The answer is choice {correct_index + 1}."
                 explanation_en = f"The answer is choice {correct_index + 1}."
             else:
-                problem_text_ko = f"다음 중 {target_color[0]} {target_shape}와(과) 같은 것은?"
+                problem_text_ko = f"다음 중 {target_color[0]} {target_shape_ko}와(과) 같은 것은?"
                 problem_text_en = f"Which of the following matches the {target_color[1].lower()} {target_shape}?"
                 explanation_ko = f"정답은 {correct_index + 1}번입니다."
                 explanation_en = f"The answer is choice {correct_index + 1}."
-        
-        # 도형 이름 한글 변환
-        shape_names_ko = {
-            "circle": "원",
-            "square": "사각형",
-            "triangle": "삼각형",
-            "rectangle": "직사각형",
-            "star": "별",
-            "diamond": "다이아몬드"
-        }
         
         return {
             "module": "shape_matching",

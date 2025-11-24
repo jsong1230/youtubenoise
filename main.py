@@ -87,22 +87,43 @@ def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = Fal
         logger.info(f"제목: {metadata['title']}")
         
         # 4. 영상 생성
-        logger.info("\n[4/5] 영상 생성 중...")
+        logger.info("\n[4/6] 영상 생성 중...")
         from scripts.make_video import make_video
         video_path = make_video(image_path, audio_path)
         logger.info(f"영상 생성 완료: {video_path}")
         
-        # 5. YouTube 업로드 (선택사항)
+        # 5. 썸네일 자동 생성
+        logger.info("\n[5/6] 썸네일 생성 중...")
+        thumbnail_path = None
+        try:
+            from scripts.create_thumbnail_dalle import create_thumbnail_with_dalle
+            
+            # 언어 설정 확인 (기본값: 한글)
+            lang_code = "ko"
+            thumbnail_path = video_path.parent / f"{video_path.stem}_thumbnail.jpg"
+            create_thumbnail_with_dalle(
+                metadata['title'],
+                language=lang_code,
+                output_path=thumbnail_path
+            )
+            logger.info(f"썸네일 생성 완료: {thumbnail_path}")
+        except Exception as e:
+            logger.warning(f"썸네일 생성 실패 (영상은 생성됨): {e}")
+            # 썸네일 생성 실패해도 영상 생성은 성공으로 처리
+        
+        # 6. YouTube 업로드 (선택사항)
         video_id = None
         if upload:
-            logger.info("\n[5/5] 유튜브 업로드 중...")
+            logger.info("\n[6/6] 유튜브 업로드 중...")
             from scripts.upload_youtube import upload_video
+            # 썸네일이 생성되었으면 썸네일 사용, 없으면 배경 이미지 사용
+            upload_thumbnail_path = thumbnail_path if thumbnail_path and thumbnail_path.exists() else image_path
             video_id = upload_video(
                 video_path=video_path,
                 title=metadata["title"],
                 description=metadata["description"],
                 tags=metadata["tags"],
-                thumbnail_path=image_path
+                thumbnail_path=upload_thumbnail_path
             )
             logger.info(f"유튜브 업로드 완료! Video ID: {video_id}")
             logger.info(f"영상 URL: https://www.youtube.com/watch?v={video_id}")
@@ -118,7 +139,8 @@ def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = Fal
                     "files": {
                         "audio": str(audio_path),
                         "image": str(image_path),
-                        "video": str(video_path)
+                        "video": str(video_path),
+                        "thumbnail": str(thumbnail_path) if thumbnail_path else None
                     },
                     "video_id": video_id,
                     "metadata": metadata,
@@ -129,7 +151,7 @@ def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = Fal
             except Exception as e:
                 logger.warning(f"히스토리 저장 실패: {e}")
         else:
-            logger.info("\n[5/5] 업로드 건너뜀 (--upload 플래그 없음)")
+            logger.info("\n[6/6] 업로드 건너뜀 (--upload 플래그 없음)")
         
         logger.info("\n" + "=" * 60)
         logger.info("파이프라인 완료!")
@@ -139,6 +161,7 @@ def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = Fal
             "audio": str(audio_path),
             "image": str(image_path),
             "video": str(video_path),
+            "thumbnail": str(thumbnail_path) if thumbnail_path else None,
             "metadata": metadata,
             "video_id": video_id
         }
@@ -396,7 +419,7 @@ def main():
         logger.info(f"영상 제작 완료: {video_path}")
         
         # 3. 메타데이터 생성 (선택사항)
-        logger.info("\n[3/3] 메타데이터 생성 중...")
+        logger.info("\n[3/4] 메타데이터 생성 중...")
         from scripts.generate_title_description import generate_metadata_for_ai_explainer
         metadata = generate_metadata_for_ai_explainer(
             topic_name=args.preset,
@@ -407,18 +430,53 @@ def main():
         # 메타데이터 저장
         metadata_dir = video_path.parent
         metadata_path = metadata_dir / f"{video_path.stem}_metadata.json"
+        
+        # 썸네일 자동 생성
+        logger.info("\n[4/4] 썸네일 생성 중...")
+        thumbnail_path = None
+        try:
+            from scripts.create_thumbnail_dalle import create_thumbnail_with_dalle
+            
+            # 언어 설정 확인 (기본값: 한글, 이중언어 제목인 경우 첫 번째 언어 사용)
+            lang_code = "ko"
+            title = metadata.get('title', '')
+            if '|' in title:
+                # 이중언어 제목인 경우 영어 부분이 먼저면 영어로
+                parts = title.split('|')
+                if len(parts) > 0 and any(ord(c) < 128 for c in parts[0]):
+                    lang_code = "en"
+            
+            thumbnail_path = metadata_dir / f"{video_path.stem}_thumbnail.jpg"
+            create_thumbnail_with_dalle(
+                title,
+                language=lang_code,
+                output_path=thumbnail_path
+            )
+            logger.info(f"썸네일 생성 완료: {thumbnail_path}")
+            
+        except Exception as e:
+            logger.warning(f"썸네일 생성 실패 (영상은 생성됨): {e}")
+            # 썸네일 생성 실패해도 영상 생성은 성공으로 처리
+        
+        # 메타데이터에 썸네일 경로 추가
+        metadata_dict = {
+            "video_path": str(video_path),
+            "script_path": str(script_file_path),
+            "metadata": metadata,
+            "created_at": datetime.now().isoformat()
+        }
+        if thumbnail_path:
+            metadata_dict["thumbnail_path"] = str(thumbnail_path)
+        
         with open(metadata_path, 'w', encoding='utf-8') as f:
-            json.dump({
-                "video_path": str(video_path),
-                "script_path": str(script_file_path),
-                "metadata": metadata,
-                "created_at": datetime.now().isoformat()
-            }, f, ensure_ascii=False, indent=2)
+            json.dump(metadata_dict, f, ensure_ascii=False, indent=2)
         
         logger.info(f"메타데이터 저장 완료: {metadata_path}")
         logger.info(f"\nAI Explainer 영상 생성 완료!")
         logger.info(f"영상: {video_path}")
         logger.info(f"제목: {metadata['title']}")
+        if thumbnail_path:
+            logger.info(f"썸네일: {thumbnail_path}")
     else:
         parser.error(f"지원하지 않는 모드: {args.mode}")
 

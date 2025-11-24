@@ -153,9 +153,38 @@ def generate_spot_difference_video(preset_name: str, output_path: Optional[Path]
         with open(description_path, 'w', encoding='utf-8') as f:
             f.write(metadata['description'])
         
+        # 썸네일 자동 생성
+        logger.info("썸네일 생성 중...")
+        thumbnail_path = None
+        try:
+            from scripts.create_thumbnail_dalle import create_thumbnail_with_dalle
+            
+            # 언어 설정 확인 (기본값: 한글)
+            lang_code = "ko"
+            thumbnail_path = metadata_dir / f"{output_path.stem}_thumbnail.jpg"
+            create_thumbnail_with_dalle(
+                metadata['title'],
+                language=lang_code,
+                output_path=thumbnail_path
+            )
+            logger.info(f"썸네일 생성 완료: {thumbnail_path}")
+            
+            # 메타데이터에 썸네일 경로 추가
+            metadata['thumbnail_path'] = str(thumbnail_path)
+            
+            # 메타데이터 파일 업데이트
+            with open(metadata_path, 'w', encoding='utf-8') as f:
+                json.dump(metadata, f, ensure_ascii=False, indent=2)
+                
+        except Exception as e:
+            logger.warning(f"썸네일 생성 실패 (영상은 생성됨): {e}")
+            # 썸네일 생성 실패해도 영상 생성은 성공으로 처리
+        
         logger.info(f"\n영상 생성 완료: {output_path}")
         logger.info(f"제목: {metadata['title']}")
         logger.info(f"메타데이터: {metadata_path}")
+        if thumbnail_path:
+            logger.info(f"썸네일: {thumbnail_path}")
         
         return output_path
         
