@@ -348,21 +348,27 @@ def check_running_process(
                 if not is_python:
                     continue
                 
-                # zsh 셸 래퍼 제외 (명령어에 zsh 관련 내용이 있으면 제외)
-                if cmdline:
-                    cmdline_str = ' '.join(cmdline)
-                    if 'zsh' in cmdline_str and 'extendedglob' in cmdline_str:
-                        continue
-                    if 'builtin' in cmdline_str and 'unsetopt' in cmdline_str:
-                        continue
-                
                 if not cmdline:
                     continue
+                
+                # zsh 셸 래퍼 제외 (첫 번째 인자가 zsh이고 extendedglob이 포함되어 있으면 제외)
+                if len(cmdline) > 0:
+                    first_arg = cmdline[0].lower()
+                    if 'zsh' in first_arg:
+                        cmdline_str = ' '.join(cmdline)
+                        # zsh 셸 래퍼 키워드 확인
+                        if any(keyword in cmdline_str for keyword in ['extendedglob', 'builtin', 'unsetopt', 'snap=', 'dump_zsh_state', 'command cat']):
+                            continue
                 
                 cmdline_str = ' '.join(cmdline)
                 
                 # 스크립트 이름 확인
                 if script_name not in cmdline_str:
+                    continue
+                
+                # 실제 Python 프로세스인지 확인 (zsh 래퍼가 아닌)
+                has_python = any('python' in arg.lower() for arg in cmdline)
+                if not has_python:
                     continue
                 
                 # 프리셋 이름이 지정된 경우, 같은 프리셋이 실행 중인지 확인

@@ -9,41 +9,45 @@
 
 ### ✅ 최근 완료된 작업
 
-#### 1. 두뇌훈련 영상 UI 개선 및 버그 수정 (2025-11-24)
-- **질문 텍스트 줄바꿈 개선**
-  - `create_text_image` 함수에서 긴 질문이 옆으로 잘리는 문제 수정
-  - `wrap_text` 함수를 사용하여 텍스트 자동 줄바꿈 처리
-  - 화면 중앙에 여러 줄로 배치되도록 개선
-  
-- **정답 화면 중앙 배치**
-  - `create_answer_image` 함수에서 정답 텍스트를 화면 중앙에 배치하도록 수정
-  - 정답 텍스트의 총 높이를 계산하여 화면 중앙에 정확히 배치
-  - 제목과 정답 텍스트 간격 조정
-  
-- **계산 문제 폰트 크기 고정 (재수정)**
-  - `create_calculation_display_image` 함수에서 폰트 크기를 절대값으로 고정 (최소 250px)
-  - `font_size`에 의존하지 않고 절대값 사용하여 일관성 유지
-  - 폰트 크기가 변하는 문제 완전 해결
-  
-- **한글 텍스트에 영어 단어 섞임 문제 수정**
-  - `generate_shape_matching_problem` 함수에서 한글 텍스트에 영어 도형명이 섞이는 문제 수정
-  - `shape_names_ko` 딕셔너리를 먼저 정의하고 한글 도형명 사용
-  - GPT 생성 텍스트에도 한글 도형명 사용하도록 프롬프트 개선
-  - 생성된 텍스트에 영어가 섞여있는지 검증 및 자동 수정 로직 추가
-  
-- **패턴 순서 문제 검증 로직 추가**
-  - GPT가 생성한 패턴의 필수 필드 검증
-  - 명백히 잘못된 패턴은 자동 재생성
-  - 패턴 설명이 너무 짧거나 모호한 경우 경고 로그 출력
-  
-- **BGM 프리셋 문제 해결**
-  - `data/bgm_presets.yaml`에 `piano` 프리셋 추가
-  - `piano` 폴더에서 음악 자동 선택되도록 설정 완료
-  
-- **수정된 파일**
-  - `scripts/make_brain_training_video.py`: 텍스트 줄바꿈, 정답 중앙 배치, 계산 폰트 고정
-  - `scripts/generate_brain_training_content.py`: 패턴 검증 로직 추가
-  - `data/bgm_presets.yaml`: piano 프리셋 추가
+#### 1. 30-45분 두뇌훈련 영상 생성 기능 추가 (2025-11-24)
+- **프리셋 추가**
+  - `brain_training_30min_korean`: 한글 버전 30-45분 영상 (45개 문제)
+  - `brain_training_30min_english`: 영어 버전 30-45분 영상 (45개 문제)
+  - `data/brain_training_presets.yaml`에 프리셋 추가
+  - 문제 설정: `display_seconds`, `countdown_seconds`, `answer_display_duration` 조정
+
+- **BGM 자동 포함 기능**
+  - `audio/public_domain/` 폴더에서 재귀적으로 오디오 파일 검색 (`.mp3`, `.wav`, `.m4a`, `.flac`)
+  - 랜덤 선택하여 영상에 자동 포함
+  - FFmpeg `-stream_loop -1` 옵션으로 영상 길이에 맞춰 BGM 자동 반복
+  - BGM 볼륨 30%로 설정 (집중 방해 최소화)
+  - `scripts/make_brain_training_video.py`의 `combine_clips()` 함수 수정
+
+- **영상 길이 계산 및 메타데이터**
+  - `ffprobe`를 사용하여 생성된 영상의 정확한 길이 계산
+  - 메타데이터에 실제 영상 길이 포함 (예: "42분")
+  - `scripts/generate_brain_training_metadata.py`에 `video_duration_minutes` 파라미터 추가
+
+- **썸네일 자동 생성**
+  - `scripts/generate_brain_training_thumbnail.py` 생성
+  - DALL-E 3를 사용하여 썸네일 자동 생성 (1280x720)
+  - 프리셋 이름과 언어에 따라 프롬프트 자동 생성
+  - YouTube 2MB 제한에 맞춰 압축
+
+- **현재 상태**
+  - 한글 버전 생성 중 중단됨 (2025-11-24 01:09)
+  - 45개 문제 생성 완료 (1,115개 클립)
+  - 영상 합성 중 FFmpeg 프로세스 강제 종료
+  - 불완전한 영상 파일 존재: `output/videos/brain_training/2025-11-24_brain_training_30min_korean_ep01.mp4` (7.1GB)
+  - 메타데이터, 썸네일, 제목/설명/태그는 정상 생성됨
+  - **다음 단계**: 불완전한 파일 삭제 후 다시 생성 필요
+
+- **주요 변경 파일**
+  - `scripts/generate_brain_training.py`: BGM 자동 선택 로직 추가, 영상 길이 계산 추가
+  - `scripts/make_brain_training_video.py`: BGM 루프 반복 기능 추가 (`-stream_loop -1`)
+  - `scripts/generate_brain_training_metadata.py`: 영상 길이 파라미터 추가
+  - `scripts/generate_brain_training_thumbnail.py`: 신규 생성
+  - `data/brain_training_presets.yaml`: 30분 프리셋 추가
 
 #### 2. 두뇌훈련 모듈 확장 (2025-11-23)
 - **틀린그림 찾기 기능 비활성화**
@@ -228,7 +232,22 @@
 
 ## 🔄 현재 작업 중인 항목
 
-**없음** - 타입 힌팅 전면 적용 완료
+### 30-45분 두뇌훈련 영상 생성 (2025-11-24)
+- **상태**: 중단됨 (영상 합성 중 강제 종료)
+- **완료된 작업**:
+  - ✅ 45개 문제 생성 완료
+  - ✅ 1,115개 클립 생성 완료
+  - ✅ 메타데이터 생성 완료
+  - ✅ 썸네일 생성 완료
+  - ✅ 제목/설명/태그 생성 완료
+- **미완료 작업**:
+  - ❌ 영상 합성 미완료 (FFmpeg 프로세스 강제 종료)
+  - ❌ 불완전한 영상 파일 존재 (7.1GB, 재생 불가능할 수 있음)
+- **다음 단계**:
+  1. 불완전한 영상 파일 삭제: `output/videos/brain_training/2025-11-24_brain_training_30min_korean_ep01.mp4`
+  2. 임시 클립 폴더 확인: `output/videos/brain_training/2025-11-24_brain_training_30min_korean_ep01_temp/` (1,221개 클립 존재)
+  3. 다시 생성 실행: `python main.py --mode brain_training --preset brain_training_30min_korean`
+  4. 영어 버전 생성: `python main.py --mode brain_training --preset brain_training_30min_english`
 
 ---
 
@@ -437,7 +456,7 @@ python -c "from scripts.utils import setup_logging; print('OK')"
 
 ---
 
-**마지막 업데이트**: 2025-11-23 (두뇌훈련 모듈 5개 추가 완료)  
+**마지막 업데이트**: 2025-11-24 (30-45분 두뇌훈련 영상 생성 기능 추가, BGM 자동 포함 기능 추가)  
 **작성자**: AI Assistant (Cursor)  
 **목적**: 다른 머신/IDE에서 작업 이어가기
 
