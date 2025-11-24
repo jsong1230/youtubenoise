@@ -2,8 +2,9 @@
 
 GPT · Claude · Public Domain 음악 · FFmpeg을 조합해 **다양한 주제의 롱폼 영상**을 자동으로 제작하는 파이프라인입니다.  
 **2025 전략**: 이중언어 메타데이터, API 비용 최적화, 요일별 필러 로테이션, AI Explainer 콘텐츠 추가  
-화이트노이즈/환경음에 머무르지 않고, **BGM·시니어 브레인트레이닝·틀린그림찾기·AI Explainer** 등 여러 포맷을 선택적으로 생성할 수 있습니다.  
-각 파이프라인은 이미지/오디오/텍스트를 자동 생성하고, 최종 MP4와 메타데이터 파일을 산출합니다.
+화이트노이즈/환경음에 머무르지 않고, **BGM·시니어 브레인트레이닝·AI Explainer** 등 여러 포맷을 선택적으로 생성할 수 있습니다.  
+각 파이프라인은 이미지/오디오/텍스트를 자동 생성하고, 최종 MP4와 메타데이터 파일을 산출합니다.  
+**모든 모드에서 DALL-E를 사용한 썸네일이 자동으로 생성됩니다.**
 
 > **📌 다른 머신/IDE에서 작업 시작하기**: [`QUICK_START.md`](QUICK_START.md)를 먼저 읽으세요.  
 > **📋 작업 히스토리 확인**: [`WORK_HISTORY.md`](WORK_HISTORY.md)에서 최근 작업 내역과 현재 상태를 확인하세요.
@@ -13,8 +14,7 @@ GPT · Claude · Public Domain 음악 · FFmpeg을 조합해 **다양한 주제�
 | 모드 (`--mode`) | 설명 | 프리셋 예시 |
 | --- | --- | --- |
 | `longform_bgm` | Public Domain 음악 또는 합성 음원을 조합한 2~6시간 BGM | `cafe_jazz_3h`, `blues_3h`, `lofi_3h`, `christmas_ambient_4h` |
-| `spot_difference` | GPT 이미지/분석을 활용한 시니어용 틀린그림찾기(10~20 문제) | `senior_easy`, `senior_normal` |
-| `brain_training` | GPT 문제 생성 기반 시니어 두뇌훈련 | `number_memory_senior`, `mixed_brain_training_senior` |
+| `brain_training` | GPT 문제 생성 기반 시니어 두뇌훈련 (한글/영어 지원) | `number_memory_senior`, `mixed_brain_training_senior` |
 | `ai_explainer` | Claude로 생성한 AI & Tech 설명 롱폼 영상 | `ChatGPT로 코딩하기: 실전 팁` |
 | `auto` | 요일별 스케줄에 따라 자동 실행 | `data/upload_schedule.yaml` 참고 |
 | (Legacy) noise | 전통적인 노이즈/환경음 합성 스크립트 | `white_noise`, `rain`, `asmr` |
@@ -29,9 +29,7 @@ YouTube 업로드는 `--upload` 옵션으로 자동화하거나, 생성된 파�
 youtubenoise/
   audio/
     public_domain/              # 장르별 Public Domain 음악
-  images/                       # 생성된 배경/틀린그림찾기 이미지
-  videos/
-    spot_difference/
+  images/                       # 생성된 배경 이미지
   scripts/
     generate_bgm.py             # 롱폼 BGM
     generate_image.py           # 배경 이미지
@@ -39,13 +37,12 @@ youtubenoise/
     make_video.py               # BGM/노이즈 영상
     upload_youtube.py           # (옵션) 업로드
     scheduler.py                # 배치 실행
-    generate_spot_difference*.py# 틀린그림찾기 파이프라인
-    make_spot_difference_video.py
     generate_brain_training*.py # 브레인트레이닝
+    create_thumbnail_dalle.py  # 썸네일 생성 (DALL-E)
+    upload_thumbnail.py         # 썸네일 업로드
   config/
     config.json                 # 공통 설정
     bgm_presets.yaml
-    spot_difference_presets.yaml
     brain_training_presets.yaml
   docs/                         # 가이드 모음
   logs/app.log
@@ -153,21 +150,7 @@ python main.py --mode longform_bgm --preset blues_3h --duration-minutes 180 --up
 - 여러 파일이 있으면 길이에 맞게 이어붙입니다.
 - 세부 스타일은 `config/bgm_presets.yaml`에서 조정합니다.
 
-### 2. 시니어용 틀린그림찾기 (GPT 기반)
-```bash
-# 쉬운 난이도 (3개 차이, 15초 카운트다운, 15문제)
-python main.py --mode spot_difference --preset senior_easy
-
-# 보통 난이도 (5개 차이, 10초 카운트다운, 20문제)
-python main.py --mode spot_difference --preset senior_normal
-```
-- DALL·E가 원본 이미지를 생성하고 GPT가 차이점·좌표 JSON을 제공합니다.
-- 비교 화면 + 1초씩 줄어드는 카운트다운 + 정답 오버레이가 자동 합성됩니다.
-- 결과물: `videos/spot_difference/<date>_<preset>_ep01.mp4`  
-  메타데이터는 JSON/텍스트로 함께 저장됩니다.
-- 자세한 가이드는 `docs/SPOT_DIFFERENCE_GUIDE.md` 참고.
-
-### 3. 시니어 브레인트레이닝
+### 2. 시니어 브레인트레이닝
 ```bash
 python main.py --mode brain_training --preset number_memory_senior
 python main.py --mode brain_training --preset mixed_brain_training_senior
@@ -178,7 +161,7 @@ python main.py --mode brain_training --preset brain_training_30min_english  # 30
 - BGM 자동 포함: `audio/public_domain/` 폴더의 오디오 파일을 랜덤 선택하여 영상 길이에 맞춰 자동 반복 재생합니다.
 - 영상 길이: 프리셋의 `num_problems`와 `problem_settings`에 따라 자동 계산되며, 메타데이터에 정확한 길이가 포함됩니다.
 
-### 4. AI Explainer (AI & Tech 설명 영상)
+### 3. AI Explainer (AI & Tech 설명 영상)
 ```bash
 # 주제 목록 보기
 python scripts/generate_ai_explainers.py --list-topics
@@ -320,7 +303,6 @@ metadata = api.generate_json(
 ## 문서
 
 - `docs/README.md` : 활성 문서 vs 레거시 문서 정리
-- `docs/SPOT_DIFFERENCE_GUIDE.md` : 틀린그림찾기 파이프라인
 - `docs/MUSIC_GUIDE.md`, `docs/PUBLIC_DOMAIN_GENRES.md` : 음악 다운로드
 - `docs/STATISTICS.md` : YouTube 통계 관리
 - `docs/API_INTEGRATION_STRATEGY.md` : API 통합 전략 및 비용 절감
@@ -345,7 +327,6 @@ metadata = api.generate_json(
 ```bash
 # 특정 모드/프리셋 지정
 0 2 * * * cd /path/to/youtubenoise && /path/to/venv/bin/python main.py --mode longform_bgm --preset cafe_jazz_3h --duration-minutes 180 >> logs/cron.log 2>&1
-0 5 * * 1 cd /path/to/youtubenoise && /path/to/venv/bin/python main.py --mode spot_difference --preset senior_easy >> logs/cron.log 2>&1
 ```
 
 **스케줄 수정**: `data/upload_schedule.yaml` 파일을 편집하여 요일별 콘텐츠 필러 변경

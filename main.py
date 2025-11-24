@@ -212,8 +212,6 @@ def main():
   # 크리스마스 카페 BGM 생성 및 YouTube 업로드
   python main.py --mode longform_bgm --preset christmas_cafe_3h --duration-minutes 180 --upload
   
-  # 시니어용 틀린그림찾기 영상 생성
-  python main.py --mode spot_difference --preset senior_easy
   
   # 시니어용 두뇌훈련 영상 생성 (숫자 기억)
   python main.py --mode brain_training --preset number_memory_senior
@@ -238,7 +236,7 @@ def main():
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["longform_bgm", "spot_difference", "brain_training", "ai_explainer", "auto"],
+        choices=["longform_bgm", "brain_training", "ai_explainer", "auto"],
         default="longform_bgm",
         help="실행 모드 (기본값: longform_bgm, auto: 스케줄에 따라 자동 실행)"
     )
@@ -354,20 +352,6 @@ def main():
         
         # 파이프라인 실행
         run_longform_bgm(args.preset, args.duration_minutes, args.upload)
-    elif args.mode == "spot_difference":
-        if not args.preset:
-            parser.error("--preset이 필요합니다. 틀린그림찾기 프리셋을 지정해주세요.")
-        
-        # 중복 실행 방지: 실행 전 반드시 확인
-        from scripts.utils import check_running_process
-        if check_running_process("main.py", preset_name=args.preset, check_ffmpeg=True, logger=logger):
-            logger.error("❌ 동일한 작업이 이미 실행 중입니다. 중복 실행을 방지하기 위해 종료합니다.")
-            sys.exit(1)
-        
-        # 틀린그림찾기 파이프라인 실행
-        from scripts.generate_spot_difference import generate_spot_difference_video
-        output_path = generate_spot_difference_video(args.preset)
-        logger.info(f"틀린그림찾기 영상 생성 완료: {output_path}")
     elif args.mode == "brain_training":
         if not args.preset:
             parser.error("--preset이 필요합니다. 두뇌훈련 프리셋을 지정해주세요.")

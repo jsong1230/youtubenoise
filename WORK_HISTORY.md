@@ -9,7 +9,78 @@
 
 ### ✅ 최근 완료된 작업
 
-#### 1. 30-45분 두뇌훈련 영상 생성 기능 추가 (2025-11-24)
+#### 3. 모든 모드에 썸네일 자동 생성 기능 추가 (2025-11-24)
+- **DALL-E 3 기반 썸네일 생성**
+  - `scripts/create_thumbnail_dalle.py` 신규 생성
+  - DALL-E 3를 사용하여 YouTube 썸네일 자동 생성 (1280x720)
+  - 언어별 프롬프트 자동 생성 (한글/영어)
+  - YouTube 2MB 제한에 맞춰 자동 압축
+
+- **YouTube 썸네일 업로드**
+  - `scripts/upload_thumbnail.py` 신규 생성
+  - YouTube Data API v3를 사용하여 썸네일 업로드
+  - `scripts/upload_youtube.py`에 `compress_thumbnail` 함수 통합
+
+- **모든 모드에 통합**
+  - `brain_training`: 영상 생성 후 자동 썸네일 생성
+  - `longform_bgm`: 영상 생성 후 자동 썸네일 생성
+  - `ai_explainer`: 영상 생성 후 자동 썸네일 생성
+  - 썸네일 경로를 메타데이터에 자동 포함
+  - `main.py`의 모든 모드에서 썸네일 생성 로직 추가
+
+- **주요 변경 파일**
+  - `scripts/create_thumbnail_dalle.py`: 신규 생성
+  - `scripts/upload_thumbnail.py`: 신규 생성
+  - `scripts/upload_youtube.py`: `compress_thumbnail` 함수 추가
+  - `main.py`: 모든 모드에 썸네일 생성 로직 추가
+  - `scripts/generate_brain_training.py`: 썸네일 생성 로직 추가
+  - `scripts/generate_spot_difference.py`: 썸네일 생성 로직 추가
+
+#### 2. 두뇌훈련 영상 다국어 지원 개선 및 버그 수정 (2025-11-24)
+- **영어 버전 한글 텍스트 제거**
+  - 모든 이미지 생성 함수에 `languages` 파라미터 추가
+  - 영어 버전일 때 영어 폰트(Helvetica) 사용
+  - 한글 폰트(AppleSDGothicNeo)는 한글 버전에서만 사용
+  - 영어 버전에서 한글 텍스트 필터링 로직 추가
+
+- **모듈별 언어 지원 개선**
+  - `korean_word_puzzle` 모듈을 영어 버전에서 자동 제외
+  - `word_association`, `pattern_sequence`, `category_classification` 모듈이 영어로 생성되도록 GPT 프롬프트 수정
+  - `shape_matching`, `color_memory`, `direction_memory` 모듈의 텍스트가 언어별로 올바르게 표시되도록 수정
+
+- **언어별 파일명 구분**
+  - 영상 파일명에 언어 식별자 추가 (`_ko_`, `_en_`)
+  - 메타데이터, 제목, 설명, 태그 파일도 언어별로 구분
+  - 예: `2025-11-24_mixed_brain_training_senior_ko_ep01.mp4`
+
+- **폰트 깨짐 문제 해결**
+  - 영어 버전에서 한글 텍스트가 포함된 경우 빈 문자열로 대체
+  - `create_answer_image`에서 영어 버전일 때 한글 텍스트 필터링
+  - `create_problem_clip`에서 패턴 표시 시 언어별 화살표 사용 (`->` vs `→`)
+
+- **주요 변경 파일**
+  - `scripts/generate_brain_training_content.py`: 모든 문제 생성 함수에 `languages` 파라미터 추가, GPT 프롬프트 언어별 분기
+  - `scripts/make_brain_training_video.py`: 모든 이미지 생성 함수에 `languages` 파라미터 추가, 언어별 폰트 선택
+  - `scripts/generate_brain_training.py`: 언어별 파일명 구분, `korean_word_puzzle` 모듈 필터링
+  - `scripts/generate_brain_training_metadata.py`: 언어별 메타데이터 생성
+
+#### 1. spot_difference 모드 제거 (2025-11-24)
+- **제거 이유**
+  - 구현이 어려워 실제로 사용하지 않음
+  - DALL-E로 동일한 이미지에서 차이점을 만드는 것이 일관성 있게 생성되지 않음
+
+- **제거된 내용**
+  - `main.py`에서 `spot_difference` 모드 제거
+  - `README.md`에서 `spot_difference` 관련 설명 제거
+  - 관련 스크립트는 유지 (향후 필요 시 재활성화 가능)
+
+- **주요 변경 파일**
+  - `main.py`: `spot_difference` 모드 제거
+  - `README.md`: `spot_difference` 관련 내용 제거
+
+### ✅ 이전 완료된 작업
+
+#### 4. 30-45분 두뇌훈련 영상 생성 기능 추가 (2025-11-24)
 - **프리셋 추가**
   - `brain_training_30min_korean`: 한글 버전 30-45분 영상 (45개 문제)
   - `brain_training_30min_english`: 영어 버전 30-45분 영상 (45개 문제)
@@ -456,7 +527,7 @@ python -c "from scripts.utils import setup_logging; print('OK')"
 
 ---
 
-**마지막 업데이트**: 2025-11-24 (30-45분 두뇌훈련 영상 생성 기능 추가, BGM 자동 포함 기능 추가)  
+**마지막 업데이트**: 2025-11-24 (모든 모드에 썸네일 자동 생성 기능 추가, 두뇌훈련 영상 다국어 지원 개선, spot_difference 모드 제거)  
 **작성자**: AI Assistant (Cursor)  
 **목적**: 다른 머신/IDE에서 작업 이어가기
 

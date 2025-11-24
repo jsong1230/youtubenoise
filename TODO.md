@@ -58,8 +58,7 @@
     - [x] direction_memory (방향 기억) - 1순위
     - [x] category_classification (카테고리 분류) - 2순위
     - [x] shape_matching (도형 매칭) - 2순위
-  - [ ] 틀린그림찾기: 다양한 테마 및 난이도 프리셋 추가 (비활성화됨)
-  - [ ] 틀린그림찾기: TTS 내레이션 기능 추가 (선택사항) (비활성화됨)
+  - [x] spot_difference 모드 제거 (구현이 어려워 제거) ✅ 2025-11-24
 - [ ] BGM: 다양한 장르 프리셋 추가 (jazz, piano, world 등)
 - [ ] BGM: 앞으로 mode와 preset을 다양하게 추가하는 목표
 - [ ] 영상 메타데이터 최적화 (SEO 개선)
@@ -104,6 +103,27 @@
 - `implementation_plan.md`: 상세 구현 계획
 
 ## ✅ 최근 완료된 작업 (2025-11)
+
+### 썸네일 자동 생성 기능 추가 (2025-11-24)
+- [x] DALL-E 3를 사용한 썸네일 생성 스크립트 추가 (`scripts/create_thumbnail_dalle.py`)
+- [x] YouTube 썸네일 업로드 스크립트 추가 (`scripts/upload_thumbnail.py`)
+- [x] 모든 모드(brain_training, longform_bgm, ai_explainer)에 자동 썸네일 생성 로직 추가
+- [x] 썸네일 경로를 메타데이터에 자동 포함
+
+### 두뇌훈련 영상 다국어 지원 개선 (2025-11-24)
+- [x] 영어 버전에서 한글 텍스트 제거 및 폰트 깨짐 문제 해결
+- [x] 모든 이미지 생성 함수에 languages 파라미터 추가
+- [x] 영어 버전일 때 영어 폰트(Helvetica) 사용, 한글 폰트(AppleSDGothicNeo)는 한글 버전에서만 사용
+- [x] korean_word_puzzle 모듈을 영어 버전에서 자동 제외
+- [x] word_association, pattern_sequence, category_classification 모듈이 영어로 생성되도록 수정
+- [x] 언어별 파일명 구분 (_ko_, _en_ 식별자 추가)
+- [x] 메타데이터, 제목, 설명, 태그 파일도 언어별로 구분
+
+### spot_difference 모드 제거 (2025-11-24)
+- [x] main.py에서 spot_difference 모드 제거
+- [x] README.md에서 spot_difference 관련 내용 제거
+
+## ✅ 이전 완료된 작업 (2025-11)
 
 - [x] 이중언어 메타데이터 시스템 구현 (한글/영어 자동 생성)
 - [x] generate_image.py APIManager 통합 (DALL-E 우선, 무료 API 폴백)
