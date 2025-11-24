@@ -25,7 +25,6 @@ YouTube 업로드는 `--upload` 옵션으로 자동화하거나, 생성된 파�
 ## 프로젝트 구조
 
 ```
-```
 youtubenoise/
   audio/
     public_domain/              # 장르별 Public Domain 음악
@@ -47,7 +46,6 @@ youtubenoise/
   docs/                         # 가이드 모음
   logs/app.log
   main.py                       # CLI 엔트리포인트
-```
 ```
 
 ## 설치 방법
