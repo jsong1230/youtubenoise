@@ -7,7 +7,7 @@ GPT · Claude · Public Domain 음악 · FFmpeg을 조합해 **다양한 주제�
 **모든 모드에서 DALL-E를 사용한 썸네일이 자동으로 생성됩니다.**
 
 > **📌 다른 머신/IDE에서 작업 시작하기**: [`QUICK_START.md`](QUICK_START.md)를 먼저 읽으세요.  
-> **📋 작업 히스토리 확인**: [`WORK_HISTORY.md`](WORK_HISTORY.md)에서 최근 작업 내역과 현재 상태를 확인하세요.
+> **📋 작업 히스토리 확인**: [`HISTORY.md`](HISTORY.md)에서 최근 작업 내역과 현재 상태를 확인하세요.
 
 ## 핵심 콘셉트
 

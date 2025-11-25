@@ -23,13 +23,10 @@ cd youtubenoise
 ### 2. 필수 문서 확인
 ```bash
 # 작업 히스토리 확인 (가장 중요!)
-cat WORK_HISTORY.md
+cat HISTORY.md
 
 # TODO 확인
 cat TODO.md
-
-# 프로젝트 히스토리 확인
-cat HISTORY.md
 ```
 
 ### 3. 환경 설정
@@ -55,24 +52,21 @@ python -c "import scripts.generate_bgm; import scripts.upload_youtube; print('�
 
 ## 📚 필수 문서 읽기 순서
 
-1. **`WORK_HISTORY.md`** ⭐ (가장 중요)
+1. **`HISTORY.md`** ⭐ (가장 중요)
    - 최근 작업 내역
    - 현재 상태
-   - 다음 단계
+   - 프로젝트 전체 히스토리
+   - 주요 결정사항
 
 2. **`TODO.md`**
    - 진행 중인 작업
    - 다음 우선순위
 
-3. **`HISTORY.md`**
-   - 프로젝트 전체 히스토리
-   - 주요 결정사항
-
-4. **`README.md`**
+3. **`README.md`**
    - 프로젝트 개요
    - 사용법
 
-5. **`docs/CURSOR_PROMPT.md`**
+4. **`docs/CURSOR_PROMPT.md`**
    - Cursor AI 가이드
    - 프로젝트 구조
 
@@ -162,9 +156,8 @@ youtubenoise/
 ├── config/           # 설정 파일
 ├── data/             # 데이터 (Git 추적)
 ├── docs/             # 문서
-├── WORK_HISTORY.md   # ⭐ 작업 히스토리
-├── TODO.md           # TODO 목록
-└── HISTORY.md        # 프로젝트 히스토리
+├── HISTORY.md        # ⭐ 작업 히스토리 및 프로젝트 히스토리
+└── TODO.md           # TODO 목록
 ```
 
 ---
@@ -209,7 +202,7 @@ python -c "from scripts.utils import setup_logging; print('OK')"
 ## 📞 다음 단계
 
 작업을 시작하기 전에:
-1. `WORK_HISTORY.md` 읽기
+1. `HISTORY.md` 읽기
 2. `TODO.md`에서 다음 우선순위 확인
 3. 현재 브랜치 확인: `git branch`
 4. 최신 상태로 업데이트: `git pull`
