@@ -1,0 +1,106 @@
+[
+  {
+    "start_time": "2025-11-17T00:28:00",
+    "preset_name": "christmas_cafe_3h",
+    "duration_minutes": 180,
+    "status": "completed",
+    "files": {
+      "audio": "audio/2025-11-16_combined_180min.wav",
+      "image": "images/2025-11-16_christmas_cafe_3h_bg.png",
+      "video": "videos/2025-11-16_2025-11-16_combined_180min.mp4"
+    },
+    "video_id": "8Q99UdhWqCA",
+    "metadata": {
+      "title": "Christmas Cafe BGM - 3시간 Long Form BGM"
+    },
+    "end_time": "2025-11-17T00:29:39",
+    "statistics": {
+      "viewCount": 0,
+      "likeCount": 0,
+      "commentCount": 0,
+      "favoriteCount": 0
+    },
+    "last_updated": "2025-11-17T01:06:57.105987"
+  },
+  {
+    "video_id": "tw-Dos5FGJc",
+    "status": "completed",
+    "metadata": {
+      "title": "Lofi Hip Hop for Deep Focus and Relaxation (4 Hours)"
+    },
+    "start_time": "2025-11-16T23:45:00",
+    "added_manually": true,
+    "statistics": {
+      "viewCount": 4,
+      "likeCount": 0,
+      "commentCount": 0,
+      "favoriteCount": 0
+    },
+    "last_updated": "2025-11-17T01:06:57.427145"
+  },
+  {
+    "video_id": "RfjRr8Fissc",
+    "status": "completed",
+    "metadata": {
+      "title": "Pink Noise for Deep Sleep (4 Hours)"
+    },
+    "start_time": "2025-11-16T23:55:00",
+    "added_manually": true,
+    "statistics": {
+      "viewCount": 3,
+      "likeCount": 0,
+      "commentCount": 0,
+      "favoriteCount": 0
+    },
+    "last_updated": "2025-11-17T01:06:57.743871"
+  },
+  {
+    "video_id": "2l0o6ZoVSUI",
+    "status": "completed",
+    "metadata": {
+      "title": "Pink Noise for Deep Sleep (0.25 Hours)"
+    },
+    "start_time": "2025-11-16T23:20:00",
+    "added_manually": true,
+    "statistics": {
+      "viewCount": 1,
+      "likeCount": 1,
+      "commentCount": 0,
+      "favoriteCount": 0
+    },
+    "last_updated": "2025-11-17T01:06:58.031013"
+  },
+  {
+    "start_time": "2025-11-18T17:32:52.142673",
+    "preset_name": "jazz_cafe_3h",
+    "duration_minutes": 180,
+    "status": "uploaded",
+    "files": {
+      "video": "videos/2025-11-18_2025-11-18_combined_180min.mp4",
+      "image": "images/2025-11-18_jazz_cafe_3h_bg.png"
+    },
+    "video_id": "5nRxfR12RpE",
+    "metadata": {
+      "title": "Jazz Cafe BGM - 3시간 Long Form BGM",
+      "description": "Welcome to our Jazz Cafe BGM, a 3-hour long-form background music experience crafted to evoke the cozy ambiance of a jazz café. This original, copyright-free music is perfect for creating a relaxed atmosphere, whether you're studying, working, or just unwinding after a long day. Let the smooth, melodic rhythms transport you to a serene cafe setting, where the soft sounds of jazz blend seamlessly with the chatter of patrons and the clinking of coffee cups.\n\nOur BGM features a blend of classic jazz elements, creating a soothing soundscape that encourages focus and relaxation. Ideal for cafes, study sessions, or simply as background music, this track sets the perfect tone for any environment. Enjoy the warmth of a jazz-inspired atmosphere without the worry of copyright issues, as this is entirely original music, not a cover or remix.\n\nYou can easily track your listening experience with our simple timeline: \n00:00:00 - Start \nFeel free to use this music in your own projects or as the perfect backdrop for your day-to-day activities. Don't forget to relax and enjoy the smooth journey through sound! \n\n#JazzCafe #BGM #RelaxingMusic #CafeAmbiance #BackgroundMusic #StudyMusic #WorkMusic #Jazz #OriginalMusic",
+      "tags": [
+        "vintagejazz",
+        "smoothjazz",
+        "night",
+        "backgroundmusic",
+        "instrumental",
+        "lofi",
+        "jazz",
+        "bgm",
+        "relaxation",
+        "lounge",
+        "chill",
+        "coffeehouse",
+        "bar",
+        "cafe",
+        "study"
+      ]
+    },
+    "end_time": "2025-11-18T17:32:52.143027"
+  }
+]

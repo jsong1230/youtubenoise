@@ -44,10 +44,12 @@ output/images/*
 !output/images/.gitkeep
 output/logs/*
 !output/logs/.gitkeep
+!output/logs/history.json  # 히스토리는 Git에 포함
 
 # Logs (Legacy or root)
 logs/*.log
 logs/history.json
+!logs/history.json  # 히스토리는 Git에 포함
 
 # Audio (Legacy or root)
 audio/*.mp3
