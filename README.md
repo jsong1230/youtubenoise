@@ -159,7 +159,15 @@ python main.py --mode brain_training --preset brain_training_30min_english  # 30
 - BGM 자동 포함: `audio/public_domain/` 폴더의 오디오 파일을 랜덤 선택하여 영상 길이에 맞춰 자동 반복 재생합니다.
 - 영상 길이: 프리셋의 `num_problems`와 `problem_settings`에 따라 자동 계산되며, 메타데이터에 정확한 길이가 포함됩니다.
 
-### 3. AI Explainer (AI & Tech 설명 영상)
+### 3. AI Explainer (AI & Tech 설명 영상) ✨ 개선됨
+
+**새로운 기능 (2025-11-25)**:
+- 🎙️ **TTS 내레이션**: OpenAI TTS API로 자연스러운 음성 생성
+- 💻 **코드 스니펫 이미지**: Python 코드를 시각적으로 표현
+- 📊 **다이어그램 자동 생성**: DALL-E로 개념 다이어그램 생성
+- ✨ **애니메이션 효과**: 페이드 인/아웃 전환 효과
+- 📝 **자막 자동 생성**: SRT 형식 자막 파일 생성 및 오버레이
+- 🎬 **B-roll 개선**: 더 정확한 검색어 및 DALL-E 옵션
 ```bash
 # 주제 목록 보기
 python scripts/generate_ai_explainers.py --list-topics

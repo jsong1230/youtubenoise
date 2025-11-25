@@ -64,8 +64,8 @@ topics:
         target_audience: "개발자"
         duration_minutes: 18
 
-  # 단독 주제
-  standalone_topics:
+# 단독 주제
+standalone_topics:
     - name: "ChatGPT로 코딩하기: 실전 팁"
       description: "ChatGPT를 활용한 효율적인 코딩 워크플로우"
       keywords: ["ChatGPT", "코딩", "개발", "팁", "워크플로우"]
@@ -87,6 +87,14 @@ topics:
       keywords: ["이미지 생성", "DALL-E", "Midjourney", "Stable Diffusion"]
       target_audience: "일반인"
       duration_minutes: 22
+      language: "ko"
+      region_targets: ["KR"]
+    
+    - name: "테스트: AI 기초 5분"
+      description: "AI의 기본 개념을 5분 안에 이해하기"
+      keywords: ["AI", "기초", "테스트", "5분"]
+      target_audience: "일반인"
+      duration_minutes: 5
       language: "ko"
       region_targets: ["KR"]
 

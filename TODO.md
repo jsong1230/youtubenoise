@@ -2,6 +2,21 @@
 
 > **참고**: 상세한 2025 전략 및 로드맵은 `TODO_2025_STRATEGY.md`를 참조하세요.
 
+## 최근 완료된 작업
+
+### 2025-11-25
+- ✅ AI Explainer 모드 전면 개선
+  - TTS 내레이션 추가 (OpenAI TTS API)
+  - 코드 스니펫 이미지 생성 (PIL)
+  - 다이어그램 자동 생성 (DALL-E)
+  - 애니메이션/전환 효과 (FFmpeg 페이드)
+  - 자막 자동 생성 (SRT 형식)
+  - B-roll 이미지 개선 (검색어 개선, DALL-E 옵션)
+  - Claude API 실패 시 OpenAI fallback 개선
+  - YAML 구조 수정 (standalone_topics 최상위 레벨로 이동)
+  - 짧은 테스트 영상(5분) 생성 성공
+- ⚠️ 성능 개선 필요: 영상 생성 시간 및 품질 최적화 필요
+
 ## 진행 중
 - [x] 프롬프트 로깅 시스템 구현 (머신/IDE 정보 포함)
 - [x] CURSOR_PROMPT.md 문서화 및 docs/ 이동

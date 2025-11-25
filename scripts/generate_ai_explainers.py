@@ -107,7 +107,9 @@ def generate_script_with_claude(
             "title": "섹션 제목",
             "content": "섹션 내용 (상세하게, 약 300-500단어)",
             "duration_seconds": 180,
-            "broll_timing": [30, 60, 90, 120, 150]
+            "broll_timing": [30, 60, 90, 120, 150],
+            "code_snippets": ["코드 예시 1", "코드 예시 2"],  # 선택사항: Python 코드 스니펫
+            "diagrams": ["개념 설명 1", "개념 설명 2"]  # 선택사항: 다이어그램으로 설명할 개념
         }}
     ],
     "outro": "마무리 텍스트 (약 30-50단어)",
@@ -119,19 +121,78 @@ def generate_script_with_claude(
 - 전문적이지만 이해하기 쉽게
 - 실용적인 예시와 코드 포함
 - 시청자가 따라할 수 있는 단계별 설명
-- SEO를 고려한 키워드 자연스럽게 포함"""
+- SEO를 고려한 키워드 자연스럽게 포함
+- 코드가 필요한 경우 "code_snippets" 배열에 Python 코드 예시 포함
+- 시각적 설명이 필요한 경우 "diagrams" 배열에 다이어그램으로 설명할 개념 포함"""
         
-        logger.info(f"Claude 3.5 Sonnet으로 스크립트 생성 중... (주제: {title})")
+        logger.info(f"AI 모델로 스크립트 생성 중... (주제: {title})")
         
-        result = api_manager.generate_json(
-            prompt=prompt,
-            provider="claude",
-            model="claude-3-5-sonnet-20241022",
-            system_prompt="당신은 AI & Tech 분야의 전문 유튜버입니다. 명확하고 실용적인 설명 스크립트를 작성합니다."
-        )
+        # Claude 시도 (실패 시 OpenAI로 자동 fallback)
+        result = None
+        
+        # 사용 가능한 Claude 모델 우선순위: Opus > Haiku (Sonnet은 권한 문제로 접근 불가)
+        claude_models = [
+            "claude-3-opus-20240229",  # 가장 강력하지만 deprecated
+            "claude-3-5-haiku-20241022",  # 빠르고 효율적
+            "claude-3-haiku-20240307",  # 대체 옵션
+        ]
+        
+        for model in claude_models:
+            try:
+                result = api_manager.generate_json(
+                    prompt=prompt,
+                    provider="claude",
+                    model=model,
+                    system_prompt="당신은 AI & Tech 분야의 전문 유튜버입니다. 명확하고 실용적인 설명 스크립트를 작성합니다."
+                )
+                if result:
+                    logger.info(f"Claude 모델 {model} 사용 성공")
+                    break
+            except Exception as e:
+                logger.warning(f"Claude {model} 사용 실패: {e}")
+                result = None
+                continue
         
         if not result:
-            raise ValueError("Claude API에서 스크립트를 생성하지 못했습니다.")
+            logger.warning("모든 Claude 모델 실패, OpenAI로 대체")
+        
+        # Claude 실패 시 OpenAI로 대체
+        if not result:
+            try:
+                result = api_manager.generate_json(
+                    prompt=prompt,
+                    provider="openai",
+                    model="gpt-4o",
+                    system_prompt="당신은 AI & Tech 분야의 전문 유튜버입니다. 명확하고 실용적인 설명 스크립트를 작성합니다. 반드시 유효한 JSON 형식으로 응답하세요."
+                )
+            except Exception as e3:
+                logger.warning(f"OpenAI generate_json 실패, generate_text로 시도: {e3}")
+                # generate_json이 실패하면 generate_text로 시도
+                try:
+                    result_text = api_manager.generate_text(
+                        prompt=prompt,
+                        model="gpt-4o",
+                        system_prompt="당신은 AI & Tech 분야의 전문 유튜버입니다. 명확하고 실용적인 설명 스크립트를 작성합니다. 반드시 유효한 JSON 형식으로 응답하세요."
+                    )
+                    # JSON 파싱 시도
+                    import json
+                    text = result_text.get("text", "")
+                    if "```json" in text:
+                        json_text = text.split("```json")[1].split("```")[0].strip()
+                        result = json.loads(json_text)
+                    elif "{" in text and "}" in text:
+                        # 첫 번째 JSON 객체 찾기
+                        start = text.find("{")
+                        end = text.rfind("}") + 1
+                        result = json.loads(text[start:end])
+                    else:
+                        raise ValueError("JSON 형식의 응답을 파싱할 수 없습니다.")
+                except Exception as parse_error:
+                    logger.error(f"JSON 파싱 실패: {parse_error}")
+                    raise ValueError(f"JSON 형식의 응답을 파싱할 수 없습니다: {parse_error}")
+        
+        if not result:
+            raise ValueError("모든 API에서 스크립트를 생성하지 못했습니다.")
         
         logger.info(f"스크립트 생성 완료: {len(result.get('sections', []))}개 섹션")
         return result

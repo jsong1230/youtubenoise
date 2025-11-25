@@ -7,7 +7,68 @@
 
 ## 📅 Timeline
 
-### 2025-11-25: 두뇌훈련 시계 및 색상 개선
+### 2025-11-25: AI Explainer 모드 전면 개선 및 테스트
+
+**테스트 결과**: 짧은 테스트 영상(5분) 생성 성공. 성능 개선 필요.
+
+### 추가된 기능
+1. **TTS 내레이션**: OpenAI TTS API를 사용하여 스크립트를 음성으로 변환
+   - `scripts/generate_tts.py`: TTS 음성 생성 스크립트
+   - Hook, Sections, Outro 각각에 대한 TTS 생성
+   - BGM과 TTS를 믹싱하여 자연스러운 영상 제작
+
+2. **코드 스니펫 이미지 생성**: PIL을 사용하여 코드 블록을 시각적으로 표현
+   - `scripts/create_code_snippet_image.py`: 코드 스니펫 이미지 생성
+   - Python 키워드, 문자열, 주석 등 syntax highlighting
+   - 줄 번호 표시 및 가독성 향상
+
+3. **다이어그램 자동 생성**: DALL-E를 사용하여 개념 다이어그램 생성
+   - `scripts/create_diagram_image.py`: 다이어그램 이미지 생성
+   - Flowchart, Architecture, Process, Comparison 등 다양한 타입 지원
+   - 한국어/영어 지원
+
+4. **애니메이션/전환 효과**: FFmpeg 필터를 사용한 페이드 인/아웃
+   - 모든 클립에 페이드 효과 적용 (기본 0.3초)
+   - Hook/Outro는 더 긴 페이드 효과 (0.5초)
+
+5. **자막 자동 생성**: SRT 형식 자막 파일 생성 및 FFmpeg subtitles 필터 적용
+   - `create_subtitles_file()` 함수로 자막 생성
+   - Hook, Sections, Outro를 자동으로 타임라인에 맞춰 자막 생성
+   - FFmpeg subtitles 필터로 영상에 오버레이
+
+6. **B-roll 이미지 개선**:
+   - 더 정확한 검색어 생성 (제목 + 내용 100자)
+   - 무료 API 실패 시 DALL-E로 자동 재시도
+   - 페이드 효과 적용
+
+### 변경된 파일
+- `scripts/make_ai_explainer_video.py`: 모든 개선 사항 통합
+- `scripts/generate_tts.py`: 새로 추가
+- `scripts/create_code_snippet_image.py`: 새로 추가
+- `scripts/create_diagram_image.py`: 새로 추가
+- `scripts/generate_ai_explainers.py`: 코드 스니펫 및 다이어그램 필드 추가, Claude API 실패 시 OpenAI fallback 개선
+- `main.py`: AI Explainer 파이프라인에 새로운 옵션 전달
+- `data/ai_explainer_topics.yaml`: YAML 구조 수정 (standalone_topics 최상위 레벨로 이동), 테스트 주제 추가
+
+### 알려진 이슈
+- Claude API 모델 이름 문제: `claude-3-5-sonnet-20241022`가 404 에러 발생 (API 키 권한 또는 모델 접근 제한 가능)
+- OpenAI fallback으로 자동 전환되어 정상 작동
+- 메타데이터 생성 중 JSON 파싱 에러 발생 (폴백 메타데이터로 처리)
+- 성능 개선 필요: 영상 생성 시간 및 품질 최적화 필요
+
+### 사용법
+```bash
+# 기본 (모든 기능 활성화)
+python main.py --mode ai_explainer --preset "ChatGPT로 코딩하기: 실전 팁"
+
+# TTS 비활성화
+python scripts/make_ai_explainer_video.py --script script.json --no-tts
+
+# 코드 스니펫/다이어그램 비활성화
+python scripts/make_ai_explainer_video.py --script script.json --no-code-snippets --no-diagrams
+```
+
+## 2025-11-25: 두뇌훈련 시계 및 색상 개선
 - **시계 읽기 문제 개선**
   - 시계가 항상 12시가 위에 오도록 각도 계산 수정
   - 숫자 표시 위치 정확도 개선 (12, 3, 6, 9)

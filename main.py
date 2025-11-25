@@ -394,17 +394,22 @@ def main():
         logger.info(f"스크립트 생성 완료: {script_file_path}")
         
         # 2. 영상 제작
-        logger.info("\n[2/3] 영상 제작 중...")
+        logger.info("\n[2/6] 영상 제작 중...")
         video_path = make_ai_explainer_video(
             script_path=script_file_path,
             output_path=None,
             bgm_path=None,
-            use_broll=True
+            use_broll=True,
+            use_tts=True,
+            use_code_snippets=True,
+            use_diagrams=True,
+            use_subtitles=True,
+            language="ko"
         )
         logger.info(f"영상 제작 완료: {video_path}")
         
         # 3. 메타데이터 생성 (선택사항)
-        logger.info("\n[3/4] 메타데이터 생성 중...")
+        logger.info("\n[3/6] 메타데이터 생성 중...")
         from scripts.generate_title_description import generate_metadata_for_ai_explainer
         metadata = generate_metadata_for_ai_explainer(
             topic_name=args.preset,
@@ -417,7 +422,7 @@ def main():
         metadata_path = metadata_dir / f"{video_path.stem}_metadata.json"
         
         # 썸네일 자동 생성
-        logger.info("\n[4/4] 썸네일 생성 중...")
+        logger.info("\n[4/6] 썸네일 생성 중...")
         thumbnail_path = None
         try:
             from scripts.create_thumbnail_dalle import create_thumbnail_with_dalle
