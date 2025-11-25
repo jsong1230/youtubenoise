@@ -507,30 +507,35 @@ def create_clock_image(hour: int, minute: int, color_scheme: Dict,
             fill=tuple(color_scheme.get('background', [255, 255, 255]))
         )
         
-        # 숫자 표시 (12, 3, 6, 9)
+        # 숫자 표시 (12, 3, 6, 9) - 12시가 항상 위에 오도록
         try:
             num_font = ImageFont.truetype("/System/Library/Fonts/AppleSDGothicNeo.ttc", 60)
         except:
             num_font = ImageFont.load_default()
         
+        # 각 숫자의 각도 계산: 12시 = -90도 (위쪽), 3시 = 0도 (오른쪽), 6시 = 90도 (아래쪽), 9시 = 180도 (왼쪽)
         for i in [12, 3, 6, 9]:
-            angle = (i - 3) * 30 - 90  # 12시가 위쪽
+            # 12시를 기준으로 각도 계산: (숫자 - 12) * 30도
+            # 12시 = 0도, 3시 = 90도, 6시 = 180도, 9시 = 270도
+            # 하지만 위쪽이 -90도이므로: 각도 = (숫자 - 12) * 30 - 90
+            angle = ((i - 12) * 30) - 90  # 12시가 위쪽 (-90도)
             rad = math.radians(angle)
             x = center_x + (radius - 40) * math.cos(rad)
             y = center_y + (radius - 40) * math.sin(rad)
             draw.text((x, y), str(i), fill=tuple(color_scheme.get('text', [40, 40, 40])), 
                      font=num_font, anchor="mm")
         
-        # 시침 (짧은 바늘)
-        hour_angle = math.radians((hour % 12) * 30 + minute * 0.5 - 90)
+        # 시침 (짧은 바늘) - 12시가 위에 오도록
+        # 12시 = -90도, 1시 = -60도, ... 3시 = 0도, ... 6시 = 90도, ... 9시 = 180도
+        hour_angle = math.radians(((hour % 12) * 30) + (minute * 0.5) - 90)
         hour_length = radius * 0.5
         hour_x = center_x + hour_length * math.cos(hour_angle)
         hour_y = center_y + hour_length * math.sin(hour_angle)
         draw.line([(center_x, center_y), (hour_x, hour_y)], 
                  fill=tuple(color_scheme.get('text', [40, 40, 40])), width=8)
         
-        # 분침 (긴 바늘)
-        minute_angle = math.radians(minute * 6 - 90)
+        # 분침 (긴 바늘) - 12시가 위에 오도록
+        minute_angle = math.radians((minute * 6) - 90)
         minute_length = radius * 0.7
         minute_x = center_x + minute_length * math.cos(minute_angle)
         minute_y = center_y + minute_length * math.sin(minute_angle)
@@ -576,8 +581,14 @@ def create_color_display_image(colors: List[Dict], color_scheme: Dict, font_size
             x = start_x + i * (box_size + spacing)
             rgb = color_info['rgb']
             
-            # 색상 박스 그리기
-            draw.rectangle([x, y, x + box_size, y + box_size], fill=rgb, outline=(0, 0, 0), width=5)
+            # 색상 박스 그리기 - 명확한 구분을 위해 두꺼운 검은 테두리
+            # 외곽 테두리 (더 두껍게)
+            draw.rectangle([x - 2, y - 2, x + box_size + 2, y + box_size + 2], 
+                         outline=(0, 0, 0), width=10)
+            
+            # 메인 색상 박스 - 명확한 구분을 위해 두꺼운 테두리
+            draw.rectangle([x, y, x + box_size, y + box_size], 
+                         fill=rgb, outline=(0, 0, 0), width=6)
         
         img.save(output_path, "PNG", optimize=True)
         logger.debug(f"색상 이미지 생성 완료: {output_path}")
