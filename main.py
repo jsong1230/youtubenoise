@@ -27,6 +27,58 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def find_existing_files(preset_name: str, duration_minutes: int) -> dict:
+    """
+    기존에 생성된 파일들을 찾기
+    
+    Returns:
+        찾은 파일 경로들 (audio, image, video, thumbnail)
+    """
+    from config import OUTPUT_DIR, PROJECT_ROOT
+    from datetime import datetime
+    
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    existing = {
+        "audio": None,
+        "image": None,
+        "video": None,
+        "thumbnail": None
+    }
+    
+    # 오디오 파일 찾기 (두 가지 패턴)
+    audio_dir = PROJECT_ROOT / "audio"
+    patterns = [
+        f"{date_str}_combined_{preset_name}_{duration_minutes}min.wav",
+        f"{date_str}_{preset_name}_{duration_minutes}min.wav"
+    ]
+    for pattern in patterns:
+        audio_path = audio_dir / pattern
+        if audio_path.exists():
+            existing["audio"] = audio_path
+            break
+    
+    # 이미지 파일 찾기
+    image_dir = OUTPUT_DIR / "images"
+    image_path = image_dir / f"{date_str}_{preset_name}_bg.png"
+    if image_path.exists():
+        existing["image"] = image_path
+    
+    # 영상 파일 찾기 (오디오 파일명 기반)
+    if existing["audio"]:
+        video_dir = OUTPUT_DIR / "videos"
+        audio_name = existing["audio"].stem
+        video_path = video_dir / f"{date_str}_{audio_name}.mp4"
+        if video_path.exists():
+            existing["video"] = video_path
+            
+            # 썸네일 파일 찾기
+            thumbnail_path = video_dir / f"{video_path.stem}_thumbnail.jpg"
+            if thumbnail_path.exists():
+                existing["thumbnail"] = thumbnail_path
+    
+    return existing
+
+
 def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = False):
     """
     롱폼 BGM 모드 실행
@@ -48,17 +100,63 @@ def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = Fal
         logger.info(f"프리셋: {preset_name}, 길이: {duration_minutes}분")
         logger.info("=" * 60)
         
-        # 1. BGM 오디오 생성
-        logger.info("\n[1/5] BGM 오디오 생성 중...")
-        from scripts.generate_bgm import generate_bgm
-        audio_path = generate_bgm(preset_name, duration_minutes)
-        logger.info(f"오디오 생성 완료: {audio_path}")
+        # 기존 파일 확인
+        existing_files = find_existing_files(preset_name, duration_minutes)
+        has_existing = any(existing_files.values())
         
-        # 2. 배경 이미지 생성
-        logger.info("\n[2/5] 배경 이미지 생성 중...")
-        from scripts.generate_image import generate_background_image_for_bgm
-        image_path = generate_background_image_for_bgm(preset_name)
-        logger.info(f"이미지 생성 완료: {image_path}")
+        if has_existing:
+            logger.info("\n📁 기존 파일 발견:")
+            for file_type, file_path in existing_files.items():
+                if file_path:
+                    file_size_mb = file_path.stat().st_size / (1024 * 1024)
+                    logger.info(f"  ✓ {file_type}: {file_path.name} ({file_size_mb:.2f} MB)")
+            
+            # 시간이 오래 걸리는 작업(영상 생성)이 필요한 경우 확인 요청
+            needs_video_generation = not existing_files["video"] or not existing_files["audio"]
+            needs_audio_generation = not existing_files["audio"]
+            
+            if needs_audio_generation or needs_video_generation:
+                logger.warning("\n⚠️  일부 파일이 없어 새로 생성해야 합니다.")
+                if needs_audio_generation:
+                    logger.warning("  - 오디오 파일이 없습니다 (시간 소요: 1-2분)")
+                if needs_video_generation:
+                    logger.warning("  - 영상 파일이 없습니다 (시간 소요: 30-40분)")
+                logger.warning("\n계속 진행하시겠습니까? (y/n): ", end="")
+                
+                # 사용자 입력 대기 (자동화 환경에서는 기본값으로 진행)
+                try:
+                    import sys
+                    if sys.stdin.isatty():
+                        response = input().strip().lower()
+                        if response not in ['y', 'yes', '']:
+                            logger.info("작업을 취소했습니다.")
+                            return None
+                    else:
+                        logger.info("자동 모드: 계속 진행합니다.")
+                except:
+                    logger.info("자동 모드: 계속 진행합니다.")
+        
+        # 1. BGM 오디오 생성 (기존 파일이 있으면 재사용)
+        if existing_files["audio"]:
+            logger.info("\n[1/5] 기존 오디오 파일 사용")
+            audio_path = existing_files["audio"]
+            logger.info(f"오디오 파일: {audio_path}")
+        else:
+            logger.info("\n[1/5] BGM 오디오 생성 중...")
+            from scripts.generate_bgm import generate_bgm
+            audio_path = generate_bgm(preset_name, duration_minutes)
+            logger.info(f"오디오 생성 완료: {audio_path}")
+        
+        # 2. 배경 이미지 생성 (기존 파일이 있으면 재사용)
+        if existing_files["image"]:
+            logger.info("\n[2/5] 기존 배경 이미지 사용")
+            image_path = existing_files["image"]
+            logger.info(f"이미지 파일: {image_path}")
+        else:
+            logger.info("\n[2/5] 배경 이미지 생성 중...")
+            from scripts.generate_image import generate_background_image_for_bgm
+            image_path = generate_background_image_for_bgm(preset_name, use_downloads=True)
+            logger.info(f"이미지 생성 완료: {image_path}")
         
         # 이미지 확인 정보 출력
         if image_path.exists():
@@ -67,49 +165,59 @@ def run_longform_bgm(preset_name: str, duration_minutes: int, upload: bool = Fal
                 width, height = img.size
                 file_size_mb = image_path.stat().st_size / (1024 * 1024)
                 logger.info("=" * 60)
-                logger.info("📸 생성된 이미지 정보")
+                logger.info("📸 이미지 정보")
                 logger.info(f"   경로: {image_path}")
                 logger.info(f"   크기: {width}x{height} 픽셀")
                 logger.info(f"   파일 크기: {file_size_mb:.2f} MB")
                 logger.info(f"   형식: {img.format}")
                 logger.info("=" * 60)
-                logger.info("💡 이미지를 확인하려면 다음 명령어를 실행하세요:")
-                logger.info(f"   open '{image_path}'")
-                logger.info("=" * 60)
         else:
             logger.warning(f"⚠️  이미지 파일이 존재하지 않습니다: {image_path}")
         
-        # 3. 메타데이터 생성
+        # 3. 메타데이터 생성 (항상 새로 생성 - 빠름)
         logger.info("\n[3/5] 메타데이터 생성 중...")
         from scripts.generate_title_description import generate_metadata_for_bgm
         metadata = generate_metadata_for_bgm(preset_name, duration_minutes)
         logger.info(f"메타데이터 생성 완료")
         logger.info(f"제목: {metadata['title']}")
         
-        # 4. 영상 생성
-        logger.info("\n[4/6] 영상 생성 중...")
-        from scripts.make_video import make_video
-        video_path = make_video(image_path, audio_path)
-        logger.info(f"영상 생성 완료: {video_path}")
+        # 4. 영상 생성 (기존 파일이 있으면 재사용)
+        if existing_files["video"]:
+            logger.info("\n[4/6] 기존 영상 파일 사용")
+            video_path = existing_files["video"]
+            logger.info(f"영상 파일: {video_path}")
+        else:
+            logger.info("\n[4/6] 영상 생성 중... (이 작업은 30-40분 정도 소요됩니다)")
+            from scripts.make_video import make_video
+            video_path = make_video(image_path, audio_path)
+            logger.info(f"영상 생성 완료: {video_path}")
         
-        # 5. 썸네일 자동 생성
-        logger.info("\n[5/6] 썸네일 생성 중...")
-        thumbnail_path = None
-        try:
-            from scripts.create_thumbnail_dalle import create_thumbnail_with_dalle
-            
-            # 언어 설정 확인 (기본값: 한글)
-            lang_code = "ko"
-            thumbnail_path = video_path.parent / f"{video_path.stem}_thumbnail.jpg"
-            create_thumbnail_with_dalle(
-                metadata['title'],
-                language=lang_code,
-                output_path=thumbnail_path
-            )
-            logger.info(f"썸네일 생성 완료: {thumbnail_path}")
-        except Exception as e:
-            logger.warning(f"썸네일 생성 실패 (영상은 생성됨): {e}")
-            # 썸네일 생성 실패해도 영상 생성은 성공으로 처리
+        # 5. 썸네일 생성 (기존 파일이 있으면 재사용)
+        if existing_files["thumbnail"]:
+            logger.info("\n[5/6] 기존 썸네일 파일 사용")
+            thumbnail_path = existing_files["thumbnail"]
+            logger.info(f"썸네일 파일: {thumbnail_path}")
+        else:
+            logger.info("\n[5/6] 썸네일 생성 중...")
+            thumbnail_path = None
+            try:
+                from scripts.create_thumbnail_from_downloads import create_thumbnail_from_downloads
+                
+                thumbnail_path = video_path.parent / f"{video_path.stem}_thumbnail.jpg"
+                result = create_thumbnail_from_downloads(
+                    output_path=thumbnail_path,
+                    target_size=(1280, 720),
+                    quality=90
+                )
+                if result:
+                    thumbnail_path = result
+                    logger.info(f"썸네일 생성 완료: {thumbnail_path}")
+                else:
+                    logger.warning("Downloads 폴더에서 이미지를 찾을 수 없어 썸네일을 생성하지 못했습니다.")
+                    thumbnail_path = None
+            except Exception as e:
+                logger.warning(f"썸네일 생성 실패 (영상은 생성됨): {e}")
+                # 썸네일 생성 실패해도 영상 생성은 성공으로 처리
         
         # 6. YouTube 업로드 (선택사항)
         video_id = None

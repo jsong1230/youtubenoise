@@ -318,6 +318,29 @@ presets:
     duration_minutes: 180
     tags: ["folk", "bgm", "acoustic", "guitar", "cozy", "campfire", "nature", "peaceful"]
 
+  celtic_3h:
+    name: "Celtic BGM"
+    description: "켈틱 피들 음악 장르의 롱폼 BGM (3시간) - 아이리시, 스코티시, 캐나다 동부 켈틱 음악 포함"
+    style: "folk"
+    tempo_bpm: 90
+    key: "D_major"
+    public_domain_categories:
+      include: ["celtic", "folk", "traditional"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "celtic"
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
+    color_scheme:
+      start: [40, 60, 50]   # 자연스러운 그린
+      end: [80, 100, 70]   # 밝은 그린
+      gradient_direction: "diagonal"
+    duration_minutes: 180
+    tags: ["celtic", "fiddle", "irish", "scottish", "folk", "traditional", "canadian", "maritime", "acoustic", "peaceful", "cultural"]
+
   lofi_3h:
     name: "Lofi BGM"
     description: "로파이 힙합 장르의 롱폼 BGM (3시간)"

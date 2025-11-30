@@ -35,6 +35,8 @@ CATEGORY_KEYWORDS: Dict[str, Iterable[str]] = {
     "traditional": ["traditional", "carol", "hymn", "classic"],
     "commercial": ["advertising", "commercial", "promo", "corporate", "branding"],
     "lofi_jazz": ["lofi", "jazz"],
+    "celtic": ["celtic", "fiddle", "irish", "scottish", "scotland", "ireland", "cape breton", "newfoundland", "quebecois", "ottawa valley", "acadian", "maritime"],
+    "folk": ["folk", "acoustic", "traditional"],
 }
 
 MOOD_KEYWORDS: Dict[str, Iterable[str]] = {

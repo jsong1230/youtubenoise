@@ -51,6 +51,7 @@ GENRE_SEARCH_TERMS = {
     "blues": ["blues", "blues guitar"],
     "folk": ["folk", "acoustic folk"],
     "world": ["world music", "ethnic", "traditional"],
+    "celtic": ["celtic", "fiddle", "irish", "scottish", "celtic music", "irish music", "scottish music"],
 }
 
 # ==========================

@@ -4,6 +4,19 @@
 
 ## 최근 완료된 작업
 
+### 2025-11-30
+- ✅ 켈틱 음악 장르 추가 및 Public Domain 지원
+  - 켈틱 음악 폴더 생성 및 52개 음악 다운로드
+  - `celtic_3h` 프리셋 추가
+  - 카탈로그 키워드 추가 (celtic, fiddle, irish, scottish 등)
+- ✅ Downloads 폴더에서 이미지 자동 사용 기능
+  - 배경 이미지 및 썸네일 자동 생성
+  - `create_thumbnail_from_downloads.py` 스크립트 추가
+- ✅ BGM 생성 최적화
+  - 기존 파일 재사용 로직 추가
+  - 시간 소요 작업 전 사용자 확인 요청
+  - 업로드만 요청 시 기존 파일 자동 재사용
+
 ### 2025-11-25
 - ✅ AI Explainer 모드 전면 개선
   - TTS 내레이션 추가 (OpenAI TTS API)

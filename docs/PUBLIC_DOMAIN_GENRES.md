@@ -175,7 +175,57 @@
 
 ---
 
-### 10. World Music
+### 10. Celtic (켈틱)
+
+켈틱 음악은 아일랜드, 스코틀랜드 등 켈트족의 전통 음악으로, 피들(바이올린)을 주로 사용합니다. 캐나다 동부 지역(뉴브런즈윅, 퀘벡, 오타와 밸리, 케이프 브레튼 등)으로 이주한 이민자들에 의해 독특한 형태로 발전했습니다.
+
+#### Pixabay Music
+- **URL**: https://pixabay.com/music/search/celtic/
+- **특징**: 상업용 완전 무료
+- **검색 예시**:
+  - https://pixabay.com/music/search/celtic/
+  - https://pixabay.com/music/search/fiddle/
+  - https://pixabay.com/music/search/irish/
+  - https://pixabay.com/music/search/scottish/
+
+#### Free Music Archive
+- **URL**: https://freemusicarchive.org/genre/Celtic/
+- **라이선스**: CC0, CC BY 등 (확인 필요)
+- **검색 예시**:
+  - https://freemusicarchive.org/genre/Celtic/
+  - https://freemusicarchive.org/genre/Irish/
+  - https://freemusicarchive.org/genre/Scottish/
+
+#### Musopen
+- **URL**: https://musopen.org/music/?q=celtic&license=pd
+- **특징**: Public Domain 녹음만 선택 가능
+- **검색 예시**:
+  - https://musopen.org/music/?q=celtic&license=pd
+  - https://musopen.org/music/?q=irish&license=pd
+  - https://musopen.org/music/?q=fiddle&license=pd
+
+#### FreePD
+- **URL**: https://freepd.com/
+- **특징**: 모든 음악이 완전 Public Domain
+- **검색**: "celtic", "fiddle", "irish", "scottish" 등으로 검색
+
+**켈틱 음악 하위 장르**:
+- **Irish Celtic**: 아일랜드 전통 켈틱 음악
+- **Scottish Celtic**: 스코틀랜드 전통 켈틱 음악
+- **Canadian Celtic**: 캐나다 동부 켈틱 음악
+  - **Cape Breton**: 케이프 브레튼 스타일
+  - **Newfoundland**: 뉴펀들랜드 스타일
+  - **Quebecois**: 퀘벡 스타일
+  - **Ottawa Valley**: 오타와 밸리 스타일
+  - **Acadian**: 아카디안 스타일
+
+**저작권 주의사항**:
+- 전통 켈틱 음악의 원곡은 Public Domain일 수 있으나, 현대적인 편곡이나 연주는 저작권이 있을 수 있습니다.
+- 다운로드 시 라이선스를 반드시 확인하세요.
+
+---
+
+### 11. World Music
 
 #### Free Music Archive
 - **URL**: https://freemusicarchive.org/genre/World/
@@ -212,6 +262,12 @@ audio/public_domain/
 ├── electronic/
 ├── blues/
 ├── folk/
+├── celtic/  # 켈틱 음악 (아이리시, 스코티시, 캐나다 동부 켈틱)
+│   ├── irish/
+│   ├── scottish/
+│   ├── cape_breton/
+│   ├── newfoundland/
+│   └── quebecois/
 ├── world/
 └── christmas/  # 기존 크리스마스 음악
 ```

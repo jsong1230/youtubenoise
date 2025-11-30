@@ -167,5 +167,50 @@
       ]
     },
     "end_time": "2025-11-23T00:26:50.336306"
+  },
+  {
+    "start_time": "2025-11-30T12:25:38.353244",
+    "preset_name": "celtic_3h",
+    "duration_minutes": 180,
+    "status": "completed",
+    "files": {
+      "audio": "/Users/jsong/dev/jsong1230-github/youtubenoise/audio/2025-11-30_combined_celtic_3h_180min.wav",
+      "image": "/Users/jsong/dev/jsong1230-github/youtubenoise/output/images/2025-11-30_celtic_3h_bg.png",
+      "video": "/Users/jsong/dev/jsong1230-github/youtubenoise/output/videos/2025-11-30_2025-11-30_combined_celtic_3h_180min.mp4",
+      "thumbnail": "/Users/jsong/dev/jsong1230-github/youtubenoise/output/videos/2025-11-30_2025-11-30_combined_celtic_3h_180min_thumbnail.jpg"
+    },
+    "video_id": "1c5mgsL0sig",
+    "metadata": {
+      "title": "켈틱 BGM | Celtic BGM (3시간)",
+      "description": "켈틱 피들 음악 장르의 롱폼 BGM을 소개합니다. 이 음악은 아이리시, 스코티시, 그리고 캐나다 동부의 켈틱 음악을 포함하며, 여러분이 편안하게 즐길 수 있는 독창적인 곡들로 구성되어 있습니다. 3시간 동안 지속되는 이 배경음악은 카페, 공부, 작업, 그리고 휴식에 완벽하게 어울립니다.\n\nThis long-form BGM features original, copyright-free music inspired by Celtic fiddle genres. With influences from Irish, Scottish, and Eastern Canadian Celtic music, this track offers a soothing and vibrant atmosphere. Perfect for cafes, studying, working, or simply relaxing, this music enhances your environment without the distraction of lyrics.\n\n이 음악은 저작권이 없는 독창적인 곡으로, 커버가 아닙니다. 00:00:00 - 시작. 이 음악과 함께 편안한 시간을 즐기세요! Hashtags: #켈틱 #Celtic #배경음악 #BackgroundMusic #피들 #Fiddle #아이리시 #Irish #스코티시 #Scottish #포크 #Folk #공부 #Study #휴식 #Relaxation #카페 #Cafe",
+      "tags": [
+        "cultural",
+        "cafe",
+        "acoustic",
+        "maritime",
+        "peaceful",
+        "folk",
+        "독창적인 음악",
+        "relaxation",
+        "악기",
+        "fiddle",
+        "scottish",
+        "celtic",
+        "traditional",
+        "long form",
+        "롱폼",
+        "배경음악",
+        "카페",
+        "instrumental",
+        "study",
+        "휴식",
+        "irish",
+        "original music",
+        "공부",
+        "bgm",
+        "canadian"
+      ]
+    },
+    "end_time": "2025-11-30T12:25:38.353255"
   }
 ]

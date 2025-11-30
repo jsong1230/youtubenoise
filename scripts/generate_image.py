@@ -619,13 +619,51 @@ def build_image_search_query_from_preset(preset_name: str) -> str:
     return preset_name.replace("_", " ").replace("3h", "").replace("2h", "").strip()
 
 
-def generate_background_image_for_bgm(preset_name: str) -> Path:
+def find_image_in_downloads_for_background() -> Optional[Path]:
+    """
+    ~/Downloads 폴더에서 배경 이미지로 사용할 이미지 파일 찾기
+    
+    Returns:
+        찾은 이미지 파일 경로 (없으면 None)
+    """
+    downloads_dir = Path.home() / "Downloads"
+    
+    if not downloads_dir.exists():
+        logger.debug(f"Downloads 폴더를 찾을 수 없습니다: {downloads_dir}")
+        return None
+    
+    # 지원하는 이미지 확장자
+    supported_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
+    
+    # 최근 수정된 이미지 파일 찾기 (가장 최근 것 우선)
+    image_files = []
+    for ext in supported_extensions:
+        image_files.extend(downloads_dir.glob(f"*{ext}"))
+        image_files.extend(downloads_dir.glob(f"*{ext.upper()}"))
+    
+    if not image_files:
+        logger.debug(f"Downloads 폴더에서 이미지 파일을 찾을 수 없습니다.")
+        return None
+    
+    # 수정 시간 기준으로 정렬 (가장 최근 것)
+    image_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    
+    # 가장 최근 이미지 파일 반환
+    selected_image = image_files[0]
+    logger.info(f"Downloads에서 배경 이미지 파일 발견: {selected_image.name}")
+    
+    return selected_image
+
+
+def generate_background_image_for_bgm(preset_name: str, use_downloads: bool = False) -> Path:
     """
     BGM용 배경 이미지 생성 함수
     APIManager를 사용하여 무료 이미지 API 우선 사용, 실패 시 DALL-E, 최종 폴백으로 Pillow
+    use_downloads=True인 경우 ~/Downloads에서 이미지를 찾아서 사용
     
     Args:
         preset_name: BGM 프리셋 이름
+        use_downloads: ~/Downloads에서 이미지를 찾아서 사용할지 여부
     
     Returns:
         생성된 이미지 파일 경로
@@ -635,6 +673,33 @@ def generate_background_image_for_bgm(preset_name: str) -> Path:
         
         # 타겟 해상도
         width, height = 1920, 1080
+        
+        # ~/Downloads에서 이미지 찾기 (우선순위 1)
+        if use_downloads:
+            downloads_image = find_image_in_downloads_for_background()
+            if downloads_image:
+                try:
+                    from PIL import Image
+                    img = Image.open(downloads_image)
+                    img = img.convert("RGB")
+                    
+                    # 1920x1080으로 리사이즈
+                    img_resized = img.resize((width, height), Image.Resampling.LANCZOS)
+                    
+                    # 출력 경로
+                    output_dir = OUTPUT_DIR / "images"
+                    output_dir.mkdir(parents=True, exist_ok=True)
+                    date_str = datetime.now().strftime("%Y-%m-%d")
+                    filename = f"{date_str}_{preset_name}_bg.png"
+                    output_path = output_dir / filename
+                    
+                    # PNG로 저장
+                    img_resized.save(str(output_path), "PNG", optimize=True)
+                    logger.info(f"Downloads 이미지를 배경으로 사용: {output_path}")
+                    return output_path
+                except Exception as e:
+                    logger.warning(f"Downloads 이미지 처리 실패: {e}, 기존 방식으로 진행")
+        
         
         # 1) DALL·E 이미지 생성 우선 시도 (APIManager 통해서)
         try:

@@ -7,6 +7,32 @@
 
 ## 📅 Timeline
 
+### 2025-11-30: 켈틱 음악 지원 추가 및 BGM 생성 최적화
+
+**주요 변경사항**:
+1. **켈틱 음악 장르 추가**: Public Domain 켈틱 음악 지원
+   - `audio/public_domain/celtic/` 폴더 생성
+   - Pixabay에서 켈틱 음악 52개 다운로드
+   - `celtic_3h` 프리셋 추가 (아이리시, 스코티시, 캐나다 동부 켈틱 음악 포함)
+   - `public_domain_catalog.py`에 켈틱 키워드 추가 (celtic, fiddle, irish, scottish, cape breton, newfoundland, quebecois 등)
+
+2. **Downloads 폴더에서 이미지 자동 사용 기능**
+   - 배경 이미지: `~/Downloads`에서 가장 최근 이미지를 찾아 1920x1080으로 리사이즈
+   - 썸네일: `~/Downloads`에서 가장 최근 이미지를 찾아 1280x720으로 리사이즈
+   - `scripts/create_thumbnail_from_downloads.py` 새로 생성
+   - `scripts/generate_image.py`에 `find_image_in_downloads_for_background()` 함수 추가
+
+3. **BGM 생성 최적화**: 기존 파일 재사용 로직 추가
+   - `find_existing_files()` 함수로 기존 파일 자동 검색
+   - 오디오, 이미지, 영상, 썸네일 파일이 있으면 재사용
+   - 시간이 오래 걸리는 작업(영상 생성) 전에 사용자 확인 요청
+   - 업로드만 요청한 경우 기존 파일 자동 재사용
+
+4. **문서 업데이트**
+   - `docs/PUBLIC_DOMAIN_GENRES.md`에 켈틱 음악 섹션 추가
+   - 다운로드 가능한 소스 안내 (Pixabay, Free Music Archive, Musopen, FreePD)
+   - 캐나다 동부 켈틱 하위 장르 설명
+
 ### 2025-11-25: AI Explainer 모드 전면 개선 및 테스트
 
 **테스트 결과**: 짧은 테스트 영상(5분) 생성 성공. 성능 개선 필요.
