@@ -32,11 +32,12 @@ CATEGORY_KEYWORDS: Dict[str, Iterable[str]] = {
     "kids": ["kids", "children", "cartoon"],
     "ambient": ["ambient", "relax", "calm", "soft", "serene", "meditation"],
     "upbeat": ["upbeat", "happy", "fun", "cheerful", "bright", "energetic", "festive"],
-    "traditional": ["traditional", "carol", "hymn", "classic"],
+    "traditional": ["traditional", "hymn", "classic"],
     "commercial": ["advertising", "commercial", "promo", "corporate", "branding"],
     "lofi_jazz": ["lofi", "jazz"],
     "celtic": ["celtic", "fiddle", "irish", "scottish", "scotland", "ireland", "cape breton", "newfoundland", "quebecois", "ottawa valley", "acadian", "maritime"],
-    "folk": ["folk", "acoustic", "traditional"],
+    "folk": ["folk", "acoustic"],
+    "christmas_carols": ["carol", "carols", "christmas carol", "xmas carol", "holiday carol"],
 }
 
 MOOD_KEYWORDS: Dict[str, Iterable[str]] = {

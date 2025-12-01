@@ -7,6 +7,28 @@
 
 ## 📅 Timeline
 
+### 2025-12-01: 크리스마스 캐롤송 BGM 추가 및 이미지 파일명 구분 기능
+
+**주요 변경사항**:
+1. **크리스마스 캐롤송 장르 추가**: Public Domain 크리스마스 캐롤송 지원
+   - `audio/public_domain/christmas_carols/` 폴더 생성
+   - Pixabay에서 크리스마스 캐롤송 50개 다운로드 (christmas/xmas + carol 조건)
+   - `christmas_carols_3h` 프리셋 추가 (3시간 롱폼 BGM)
+   - `public_domain_catalog.py`에 `christmas_carols` 키워드 추가
+
+2. **파일명 패턴으로 이미지 용도 구분 기능**
+   - 배경 이미지: `bg_`, `background_`, `배경_` 접두사 또는 파일명에 `background`, `bg`, `배경` 포함
+   - 썸네일: `thumb_`, `thumbnail_`, `썸네일_` 접두사 또는 파일명에 `thumbnail`, `thumb`, `썸네일` 포함
+   - `scripts/generate_image.py`의 `find_image_in_downloads_for_background()` 함수 개선
+   - `scripts/create_thumbnail_from_downloads.py`의 `find_image_in_downloads()` 함수 개선
+   - 키워드 충돌 방지 로직 추가 (배경 이미지 선택 시 썸네일 키워드 제외, 그 반대도 동일)
+
+3. **크리스마스 캐롤송 3시간 BGM 생성 및 업로드**
+   - 32개 크리스마스 캐롤송으로 3시간 BGM 생성
+   - 배경 이미지: `~/Downloads/background.png` 사용
+   - 썸네일: `~/Downloads/thumbnail.png` 사용
+   - YouTube 업로드 완료 (Video ID: 9L7e2Y2_iH8)
+
 ### 2025-11-30: 켈틱 음악 지원 추가 및 BGM 생성 최적화
 
 **주요 변경사항**:

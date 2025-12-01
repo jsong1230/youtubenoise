@@ -341,6 +341,29 @@ presets:
     duration_minutes: 180
     tags: ["celtic", "fiddle", "irish", "scottish", "folk", "traditional", "canadian", "maritime", "acoustic", "peaceful", "cultural"]
 
+  christmas_carols_3h:
+    name: "Christmas Carols BGM"
+    description: "크리스마스 캐롤송 롱폼 BGM (3시간) - 전통적인 크리스마스 캐롤 모음"
+    style: "christmas"
+    tempo_bpm: 80
+    key: "C_major"
+    public_domain_categories:
+      include: ["christmas_carols", "christmas", "traditional"]
+      exclude: ["electronic", "rock", "kids"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "christmas_carols"
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
+    color_scheme:
+      start: [100, 30, 30]  # 따뜻한 빨강
+      end: [150, 80, 50]    # 크리스마스 골드
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["christmas", "carols", "christmas carols", "holiday", "traditional", "festive", "winter", "bgm", "relaxing", "peaceful"]
+
   lofi_3h:
     name: "Lofi BGM"
     description: "로파이 힙합 장르의 롱폼 BGM (3시간)"

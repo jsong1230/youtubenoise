@@ -52,6 +52,7 @@ GENRE_SEARCH_TERMS = {
     "folk": ["folk", "acoustic folk"],
     "world": ["world music", "ethnic", "traditional"],
     "celtic": ["celtic", "fiddle", "irish", "scottish", "celtic music", "irish music", "scottish music"],
+    "christmas_carols": ["christmas carol", "carol", "christmas song", "holiday carol", "xmas carol"],
 }
 
 # ==========================

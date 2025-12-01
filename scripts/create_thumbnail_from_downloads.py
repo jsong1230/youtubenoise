@@ -25,7 +25,8 @@ SUPPORTED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
 
 def find_image_in_downloads() -> Optional[Path]:
     """
-    ~/Downloads 폴더에서 이미지 파일 찾기
+    ~/Downloads 폴더에서 썸네일용 이미지 파일 찾기
+    파일명 패턴으로 구분: thumb_, thumbnail_, 썸네일_ 접두사 우선
     
     Returns:
         찾은 이미지 파일 경로 (없으면 None)
@@ -36,7 +37,11 @@ def find_image_in_downloads() -> Optional[Path]:
         logger.warning(f"Downloads 폴더를 찾을 수 없습니다: {downloads_dir}")
         return None
     
-    # 최근 수정된 이미지 파일 찾기 (가장 최근 것 우선)
+    # 썸네일용 패턴 (접두사 또는 파일명에 포함)
+    thumb_patterns = ['thumb_', 'thumbnail_', '썸네일_', '썸네일이미지_']
+    thumb_keywords = ['thumbnail', 'thumb', '썸네일']
+    
+    # 모든 이미지 파일 찾기
     image_files = []
     for ext in SUPPORTED_EXTENSIONS:
         image_files.extend(downloads_dir.glob(f"*{ext}"))
@@ -46,12 +51,30 @@ def find_image_in_downloads() -> Optional[Path]:
         logger.warning(f"Downloads 폴더에서 이미지 파일을 찾을 수 없습니다.")
         return None
     
-    # 수정 시간 기준으로 정렬 (가장 최근 것)
-    image_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    # 1순위: 썸네일 패턴이 있는 파일 찾기
+    thumb_files = []
+    for img_file in image_files:
+        filename_lower = img_file.name.lower()
+        # 접두사로 시작하거나 파일명에 키워드가 포함된 경우
+        if (any(filename_lower.startswith(pattern.lower()) for pattern in thumb_patterns) or
+            any(keyword in filename_lower for keyword in thumb_keywords)):
+            # 배경 키워드는 제외
+            if not any(bg_keyword in filename_lower for bg_keyword in ['background', 'bg', '배경']):
+                thumb_files.append(img_file)
     
-    # 가장 최근 이미지 파일 반환
+    if thumb_files:
+        # 썸네일 파일이 있으면 가장 최근 것 사용
+        thumb_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        selected_image = thumb_files[0]
+        logger.info(f"Downloads에서 썸네일 이미지 파일 발견 (접두사 매칭): {selected_image.name}")
+        logger.info(f"   경로: {selected_image}")
+        logger.info(f"   크기: {selected_image.stat().st_size / 1024:.1f} KB")
+        return selected_image
+    
+    # 2순위: 썸네일 접두사가 없으면 가장 최근 이미지 사용
+    image_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     selected_image = image_files[0]
-    logger.info(f"Downloads에서 이미지 파일 발견: {selected_image.name}")
+    logger.info(f"Downloads에서 썸네일 이미지 파일 발견 (가장 최근): {selected_image.name}")
     logger.info(f"   경로: {selected_image}")
     logger.info(f"   크기: {selected_image.stat().st_size / 1024:.1f} KB")
     
@@ -194,4 +217,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
 

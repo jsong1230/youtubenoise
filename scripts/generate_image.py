@@ -622,6 +622,7 @@ def build_image_search_query_from_preset(preset_name: str) -> str:
 def find_image_in_downloads_for_background() -> Optional[Path]:
     """
     ~/Downloads 폴더에서 배경 이미지로 사용할 이미지 파일 찾기
+    파일명 패턴으로 구분: bg_, background_, 배경_ 접두사 우선
     
     Returns:
         찾은 이미지 파일 경로 (없으면 None)
@@ -635,7 +636,11 @@ def find_image_in_downloads_for_background() -> Optional[Path]:
     # 지원하는 이미지 확장자
     supported_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'}
     
-    # 최근 수정된 이미지 파일 찾기 (가장 최근 것 우선)
+    # 배경 이미지용 패턴 (접두사 또는 파일명에 포함)
+    bg_patterns = ['bg_', 'background_', '배경_', '배경이미지_']
+    bg_keywords = ['background', 'bg', '배경']
+    
+    # 모든 이미지 파일 찾기
     image_files = []
     for ext in supported_extensions:
         image_files.extend(downloads_dir.glob(f"*{ext}"))
@@ -645,12 +650,28 @@ def find_image_in_downloads_for_background() -> Optional[Path]:
         logger.debug(f"Downloads 폴더에서 이미지 파일을 찾을 수 없습니다.")
         return None
     
-    # 수정 시간 기준으로 정렬 (가장 최근 것)
-    image_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    # 1순위: 배경 이미지 패턴이 있는 파일 찾기
+    bg_files = []
+    for img_file in image_files:
+        filename_lower = img_file.name.lower()
+        # 접두사로 시작하거나 파일명에 키워드가 포함된 경우
+        if (any(filename_lower.startswith(pattern.lower()) for pattern in bg_patterns) or
+            any(keyword in filename_lower for keyword in bg_keywords)):
+            # 썸네일 키워드는 제외
+            if not any(thumb_keyword in filename_lower for thumb_keyword in ['thumb', 'thumbnail', '썸네일']):
+                bg_files.append(img_file)
     
-    # 가장 최근 이미지 파일 반환
+    if bg_files:
+        # 배경 이미지 파일이 있으면 가장 최근 것 사용
+        bg_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        selected_image = bg_files[0]
+        logger.info(f"Downloads에서 배경 이미지 파일 발견 (접두사 매칭): {selected_image.name}")
+        return selected_image
+    
+    # 2순위: 배경 이미지 접두사가 없으면 가장 최근 이미지 사용
+    image_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
     selected_image = image_files[0]
-    logger.info(f"Downloads에서 배경 이미지 파일 발견: {selected_image.name}")
+    logger.info(f"Downloads에서 배경 이미지 파일 발견 (가장 최근): {selected_image.name}")
     
     return selected_image
 
