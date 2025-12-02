@@ -53,6 +53,7 @@ GENRE_SEARCH_TERMS = {
     "world": ["world music", "ethnic", "traditional"],
     "celtic": ["celtic", "fiddle", "irish", "scottish", "celtic music", "irish music", "scottish music"],
     "christmas_carols": ["christmas carol", "carol", "christmas song", "holiday carol", "xmas carol"],
+    "newyear": ["new year", "newyear", "new-year", "2026", "2025", "goodbye", "good bye", "adieu", "celebration", "countdown", "midnight", "year end", "year-end", "new years", "newyears", "new years eve", "newyears eve", "happy new year", "새해", "신년", "新年", "年明け", "元旦", "xīnnián", "yuándàn", "shinnen", "toshiake"],
 }
 
 # ==========================

@@ -250,7 +250,7 @@ def upload_video(
                 'categoryId': '10'  # Music 카테고리
             },
             'status': {
-                'privacyStatus': 'public',
+                'privacyStatus': 'private',  # 기본값: 비공개
                 'selfDeclaredMadeForKids': False
             }
         }

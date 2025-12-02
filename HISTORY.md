@@ -7,6 +7,35 @@
 
 ## 📅 Timeline
 
+### 2025-12-02: 새해 BGM 추가 및 이미지 처리 개선
+
+**주요 변경사항**:
+1. **새해(New Year) 장르 추가**: Public Domain 새해 음악 지원
+   - `audio/public_domain/newyear/` 폴더 생성
+   - Pixabay에서 새해 음악 49개 다운로드 (다국어 키워드: 한국어, 일본어, 중국어 포함)
+   - `newyear_3h` 프리셋 추가 (Good Bye 2025 / Happy New Year 2026 BGM)
+   - `public_domain_catalog.py`에 `newyear` 키워드 추가 (new year, goodbye, adieu, 2025, 2026, 새해, 新年, 元旦 등)
+   - `scripts/organize_newyear_music.py`로 기존 폴더에서 새해 관련 음악 이동
+
+2. **이미지 처리 개선**: PNG를 JPG로 자동 변환
+   - 배경 이미지: PNG 파일을 JPG로 변환하여 저장 (quality=90)
+   - 썸네일: 기존 JPG 변환 기능 유지
+   - `scripts/generate_image.py`의 `generate_background_image_for_bgm()` 함수 수정
+
+3. **문서 업데이트**: README.md에 Downloads 폴더 이미지 사용법 추가
+   - 배경 이미지 및 썸네일 파일명 패턴 설명 추가
+   - PNG 자동 JPG 변환 기능 문서화
+
+4. **YouTube 업로드 기본값 변경**: 비공개(private)로 설정
+   - `scripts/upload_youtube.py`의 `privacyStatus`를 `'private'`로 변경
+   - 모든 업로드 영상이 기본적으로 비공개로 설정됨
+
+5. **Good Bye 2025 / Happy New Year 2026 BGM 생성 및 업로드**
+   - 44개 새해 음악으로 3시간 BGM 생성 (180분)
+   - 배경 이미지: `~/Downloads/background.png` 사용 (JPG 변환)
+   - 썸네일: `~/Downloads/thumbnail.png` 사용
+   - YouTube 업로드 완료 (Video ID: OahsLshWAlM, 비공개)
+
 ### 2025-12-01: 크리스마스 캐롤송 BGM 추가 및 이미지 파일명 구분 기능
 
 **주요 변경사항**:

@@ -711,12 +711,12 @@ def generate_background_image_for_bgm(preset_name: str, use_downloads: bool = Fa
                     output_dir = OUTPUT_DIR / "images"
                     output_dir.mkdir(parents=True, exist_ok=True)
                     date_str = datetime.now().strftime("%Y-%m-%d")
-                    filename = f"{date_str}_{preset_name}_bg.png"
+                    filename = f"{date_str}_{preset_name}_bg.jpg"
                     output_path = output_dir / filename
                     
-                    # PNG로 저장
-                    img_resized.save(str(output_path), "PNG", optimize=True)
-                    logger.info(f"Downloads 이미지를 배경으로 사용: {output_path}")
+                    # JPG로 저장 (PNG에서 변환)
+                    img_resized.save(str(output_path), "JPEG", quality=90, optimize=True)
+                    logger.info(f"Downloads 이미지를 배경으로 사용 (JPG 변환): {output_path}")
                     return output_path
                 except Exception as e:
                     logger.warning(f"Downloads 이미지 처리 실패: {e}, 기존 방식으로 진행")

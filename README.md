@@ -148,6 +148,12 @@ python main.py --mode longform_bgm --preset blues_3h --duration-minutes 180 --up
 - 여러 파일이 있으면 길이에 맞게 이어붙입니다.
 - 세부 스타일은 `config/bgm_presets.yaml`에서 조정합니다.
 
+**📸 배경 이미지 및 썸네일 사용법:**
+- `~/Downloads` 폴더에 이미지 파일을 넣으면 자동으로 사용됩니다.
+- **배경 이미지**: 파일명에 `background`, `bg`, `배경` 키워드가 포함된 파일 (예: `background.png`, `bg_newyear.jpg`)
+- **썸네일**: 파일명에 `thumbnail`, `thumb`, `썸네일` 키워드가 포함된 파일 (예: `thumbnail.png`, `thumb_newyear.jpg`)
+- PNG 파일은 자동으로 JPG로 변환되고, 크기는 자동 조절됩니다 (배경: 1920x1080, 썸네일: 1280x720)
+
 ### 2. 시니어 브레인트레이닝
 ```bash
 python main.py --mode brain_training --preset number_memory_senior

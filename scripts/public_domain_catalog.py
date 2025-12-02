@@ -38,14 +38,16 @@ CATEGORY_KEYWORDS: Dict[str, Iterable[str]] = {
     "celtic": ["celtic", "fiddle", "irish", "scottish", "scotland", "ireland", "cape breton", "newfoundland", "quebecois", "ottawa valley", "acadian", "maritime"],
     "folk": ["folk", "acoustic"],
     "christmas_carols": ["carol", "carols", "christmas carol", "xmas carol", "holiday carol"],
+    "newyear": ["new year", "newyear", "new-year", "2026", "2025", "goodbye", "good bye", "adieu", "celebration", "countdown", "midnight", "year end", "year-end", "year end", "new years", "newyears", "new years eve", "newyears eve", "새해", "신년", "新年", "年明け", "元旦", "xīnnián", "yuándàn", "shinnen", "toshiake"],
 }
 
 MOOD_KEYWORDS: Dict[str, Iterable[str]] = {
     "calm": ["calm", "relax", "soft", "gentle", "peaceful", "cozy", "chill"],
     "bright": ["bright", "happy", "cheerful", "uplifting", "positive"],
-    "festive": ["christmas", "holiday", "xmas", "winter", "snow", "santa"],
+    "festive": ["christmas", "holiday", "xmas", "winter", "snow", "santa", "new year", "newyear", "celebration", "countdown"],
     "dramatic": ["epic", "dramatic", "majestic"],
     "emotional": ["emotional", "touching", "romantic"],
+    "celebration": ["celebration", "party", "festive", "new year", "newyear", "countdown", "midnight"],
 }
 
 SOURCE_HINTS: Dict[str, Iterable[str]] = {

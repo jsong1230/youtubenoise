@@ -4,6 +4,21 @@
 
 ## 최근 완료된 작업
 
+### 2025-12-02
+- ✅ 새해(New Year) 장르 추가 및 Public Domain 지원
+  - 새해 음악 폴더 생성 및 49개 음악 다운로드 (다국어 키워드: 한국어, 일본어, 중국어 포함)
+  - `newyear_3h` 프리셋 추가 (Good Bye 2025 / Happy New Year 2026 BGM)
+  - 카탈로그 키워드 추가 (newyear, goodbye, adieu, 2025, 2026, 새해, 新年, 元旦 등)
+  - 기존 폴더에서 새해 관련 음악 자동 이동 기능 추가
+- ✅ 이미지 처리 개선
+  - 배경 이미지 PNG → JPG 자동 변환 기능 추가 (quality=90)
+  - README.md에 Downloads 폴더 이미지 사용법 문서화
+- ✅ YouTube 업로드 기본값 변경
+  - 모든 업로드 영상을 기본적으로 비공개(private)로 설정
+- ✅ Good Bye 2025 / Happy New Year 2026 BGM 생성 및 YouTube 업로드
+  - 3시간 BGM 생성 완료 (981.79 MB)
+  - YouTube 업로드 완료 (Video ID: OahsLshWAlM, 비공개)
+
 ### 2025-12-01
 - ✅ 크리스마스 캐롤송 장르 추가 및 Public Domain 지원
   - 크리스마스 캐롤송 폴더 생성 및 50개 음악 다운로드 (christmas/xmas + carol 조건)

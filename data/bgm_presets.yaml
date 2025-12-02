@@ -364,6 +364,28 @@ presets:
     duration_minutes: 180
     tags: ["christmas", "carols", "christmas carols", "holiday", "traditional", "festive", "winter", "bgm", "relaxing", "peaceful"]
 
+  newyear_3h:
+    name: "Good Bye 2025 / Happy New Year 2026 BGM"
+    description: "새해 축하 BGM (3시간) - 2025년 작별 인사와 2026년 새해 인사"
+    style: "celebration"
+    tempo_bpm: 90
+    key: "C_major"
+    public_domain_categories:
+      include: ["newyear", "upbeat", "festive", "celebration"]  # 새해 관련 음악 우선, 없으면 upbeat/festive 사용
+      exclude: ["christmas", "christmas_carols", "kids", "rock"]  # 크리스마스 음악 제외
+    public_domain_only: true
+    combine_mode: "combine"
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
+    color_scheme:
+      start: [200, 150, 50]  # 골드
+      end: [255, 200, 100]   # 밝은 골드
+      gradient_direction: "radial"
+    duration_minutes: 180
+    tags: ["new year", "2026", "2025", "goodbye", "celebration", "festive", "upbeat", "happy", "bright", "bgm", "year end", "countdown"]
+
   lofi_3h:
     name: "Lofi BGM"
     description: "로파이 힙합 장르의 롱폼 BGM (3시간)"
