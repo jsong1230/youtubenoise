@@ -1,86 +1,22 @@
 # TODO 목록
 
-> **참고**: 상세한 2025 전략 및 로드맵은 `TODO_2025_STRATEGY.md`를 참조하세요.
+> **참고**: 상세한 2025 전략 및 로드맵은 `TODO_2025_STRATEGY.md`를 참조하세요.  
+> **완료된 작업 이력**: `HISTORY.md`를 참조하세요.
 
-## 최근 완료된 작업
+## 최근 완료된 작업 (HISTORY.md에 기록됨)
 
-### 2025-12-02
-- ✅ 새해(New Year) 장르 추가 및 Public Domain 지원
-  - 새해 음악 폴더 생성 및 49개 음악 다운로드 (다국어 키워드: 한국어, 일본어, 중국어 포함)
-  - `newyear_3h` 프리셋 추가 (Good Bye 2025 / Happy New Year 2026 BGM)
-  - 카탈로그 키워드 추가 (newyear, goodbye, adieu, 2025, 2026, 새해, 新年, 元旦 등)
-  - 기존 폴더에서 새해 관련 음악 자동 이동 기능 추가
-- ✅ 이미지 처리 개선
-  - 배경 이미지 PNG → JPG 자동 변환 기능 추가 (quality=90)
-  - README.md에 Downloads 폴더 이미지 사용법 문서화
-- ✅ YouTube 업로드 기본값 변경
-  - 모든 업로드 영상을 기본적으로 비공개(private)로 설정
-- ✅ Good Bye 2025 / Happy New Year 2026 BGM 생성 및 YouTube 업로드
-  - 3시간 BGM 생성 완료 (981.79 MB)
-  - YouTube 업로드 완료 (Video ID: OahsLshWAlM, 비공개)
-
-### 2025-12-01
-- ✅ 크리스마스 캐롤송 장르 추가 및 Public Domain 지원
-  - 크리스마스 캐롤송 폴더 생성 및 50개 음악 다운로드 (christmas/xmas + carol 조건)
-  - `christmas_carols_3h` 프리셋 추가
-  - 카탈로그 키워드 추가 (christmas_carols)
-- ✅ 파일명 패턴으로 이미지 용도 구분 기능
-  - 배경 이미지/썸네일 자동 구분 (접두사 또는 키워드 매칭)
-  - 키워드 충돌 방지 로직 추가
-- ✅ 크리스마스 캐롤송 3시간 BGM 생성 및 YouTube 업로드
-  - 영상 생성 완료 (1152.08 MB)
-  - YouTube 업로드 완료 (Video ID: 9L7e2Y2_iH8)
-
-### 2025-11-30
-- ✅ 켈틱 음악 장르 추가 및 Public Domain 지원
-  - 켈틱 음악 폴더 생성 및 52개 음악 다운로드
-  - `celtic_3h` 프리셋 추가
-  - 카탈로그 키워드 추가 (celtic, fiddle, irish, scottish 등)
-- ✅ Downloads 폴더에서 이미지 자동 사용 기능
-  - 배경 이미지 및 썸네일 자동 생성
-  - `create_thumbnail_from_downloads.py` 스크립트 추가
-- ✅ BGM 생성 최적화
-  - 기존 파일 재사용 로직 추가
-  - 시간 소요 작업 전 사용자 확인 요청
-  - 업로드만 요청 시 기존 파일 자동 재사용
-
-### 2025-11-25
-- ✅ AI Explainer 모드 전면 개선
-  - TTS 내레이션 추가 (OpenAI TTS API)
-  - 코드 스니펫 이미지 생성 (PIL)
-  - 다이어그램 자동 생성 (DALL-E)
-  - 애니메이션/전환 효과 (FFmpeg 페이드)
-  - 자막 자동 생성 (SRT 형식)
-  - B-roll 이미지 개선 (검색어 개선, DALL-E 옵션)
-  - Claude API 실패 시 OpenAI fallback 개선
-  - YAML 구조 수정 (standalone_topics 최상위 레벨로 이동)
-  - 짧은 테스트 영상(5분) 생성 성공
-- ⚠️ 성능 개선 필요: 영상 생성 시간 및 품질 최적화 필요
+### 2025-12-06
+- ✅ 수면용 BGM 프리셋 추가
+  - `sleep_ambient_4h`, `sleep_piano_3h`, `sleep_meditation_4h`, `sleep_night_6h` 프리셋 추가
+  - sleep 폴더 생성 및 200개 수면 관련 음악 정리
+  - `organize_sleep_music.py` 스크립트 추가 (50개 미만 시 자동 다운로드)
+- ✅ 메타데이터 생성 시 영어 우선 형식으로 변경
+  - 제목: "English Title | 한국어 제목" 형식
+  - 설명: 영어 섹션이 먼저 오도록 수정
+  - 모든 메타데이터 생성 함수에 적용 (BGM, AI Explainer, Brain Training)
 
 ## 진행 중
-- [x] 프롬프트 로깅 시스템 구현 (머신/IDE 정보 포함)
-- [x] CURSOR_PROMPT.md 문서화 및 docs/ 이동
-
-## 🚀 현재 진행 중 (Phase 1)
-
-- [x] HISTORY.md 생성
-- [x] data/channel_state.json 생성
-- [x] data/api_usage.json 생성
-- [x] scripts/sync_channel_state.py 생성
-- [x] .gitignore 업데이트 (채널 상태 포함)
-- [x] requirements.txt 업데이트 (Flask, anthropic 추가)
-- [x] API Manager 구현 (src/api/)
-- [x] Flask 웹 대시보드 구현 (src/web/)
-- [x] 채널 상태 동기화 테스트
-
-## 📅 다음 단계 (Phase 2-3)
-
-- [x] 이중언어 메타데이터 시스템 구현
-- [x] Claude API 통합
-- [x] 무료 이미지 API 통합 (Unsplash, Pexels, Pixabay)
-- [x] API 사용량 추적 시스템
-- [x] AI Explainer 콘텐츠 필러 추가
-- [x] 스케줄링 & 자동화 시스템 (요일별 필러 로테이션)
+- 없음
 
 ## 프로젝트 개선 사항
 
@@ -157,65 +93,15 @@
 - `HISTORY.md`: 프로젝트 히스토리 및 API 설정 가이드
 - `implementation_plan.md`: 상세 구현 계획
 
-## ✅ 최근 완료된 작업 (2025-11)
-
-### 두뇌훈련 시계 및 색상 개선 (2025-11-25)
-- [x] 시계 읽기 문제: 시계가 항상 12시가 위에 오도록 각도 계산 수정
-- [x] 색상 기억 문제: 색상 구분을 명확하게 하기 위해 더 밝고 선명한 색상 사용
-- [x] 색상 박스 테두리를 더 두껍게 하여 구분 명확히
-
-### 썸네일 자동 생성 기능 추가 (2025-11-24)
-- [x] DALL-E 3를 사용한 썸네일 생성 스크립트 추가 (`scripts/create_thumbnail_dalle.py`)
-- [x] YouTube 썸네일 업로드 스크립트 추가 (`scripts/upload_thumbnail.py`)
-- [x] 모든 모드(brain_training, longform_bgm, ai_explainer)에 자동 썸네일 생성 로직 추가
-- [x] 썸네일 경로를 메타데이터에 자동 포함
-
-### 두뇌훈련 영상 다국어 지원 개선 (2025-11-24)
-- [x] 영어 버전에서 한글 텍스트 제거 및 폰트 깨짐 문제 해결
-- [x] 모든 이미지 생성 함수에 languages 파라미터 추가
-- [x] 영어 버전일 때 영어 폰트(Helvetica) 사용, 한글 폰트(AppleSDGothicNeo)는 한글 버전에서만 사용
-- [x] korean_word_puzzle 모듈을 영어 버전에서 자동 제외
-- [x] word_association, pattern_sequence, category_classification 모듈이 영어로 생성되도록 수정
-- [x] 언어별 파일명 구분 (_ko_, _en_ 식별자 추가)
-- [x] 메타데이터, 제목, 설명, 태그 파일도 언어별로 구분
-
-### spot_difference 모드 제거 (2025-11-24)
-- [x] main.py에서 spot_difference 모드 제거
-- [x] README.md에서 spot_difference 관련 내용 제거
-
-## ✅ 이전 완료된 작업 (2025-11)
-
-- [x] 이중언어 메타데이터 시스템 구현 (한글/영어 자동 생성)
-- [x] generate_image.py APIManager 통합 (DALL-E 우선, 무료 API 폴백)
-- [x] AI Explainer 콘텐츠 필러 추가 (Claude 3.5 Sonnet 사용)
-- [x] 스케줄링 & 자동화 시스템 (요일별 필러 로테이션)
-- [x] main.py에 --mode auto 옵션 추가
-- [x] 문서 업데이트 (README.md, TODO.md)
-- [x] 코드 품질 개선: 공통 유틸리티 모듈화 (`scripts/utils.py`)
-- [x] 로깅 설정 중복 제거 (모든 스크립트가 `setup_logging()` 사용)
-- [x] 에러 처리 표준화 및 재시도 로직 추가 (`retry_with_backoff` 데코레이터)
-- [x] API Provider에 재시도 로직 적용 (OpenAI, Claude, Image Provider)
-- [x] 타입 힌팅 전면 적용 (`scripts/utils.py`, 주요 스크립트들)
-- [x] mypy 정적 타입 체크 설정 (`mypy.ini`)
+> **참고**: 2025-11월 이전의 완료된 작업들은 `HISTORY.md`에 상세히 기록되어 있습니다.
 
 ## 🎯 다음 작업 (우선순위)
-
-### 두뇌훈련 영상 개선
-- [x] 이미지 다운로드 타임아웃 에러 해결 (재시도 로직 추가) ✅ 2025-11-24
-- [x] 영어 테스트 영상 생성 ✅ 2025-11-24
-- [x] 15분 영상 테스트 생성 (10개 모듈 활용) ✅ 2025-11-24
-- [x] 30-45분 두뇌훈련 영상 생성 (한글/영어 각각) ✅ 2025-11-24
-  - [x] 프리셋 생성 (`brain_training_30min_korean`, `brain_training_30min_english`)
-  - [x] 영상 생성 (45개 문제, 약 30-45분)
-  - [x] 메타데이터 생성 (정확한 영상 길이 포함)
-  - [x] 썸네일 생성 (DALL-E 사용)
-  - [x] BGM 자동 포함 (public_domain 폴더에서 랜덤 선택, 루프 반복)
-- [ ] 영상 품질 검증 및 개선
 
 ### 기능 추가
 - [ ] 3순위 모듈 추가 (word_order, date_memory, find_difference_text 등)
 - [ ] 모듈별 난이도 조절 기능
 - [ ] 문제 생성 다양성 개선 (더 많은 변형)
+- [ ] 영상 품질 검증 및 개선
 
 ---
-**마지막 업데이트**: 2025-11-24 (30-45분 두뇌훈련 영상 생성 완료, BGM 루프 반복 기능 추가)
+**마지막 업데이트**: 2025-12-06 (수면용 BGM 프리셋 추가, 메타데이터 영어 우선 형식 변경)

@@ -7,6 +7,36 @@
 
 ## 📅 Timeline
 
+### 2025-12-06: 수면용 BGM 프리셋 추가 및 메타데이터 형식 개선
+
+**주요 변경사항**:
+1. **수면용 BGM 프리셋 추가**: 4가지 수면용 BGM 프리셋 추가
+   - `sleep_ambient_4h`: 4시간 앰비언트 수면 BGM
+   - `sleep_piano_3h`: 3시간 피아노 수면 BGM
+   - `sleep_meditation_4h`: 4시간 명상 수면 BGM
+   - `sleep_night_6h`: 6시간 밤새 수면 BGM
+   - 모든 프리셋이 `audio/public_domain/sleep/` 폴더의 음악 사용
+
+2. **Sleep 음악 정리 시스템**: `scripts/organize_sleep_music.py` 추가
+   - 기존 public_domain 폴더에서 sleep 관련 음악 자동 검색 및 이동
+   - 50개 미만이면 Pixabay API로 자동 다운로드
+   - sleep 키워드 추가 (sleep, bedtime, night, peaceful, meditation 등)
+   - 200개 수면 관련 음악 파일 정리 완료
+
+3. **메타데이터 형식 개선**: 영어가 한글보다 앞에 오도록 변경
+   - 제목 형식: "English Title | 한국어 제목" (기존: "한국어 제목 | English Title")
+   - 설명 형식: 영어 섹션이 먼저, 한글 섹션이 나중
+   - 모든 메타데이터 생성 함수에 적용 (BGM, AI Explainer, Brain Training)
+   - 폴백 메타데이터도 영어 우선 형식으로 수정
+
+4. **비디오 파일 검색 로직 개선**: 기존 파일 재사용 개선
+   - 프리셋 이름과 길이로 직접 비디오 파일 검색 기능 추가
+   - 오디오 파일을 찾지 못해도 비디오 파일을 찾을 수 있도록 개선
+
+5. **수면 BGM 생성 및 업로드**
+   - 6시간 수면 BGM 생성 완료 (200개 음악 조합, 1.9GB)
+   - YouTube 비공개 업로드 완료 (Video ID: 8xth9Ui0zk0)
+
 ### 2025-12-02: 새해 BGM 추가 및 이미지 처리 개선
 
 **주요 변경사항**:

@@ -402,6 +402,99 @@ presets:
     duration_minutes: 180
     tags: ["piano", "bgm", "classical", "study", "focus", "relaxing", "peaceful", "instrumental", "calm"]
 
+  # 수면용 BGM 프리셋
+  sleep_ambient_4h:
+    name: "Sleep Ambient BGM"
+    description: "수면을 돕는 앰비언트 BGM (4시간) - 깊은 잠을 위한 차분한 음악"
+    style: "ambient"
+    tempo_bpm: 55
+    key: "D_major"
+    public_domain_categories:
+      include: ["ambient", "piano", "calm"]
+      exclude: ["upbeat", "kids", "rock", "electronic", "jazz"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "sleep"  # sleep 폴더의 음악만 사용
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
+    color_scheme:
+      start: [20, 30, 50]   # 어두운 파란색 (밤하늘)
+      end: [40, 50, 70]    # 부드러운 파란색
+      gradient_direction: "radial"
+    duration_minutes: 240
+    tags: ["sleep", "ambient", "bgm", "relaxing", "meditation", "calm", "peaceful", "night", "deep sleep", "insomnia", "bedtime"]
+
+  sleep_piano_3h:
+    name: "Sleep Piano BGM"
+    description: "수면을 돕는 피아노 BGM (3시간) - 부드러운 피아노 선율로 잠들기"
+    style: "classical"
+    tempo_bpm: 60
+    key: "C_major"
+    public_domain_categories:
+      include: ["piano", "ambient", "calm"]
+      exclude: ["upbeat", "kids", "rock", "electronic", "jazz"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "sleep"  # sleep 폴더의 음악만 사용
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
+    color_scheme:
+      start: [30, 25, 40]   # 어두운 보라색
+      end: [60, 50, 80]     # 부드러운 라벤더
+      gradient_direction: "vertical"
+    duration_minutes: 180
+    tags: ["sleep", "piano", "bgm", "relaxing", "calm", "peaceful", "bedtime", "soft", "gentle", "insomnia"]
+
+  sleep_meditation_4h:
+    name: "Sleep Meditation BGM"
+    description: "수면 명상을 위한 BGM (4시간) - 마음을 진정시키는 명상 음악"
+    style: "ambient"
+    tempo_bpm: 50
+    key: "G_major"
+    public_domain_categories:
+      include: ["ambient", "meditation", "calm"]
+      exclude: ["upbeat", "kids", "rock", "electronic", "jazz"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "sleep"  # sleep 폴더의 음악만 사용
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
+    color_scheme:
+      start: [15, 20, 35]   # 매우 어두운 파란색
+      end: [35, 45, 60]    # 어두운 파란색
+      gradient_direction: "diagonal"
+    duration_minutes: 240
+    tags: ["sleep", "meditation", "bgm", "relaxing", "calm", "peaceful", "mindfulness", "zen", "deep sleep", "bedtime", "insomnia"]
+
+  sleep_night_6h:
+    name: "Sleep Night BGM"
+    description: "밤새 잠을 돕는 BGM (6시간) - 밤새 편안한 수면을 위한 긴 음악"
+    style: "ambient"
+    tempo_bpm: 55
+    key: "D_major"
+    public_domain_categories:
+      include: ["ambient", "piano", "strings", "calm"]
+      exclude: ["upbeat", "kids", "rock", "electronic", "jazz"]
+    public_domain_only: true
+    combine_mode: "combine"
+    public_domain_subdir: "sleep"  # sleep 폴더의 음악만 사용
+    instruments: []  # Public Domain 전용
+    # 이중언어 메타데이터 설정
+    languages: ["ko", "en"]
+    region_targets: ["KR", "NA"]
+    color_scheme:
+      start: [10, 15, 25]   # 매우 어두운 파란색 (깊은 밤)
+      end: [30, 40, 55]    # 어두운 파란색
+      gradient_direction: "radial"
+    duration_minutes: 360
+    tags: ["sleep", "night", "bgm", "relaxing", "calm", "peaceful", "deep sleep", "bedtime", "insomnia", "6 hours", "all night"]
+
   rock_3h:
     name: "Rock BGM"
     description: "록 장르의 롱폼 BGM (3시간)"

@@ -30,7 +30,7 @@ CATEGORY_KEYWORDS: Dict[str, Iterable[str]] = {
     "rock": ["rock", "guitar"],
     "electronic": ["electronic", "edm", "synth", "future"],
     "kids": ["kids", "children", "cartoon"],
-    "ambient": ["ambient", "relax", "calm", "soft", "serene", "meditation"],
+    "ambient": ["ambient", "relax", "calm", "soft", "serene", "meditation", "sleep", "bedtime", "night", "peaceful"],
     "upbeat": ["upbeat", "happy", "fun", "cheerful", "bright", "energetic", "festive"],
     "traditional": ["traditional", "hymn", "classic"],
     "commercial": ["advertising", "commercial", "promo", "corporate", "branding"],

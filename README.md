@@ -13,7 +13,7 @@ GPT · Claude · Public Domain 음악 · FFmpeg을 조합해 **다양한 주제�
 
 | 모드 (`--mode`) | 설명 | 프리셋 예시 |
 | --- | --- | --- |
-| `longform_bgm` | Public Domain 음악 또는 합성 음원을 조합한 2~6시간 BGM | `cafe_jazz_3h`, `blues_3h`, `lofi_3h`, `christmas_ambient_4h` |
+| `longform_bgm` | Public Domain 음악 또는 합성 음원을 조합한 2~6시간 BGM | `cafe_jazz_3h`, `blues_3h`, `lofi_3h`, `christmas_ambient_4h`, `sleep_night_6h` |
 | `brain_training` | GPT 문제 생성 기반 시니어 두뇌훈련 (한글/영어 지원) | `number_memory_senior`, `mixed_brain_training_senior` |
 | `ai_explainer` | Claude로 생성한 AI & Tech 설명 롱폼 영상 | `ChatGPT로 코딩하기: 실전 팁` |
 | `auto` | 요일별 스케줄에 따라 자동 실행 | `data/upload_schedule.yaml` 참고 |

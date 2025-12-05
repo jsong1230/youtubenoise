@@ -67,12 +67,13 @@ Secondary Language: English
 
 Return JSON with:
 {{
-  "title": "Korean Title | English Title (max 100 characters total)",
-  "description": "Section 1 (Korean description, 2-3 paragraphs)...\n\n---\n\nSection 2 (English description, 2-3 paragraphs)...\n\n---\n\nSection 3 (Mixed section with key info in both languages)...",
+  "title": "English Title | Korean Title (max 100 characters total)",
+  "description": "Section 1 (English description, 2-3 paragraphs)...\n\n---\n\nSection 2 (Korean description, 2-3 paragraphs)...\n\n---\n\nSection 3 (Mixed section with key info in both languages)...",
   "tags": ["tag1", "tag2", "태그1", "태그2", ...] (mix both languages, 15-20 tags)
 }}
 
-Title format: "한국어 제목 | English Title"
+IMPORTANT: Title format must ALWAYS be "English Title | Korean Title" (English first, then Korean).
+Description must ALWAYS have English section first, then Korean section.
 Description should include:
 - Purpose of the video
 - What viewers will learn
@@ -151,12 +152,12 @@ Tags should be in English only, optimized for SEO.
         
     except Exception as e:
         logger.error(f"메타데이터 생성 실패: {e}", exc_info=True)
-        # 기본 메타데이터 반환
+        # 기본 메타데이터 반환 (영어가 먼저 오도록 수정)
         if is_bilingual:
             return {
-                "title": f"시니어 두뇌훈련 | Senior Brain Training - {preset_name} ({num_problems}문제)",
-                "description": f"치매 예방을 위한 두뇌훈련 영상입니다.\n\nDementia prevention brain training video.\n\n총 {num_problems}개의 문제로 구성되어 있습니다.\nTotal {num_problems} problems included.",
-                "tags": ["시니어", "두뇌훈련", "치매예방", "senior", "brain training", "dementia prevention", "인지훈련", "cognitive training"]
+                "title": f"Senior Brain Training - {preset_name} ({num_problems} Problems) | 시니어 두뇌훈련 ({num_problems}문제)",
+                "description": f"Dementia prevention brain training video.\n\n---\n\n치매 예방을 위한 두뇌훈련 영상입니다.\n\nTotal {num_problems} problems included.\n총 {num_problems}개의 문제로 구성되어 있습니다.",
+                "tags": ["senior", "brain training", "dementia prevention", "cognitive training", "시니어", "두뇌훈련", "치매예방", "인지훈련"]
             }
         elif is_english_only:
             return {

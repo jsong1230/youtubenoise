@@ -323,7 +323,7 @@ def check_running_process(
         import psutil
         current_pid = os.getpid()
         
-        # Python 프로세스 확인
+        # Python 프로세스만 확인 (셸은 완전히 제외)
         for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
             try:
                 if proc.info['pid'] == current_pid:
@@ -334,40 +334,43 @@ def check_running_process(
                 proc_name = proc.info.get('name', '')
                 cmdline = proc.info.get('cmdline', [])
                 
-                # Python 프로세스만 확인 (프로세스 이름과 명령어 모두 확인)
+                # 셸 프로세스는 완전히 제외
+                if proc_name:
+                    proc_name_lower = proc_name.lower()
+                    if any(shell in proc_name_lower for shell in ['zsh', 'bash', 'sh', 'fish', 'csh', 'tcsh']):
+                        continue
+                
+                # cmdline의 첫 번째 인자가 셸이면 제외
+                if cmdline and len(cmdline) > 0:
+                    first_arg = str(cmdline[0]).lower()
+                    if any(shell in first_arg for shell in ['/bin/zsh', '/bin/bash', '/bin/sh', '/usr/bin/zsh', '/usr/bin/bash', 'zsh', 'bash']):
+                        continue
+                
+                # Python 프로세스인지 확인 (프로세스 이름이 python으로 시작)
                 is_python = False
                 if proc_name:
-                    is_python = 'python' in proc_name.lower()
+                    proc_name_lower = proc_name.lower()
+                    is_python = proc_name_lower.startswith('python')
                 
-                if not is_python and cmdline:
-                    # 명령어 첫 번째 인자가 python인지 확인
-                    if len(cmdline) > 0:
-                        first_arg = cmdline[0].lower()
-                        is_python = 'python' in first_arg
+                # cmdline의 첫 번째 인자가 python인지 확인
+                if not is_python and cmdline and len(cmdline) > 0:
+                    first_arg = str(cmdline[0]).lower()
+                    is_python = 'python' in first_arg and ('/python' in first_arg or first_arg.endswith('python') or first_arg.split('/')[-1].startswith('python'))
                 
+                # Python 프로세스가 아니면 스킵
                 if not is_python:
                     continue
                 
                 if not cmdline:
                     continue
                 
-                # zsh 셸 래퍼 제외 (첫 번째 인자가 zsh이고 extendedglob이 포함되어 있으면 제외)
-                if len(cmdline) > 0:
-                    first_arg = cmdline[0].lower()
-                    if 'zsh' in first_arg:
-                        cmdline_str = ' '.join(cmdline)
-                        # zsh 셸 래퍼 키워드 확인
-                        if any(keyword in cmdline_str for keyword in ['extendedglob', 'builtin', 'unsetopt', 'snap=', 'dump_zsh_state', 'command cat']):
-                            continue
+                cmdline_str = ' '.join(str(arg) for arg in cmdline)
                 
-                cmdline_str = ' '.join(cmdline)
-                
-                # 스크립트 이름 확인
+                # 스크립트 이름과 python이 모두 cmdline에 있어야 함
                 if script_name not in cmdline_str:
                     continue
                 
-                # 실제 Python 프로세스인지 확인 (zsh 래퍼가 아닌)
-                has_python = any('python' in arg.lower() for arg in cmdline)
+                has_python = any('python' in str(arg).lower() for arg in cmdline)
                 if not has_python:
                     continue
                 

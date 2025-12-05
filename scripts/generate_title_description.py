@@ -141,15 +141,17 @@ Preset Information:
 IMPORTANT: This is original, copyright-free music generated algorithmically. It is NOT a cover or remix of any existing copyrighted song.
 
 Requirements:
-1. Title: Create a bilingual title in the format "{lang_names.get(language_primary)} | {lang_names.get(language_secondary)}"
-   Example: "크리스마스 카페 BGM | Christmas Cafe Background Music ({duration_str_en})"
-   Or: "시니어 두뇌운동 | Brain Workout ({duration_str_en})"
+1. Title: Create a bilingual title ALWAYS in the format "English | Korean" (English first, then Korean)
+   Example: "Christmas Cafe Background Music ({duration_str_en}) | 크리스마스 카페 BGM"
+   Or: "Brain Workout ({duration_str_en}) | 시니어 두뇌운동"
+   IMPORTANT: English must always come first, regardless of language_primary setting.
    Maximum 100 characters total.
 
-2. Description: Create a bilingual description with 3 sections:
-   - Section 1: {lang_names.get(language_primary)} description (2-3 paragraphs)
-   - Section 2: {lang_names.get(language_secondary)} description (2-3 paragraphs)
+2. Description: Create a bilingual description with 3 sections (English first, then Korean):
+   - Section 1: English description (2-3 paragraphs) - MUST come first
+   - Section 2: Korean description (2-3 paragraphs) - MUST come second
    - Section 3: Mixed section with key information in both languages
+   IMPORTANT: English section must always come before Korean section, regardless of language_primary setting.
    Include:
      * Introduction about this original, copyright-free BGM
      * Style and atmosphere
@@ -164,8 +166,8 @@ Requirements:
 
 Return the response as a JSON object with the following structure:
 {{
-    "title": "한국어 제목 | English Title (duration)",
-    "description": "Section 1 (Korean)...\n\n---\n\nSection 2 (English)...\n\n---\n\nSection 3 (Mixed)...",
+    "title": "English Title (duration) | 한국어 제목",
+    "description": "Section 1 (English)...\n\n---\n\nSection 2 (Korean)...\n\n---\n\nSection 3 (Mixed)...",
     "tags": ["tag1", "tag2", ...]
 }}"""
 
@@ -291,24 +293,8 @@ def generate_fallback_bilingual_metadata_for_bgm(
         duration_str_ko = f"{minutes}분"
         duration_str_en = f"{minutes}min"
     
-    if language_primary == "ko":
-        title = f"{preset_name_display} - {duration_str_ko} 롱폼 BGM | {preset_name_display} - {duration_str_en} Long Form BGM"
-    else:
-        title = f"{preset_name_display} - {duration_str_en} Long Form BGM | {preset_name_display} - {duration_str_ko} 롱폼 BGM"
-    
-    description_ko = f"""환영합니다! {duration_str_ko} 길이의 오리지널, 저작권 없는 배경음악: {preset_name_display}입니다.
-
-이 알고리즘으로 생성된 오리지널 음악은 다음과 같은 용도에 완벽합니다:
-- 카페 분위기
-- 공부 및 업무
-- 휴식
-- 영상 배경음악
-- 평화로운 분위기 조성
-
-이것은 기존 저작권이 있는 곡의 커버나 리믹스가 아닌 오리지널 음악입니다.
-
-타임라인:
-00:00:00 - 시작"""
+    # 항상 영어가 먼저 오도록 수정
+    title = f"{preset_name_display} - {duration_str_en} Long Form BGM | {preset_name_display} - {duration_str_ko} 롱폼 BGM"
     
     description_en = f"""Welcome to {duration_str_en} of original, copyright-free background music: {preset_name_display}.
 
@@ -324,7 +310,22 @@ This is original music, not a cover or remix of any existing copyrighted song.
 Timeline:
 00:00:00 - Start"""
     
-    description = f"{description_ko}\n\n---\n\n{description_en}\n\n#bgm #backgroundmusic #배경음악 #music #음악 #cafe #카페 #study #공부 #work #업무 #relaxation #휴식"
+    description_ko = f"""환영합니다! {duration_str_ko} 길이의 오리지널, 저작권 없는 배경음악: {preset_name_display}입니다.
+
+이 알고리즘으로 생성된 오리지널 음악은 다음과 같은 용도에 완벽합니다:
+- 카페 분위기
+- 공부 및 업무
+- 휴식
+- 영상 배경음악
+- 평화로운 분위기 조성
+
+이것은 기존 저작권이 있는 곡의 커버나 리믹스가 아닌 오리지널 음악입니다.
+
+타임라인:
+00:00:00 - 시작"""
+    
+    # 영어가 먼저 오도록 수정
+    description = f"{description_en}\n\n---\n\n{description_ko}\n\n#bgm #backgroundmusic #배경음악 #music #음악 #cafe #카페 #study #공부 #work #업무 #relaxation #휴식"
     
     tags = preset_tags + ["bgm", "background music", "배경음악", "original music", "오리지널 음악", "copyright free", "저작권 없음", "instrumental", "기악", "ambient", "앰비언트", "study music", "공부 음악", "cafe music", "카페 음악"]
     
@@ -720,14 +721,16 @@ Topic Information:
 - Target Region: {region_names.get(region, region)}
 
 Requirements:
-1. Title: Create a bilingual title in the format "{lang_names.get(language_primary)} | {lang_names.get(language_secondary)}"
-   Example: "AI 자동화 완벽 가이드 | Complete Guide to AI Automation"
+1. Title: Create a bilingual title ALWAYS in the format "English | Korean" (English first, then Korean)
+   Example: "Complete Guide to AI Automation | AI 자동화 완벽 가이드"
+   IMPORTANT: English must always come first, regardless of language_primary setting.
    Maximum 100 characters total.
 
-2. Description: Create a bilingual description with 3 sections:
-   - Section 1: {lang_names.get(language_primary)} description (2-3 paragraphs)
-   - Section 2: {lang_names.get(language_secondary)} description (2-3 paragraphs)
+2. Description: Create a bilingual description with 3 sections (English first, then Korean):
+   - Section 1: English description (2-3 paragraphs) - MUST come first
+   - Section 2: Korean description (2-3 paragraphs) - MUST come second
    - Section 3: Mixed section with key information in both languages
+   IMPORTANT: English section must always come before Korean section, regardless of language_primary setting.
    Include:
      * Introduction about the topic
      * What viewers will learn
@@ -741,8 +744,8 @@ Requirements:
 
 Return the response as a JSON object with the following structure:
 {{
-    "title": "한국어 제목 | English Title",
-    "description": "Section 1 (Korean)...\n\n---\n\nSection 2 (English)...\n\n---\n\nSection 3 (Mixed)...",
+    "title": "English Title | 한국어 제목",
+    "description": "Section 1 (English)...\n\n---\n\nSection 2 (Korean)...\n\n---\n\nSection 3 (Mixed)...",
     "tags": ["tag1", "tag2", ...]
 }}"""
 
